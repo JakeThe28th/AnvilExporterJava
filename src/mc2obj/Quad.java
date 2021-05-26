@@ -17,12 +17,15 @@ public class Quad {
 	public int y4 = 0;
 	public int z4 = 0;
 	
-	public Quad(int x1, int y1, int z1, 
+	public Quad(int x1_, int y1, int z1, 
 				int x2, int y2, int z2,
 				int x3, int y3, int z3,
 				int x4, int y4, int z4) {
+			
+		x1 = x1_;
 		
-		System.out.println(x1);
+			
+		//System.out.println(x1);
 		
 	}
 }
