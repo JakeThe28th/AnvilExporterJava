@@ -4,6 +4,18 @@ import java.io.File;  // Import the File class
 import java.io.IOException;  // Import the IOException class to handle errors
 import java.io.FileWriter;   // Import the FileWriter class
 
+//
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+ 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import mc2obj.WriteBlock;
+
 public class main {
 	//My first serious java project, better put some to-do's here.
 	//In order of importance
@@ -31,8 +43,24 @@ public class main {
 	
 	//5/10/2021 (c) Jake 28
 	
+	//
+	public static int v_count = 0;
+	public static int vt_count = 0;
+	
 	
 	  public static void main(String[] args) {
+		  
+		  mc2obj.WriteBlock mod = new  mc2obj.WriteBlock();
+		  mod.WriteModel("assets\\\\minecraft\\\\models\\\\block\\\\brewing_stand.json", 182, 2, 4);
+
+		  
+		  
+		  System.out.println(v_count);
+	       
+	        	
+		  
+		  
+		  ////////////
 	    try {
 	      File myObj = new File("filename.obj");
 	      if (myObj.createNewFile()) {
