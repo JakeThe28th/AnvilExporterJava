@@ -21,8 +21,14 @@ public class main {
 	//In order of importance
 	//[?] Learn java
 	//[x] write a basic .obj file 					//5/16/2021
-	//[ ] read minecraft json files
-	//[ ] convert minecraft json files to obj files
+	//[-..] read minecraft json files
+	//[-..] convert minecraft json files to obj files
+		//[	] Read UV coordinates
+		//[	] Fix coordinates to 16 pixels per unit
+		//[	] Add rotation
+		//[	] Parent handling
+		//[	] Culling
+		//[	] Proper UVS
 	//[ ] create nbt modules
 	//[ ] read minecraft level data
 	//[ ] export minecraft level data into .obj files
@@ -50,10 +56,10 @@ public class main {
 	
 	  public static void main(String[] args) {
 		  
-		  mc2obj.WriteBlock mod = new  mc2obj.WriteBlock();
-		  mod.WriteModel("assets\\\\minecraft\\\\models\\\\block\\\\brewing_stand.json", 182, 2, 4);
+		  mc2obj.WriteBlock mod = new  mc2obj.WriteBlock("brewing_stand.obj");
+		  mod.WriteModel("assets\\\\minecraft\\\\models\\\\block\\\\cactus.json", 182, 2, 4);
 
-		  
+		  mod.end();
 		  
 		  System.out.println(v_count);
 	       

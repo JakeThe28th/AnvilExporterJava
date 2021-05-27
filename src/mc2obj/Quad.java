@@ -1,31 +1,44 @@
 package mc2obj;
 
 public class Quad {
-	public int x1 = 0;
-	public int y1 = 0;
-	public int z1 = 0;
+	public long x1 = 0;
+	public long y1 = 0;
+	public long z1 = 0;
 	
-	public int x2 = 0;
-	public int y2 = 0;
-	public int z2 = 0;
+	public long x2 = 0;
+	public long y2 = 0;
+	public long z2 = 0;
 	
-	public int x3 = 0;
-	public int y3 = 0;
-	public int z3 = 0;
+	public long x3 = 0;
+	public long y3 = 0;
+	public long z3 = 0;
 	
-	public int x4 = 0;
-	public int y4 = 0;
-	public int z4 = 0;
+	public long x4 = 0;
+	public long y4 = 0;
+	public long z4 = 0;
 	
-	public Quad(int x1_, int y1, int z1, 
-				int x2, int y2, int z2,
-				int x3, int y3, int z3,
-				int x4, int y4, int z4) {
+	public Quad(long x1_, long y1_, long z1_, 
+				long x2_, long y2_, long z2_,
+				long x3_, long y3_, long z3_,
+				long x4_, long y4_, long z4_) {
 			
 		x1 = x1_;
+		y1 = y1_;
+		z1 = z1_;
 		
+		x2 = x2_;
+		y2 = y2_;
+		z2 = z2_;
+		
+		x3 = x3_;
+		y3 = y3_;
+		z3 = z3_;
+		
+		x4 = x4_;
+		y4 = y4_;
+		z4 = z4_;
 			
-		//System.out.println(x1);
+		//System.out.prlongln(x1);
 		
 	}
 }
