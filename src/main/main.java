@@ -28,7 +28,7 @@ public class main {
 		//[	] Add rotation
 		//[	] Parent handling
 		//[	] Culling
-		//[	] Proper UVS
+		//[	] Proper UVS (adapt to non 16 texture sizes aswell.)
 	//[ ] create nbt modules
 	//[ ] read minecraft level data
 	//[ ] export minecraft level data into .obj files
@@ -56,8 +56,8 @@ public class main {
 	
 	  public static void main(String[] args) {
 		  
-		  mc2obj.WriteBlock mod = new  mc2obj.WriteBlock("brewing_stand.obj");
-		  mod.WriteModel("assets\\\\minecraft\\\\models\\\\block\\\\cactus.json", 182, 2, 4);
+		  mc2obj.WriteBlock mod = new  mc2obj.WriteBlock("brewing_stand");
+		  mod.WriteModel("assets\\\\minecraft\\\\models\\\\block\\\\brewing_stand.json", 182, 2, 4);
 
 		  mod.end();
 		  

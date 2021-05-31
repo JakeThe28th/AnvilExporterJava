@@ -23,14 +23,16 @@ import org.json.simple.parser.ParseException;
 public class WriteBlock {
 	
 	public String filename;
-	public FileWriter myWriter;
+	public FileWriter objWriter;
+	public FileWriter mtlWriter;
 	
 	public int v_count;
 	public int vt_count;
 	
 	public void end() {
 		try {
-		myWriter.close();
+		objWriter.close();
+		mtlWriter.close();
 		System.out.println("Closed MC2OBJ inst");
 		 	} catch (IOException e) {
 		      System.out.println("An error occurred when closing filewriter..");
@@ -43,9 +45,9 @@ public class WriteBlock {
 		filename = filename_;
 		
 		
-		//Create file.
+		//Create file. obj.
 		  try {
-		      File myObj = new File(filename);
+		      File myObj = new File(filename + ".obj");
 		      if (myObj.createNewFile()) {
 		        System.out.println("File created: " + myObj.getName());
 		      } else {
@@ -58,16 +60,44 @@ public class WriteBlock {
 		    
 		    
 		    try {
-		    	FileWriter myWriter_ = new FileWriter(filename);
-		    	myWriter = myWriter_;
+		    	FileWriter myWriter_ = new FileWriter(filename + ".obj");
+		    	objWriter = myWriter_;
 		        
-		        myWriter.write("# obj made with AnvilExporterJava");
+		    	objWriter.write("# obj made with AnvilExporterJava");
 		        //myWriter.close();
 		        //System.out.println("Successfully wrote to the file.");
 		      } catch (IOException e) {
 		        System.out.println("An error occurred writing.");
 		        e.printStackTrace();
 		      }
+		    
+		    //
+		    
+		  //Create file.
+			  try {
+			      File myObj = new File(filename + ".mtl");
+			      if (myObj.createNewFile()) {
+			        System.out.println("File created: " + myObj.getName());
+			      } else {
+			        System.out.println("File already exists.");
+			      }
+			    } catch (IOException e) {
+			      System.out.println("An error occurred starting a writeblock.");
+			      e.printStackTrace();
+			    }
+			    
+			    
+			    try {
+			    	FileWriter myWriter_ = new FileWriter(filename + ".mtl");
+			    	mtlWriter = myWriter_;
+			        
+			    	mtlWriter.write("# obj made with AnvilExporterJava");
+			        //myWriter.close();
+			        //System.out.println("Successfully wrote to the file.");
+			      } catch (IOException e) {
+			        System.out.println("An error occurred writing.");
+			        e.printStackTrace();
+			      }
 	}
 	
 	
@@ -85,7 +115,7 @@ public class WriteBlock {
      {
 		v_count += 4;
 		 
-		myWriter.write("# obj made with AnvilertyuExporterJava \n");
+		objWriter.write("# obj made with AnvilertyuExporterJava \n");
 		
 		
 		
@@ -95,6 +125,7 @@ public class WriteBlock {
 
          JSONObject model = (JSONObject) obj;
          JSONArray elements = (JSONArray) model.get("elements");
+         JSONObject textures = (JSONObject) model.get("textures");
          System.out.println(elements.get(1));//textures.get("particle"));
          
          int i = 0;
@@ -134,7 +165,18 @@ public class WriteBlock {
         	JSONObject face = (JSONObject) faces.get(face_name);
         	mc2obj.Quad coords = null;
         	
+        	if (face != null) {
+        		
+        	String tex = ((String) face.get("texture")).substring(1);
+        	System.out.println(tex);
         	
+        	String tex2 = (String) textures.get(tex);
+        	System.out.println("data/minecraft/textures/" + tex2 + ".png");
+        	
+        	mtlWriter.write("newmtl " + tex2 + "\n");
+        	mtlWriter.write("map_Kd  " + "data/minecraft/textures/" + tex2 + ".png" + "\n");
+        	
+        	objWriter.write("usemtl " + tex2 + "\n");
         	
         	/*
         	case "south": 	
@@ -250,30 +292,56 @@ public class WriteBlock {
         	 
              //System.out.println(coords.x1);
              
-             myWriter.write("v "+coords.x1+" "+coords.y1+" "+coords.z1+ "\n");
-    	     myWriter.write("v "+coords.x2+" "+coords.y2+" "+coords.z2+ "\n");
-    	     myWriter.write("v "+coords.x3+" "+coords.y3+" "+coords.z3+ "\n");
-    	     myWriter.write("v "+coords.x4+" "+coords.y4+" "+coords.z4+ "\n");
+        	 objWriter.write("v "+coords.x1+" "+coords.y1+" "+coords.z1+ "\n");
+        	 objWriter.write("v "+coords.x2+" "+coords.y2+" "+coords.z2+ "\n");
+        	 objWriter.write("v "+coords.x3+" "+coords.y3+" "+coords.z3+ "\n");
+        	 objWriter.write("v "+coords.x4+" "+coords.y4+" "+coords.z4+ "\n");
+    	     
+    	     
+    	     JSONArray uv = (JSONArray) face.get("uv");
+    	     System.out.println(face);
+    	     
+    	     int tex_w = 16;
+    	     int tex_h = 16;
+    	     float uv_x1 = (long) uv.get(0);
+    	     float uv_y1 = (long) uv.get(1);
+    	     float uv_x2 = (long) uv.get(2);
+    	     float uv_y2 = (long) uv.get(3);
+    	     
+    	     if (face_name == "east" | face_name == "west" | face_name == "south" | face_name == "north") {
+    	    	 uv_y2-= uv_y1;
+    	         uv_y1-= uv_y1;
+    	     	}
+    	     
+    	     
+    	     uv_x1 /=tex_w;
+    	     uv_y1 /=tex_h;
+    	     uv_x2 /=tex_w;
+    	     uv_y2 /=tex_h;
+    	     
+    	     //x1-y2;x2-y2;x2-y1;x1-y1;
+    	     objWriter.write("vt "+uv_x1+" "+uv_y2+" "+ "\n");
+    	     objWriter.write("vt "+uv_x2+" "+uv_y2+" "+ "\n");
+    	     objWriter.write("vt "+uv_x2+" "+uv_y1+" "+ "\n");
+    	     objWriter.write("vt "+uv_x1+" "+uv_y1+" "+ "\n");
+    	     
     	     
     	     /*
-    	     myWriter.write("vt "+coords.x1+" "+coords.y1+" "+coords.z1+ "\n");
-    	     myWriter.write("vt "+coords.x2+" "+coords.y2+" "+coords.z2+ "\n");
-    	     myWriter.write("vt "+coords.x3+" "+coords.y3+" "+coords.z3+ "\n");
-    	     myWriter.write("vt "+coords.x4+" "+coords.y4+" "+coords.z4+ "\n");
+    	     myWriter.write("vt 0 0 \n");
+    	     myWriter.write("vt 0 0 \n");
+    	     myWriter.write("vt 0 0 \n");
+    	     myWriter.write("vt 0 0 \n");
     	     */
     	     
-    	     myWriter.write("vt 0 0 \n");
-    	     myWriter.write("vt 0 0 \n");
-    	     myWriter.write("vt 0 0 \n");
-    	     myWriter.write("vt 0 0 \n");
-    	     
-    	     myWriter.write("f " 
+    	     objWriter.write("f " 
     	    		 		+ (v_count-3) + "/" + (v_count-3) + " " 
     	    		 		+ (v_count-2) + "/" + (v_count-2) + " " 
     	    		 		+ (v_count-1) + "/" + (v_count-1) + " " 
     	    		 		+ v_count + "/" + v_count + " \n"); 
             
     	     v_count +=4;
+    	     
+        	}
     	     
     	     i_faces+=1;
         	 } while (i_faces < 6);
