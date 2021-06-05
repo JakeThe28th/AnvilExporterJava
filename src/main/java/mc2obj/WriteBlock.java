@@ -96,29 +96,79 @@ public class WriteBlock {
 	}
 	
 	
-	public void WriteModel(String path, int x, int y, int z) {
+	public JSONObject deepMerge(JSONObject source, JSONObject target) {
+	    for (Object keyO : source.keySet()) {
+	    	String key = (String)keyO;
+            Object value = source.get(key);
+            
+            System.out.println(key);
+            
+            if (target.get(key) != null) {
+                // new value for "key":
+            	if (value instanceof JSONObject) {
+                    deepMerge((JSONObject) value, (JSONObject) target.get(key));
+            		} else target.put(key, value);
+            	
+            } else {
+                // existing value for "key" - recursively deep merge:
+                if (value instanceof JSONObject) {
+                    JSONObject valueJson = (JSONObject)value;
+                    deepMerge(valueJson, (JSONObject) target.get(key));
+                } else {
+                    target.put(key, value);
+                }
+            }
+    }
+    return target;
+}
+	
+	public int WriteModel(String path, int x, int y, int z) {
 	path = "data\\minecraft\\" + path;
+	
+	v_count+=4;
 		
 	System.out.println(path);
+	
+	File tmpDir = new File(path);
+	boolean exists = tmpDir.exists();
+	
+	if (!exists) {
+		System.out.println("Model does not exist.");
+		return -1; // if path no, leave
+		}
+	
 	
 	System.out.println(filename);
 	  
 	 //JSON parser object to parse read file
      JSONParser jsonParser = new JSONParser();
 	
-	 try (FileReader reader = new FileReader(path))
-     {
-		v_count += 4;
+     try {
+		 
+		FileReader reader2 = new FileReader("data\\minecraft\\assets\\minecraft\\models\\block\\cross.json");
+		FileReader reader = new FileReader("data\\minecraft\\assets\\minecraft\\models\\block\\wither_rose.json");
+		
+		//v_count += 4;
 		 
 		objWriter.write("# obj made with AnvilertyuExporterJava \n");
-		
-		
-		
+
 		
          //Read JSON file
          Object obj = jsonParser.parse(reader);
-
-         JSONObject model = (JSONObject) obj;
+ 		 Object obj2 = jsonParser.parse(reader2);
+ 		 System.out.println(obj);
+         System.out.println(obj2);
+         
+         System.out.println("b");
+         
+         JSONObject obj3 = deepMerge((JSONObject) obj, (JSONObject) obj2);
+         
+         System.out.println(obj3);
+         
+         System.out.println("a");
+         
+         	
+         JSONObject model = (JSONObject) obj3;
          JSONArray elements = (JSONArray) model.get("elements");
          JSONObject textures = (JSONObject) model.get("textures");
          System.out.println(elements.get(1));//textures.get("particle"));
@@ -133,13 +183,13 @@ public class WriteBlock {
         	JSONArray from = (JSONArray) element.get("from");
         	JSONArray to = (JSONArray) element.get("to");
         	
-        	long from_x = (long) from.get(0);
-        	long from_y = (long) from.get(1);
-        	long from_z = (long) from.get(2);
+        	Object  from_x = (Object)from.get(0);
+        	Object  from_y = (Object)from.get(1);
+        	Object  from_z = (Object)from.get(2);
         	
-        	long to_x = (long) to.get(0);
-        	long to_y = (long) to.get(1);
-        	long to_z = (long) to.get(2);
+        	Object  to_x = (Object)to.get(0);
+        	Object  to_y = (Object)to.get(1);
+        	Object  to_z = (Object)to.get(2);
         	
         	System.out.println(from_x + " fr_x");
         	
@@ -358,7 +408,7 @@ public class WriteBlock {
          e.printStackTrace();
      }
 	  
-
+	 return 1;
 	}
 	
 

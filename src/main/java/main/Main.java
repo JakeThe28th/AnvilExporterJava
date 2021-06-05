@@ -23,8 +23,10 @@ public class Main {
 		//[	] Fix coordinates to 16 pixels per unit
 		//[	] Add rotation
 		//[	] Parent handling
+		//[ ] blockstate handling
 		//[	] Culling
 		//[	] Proper UVS (adapt to non 16 texture sizes aswell.)
+		//[ ] rotation
 	
 	//[no] create nbt modules -- Just use Querz/NBT
 	
@@ -52,7 +54,7 @@ public class Main {
 	public static int vt_count = 0;
 	
 	
-	  public static void main(String[] args) {
+	  public static void main(String[] args) throws IOException {
 		  
 		  mc2obj.WriteBlock mod = new  mc2obj.WriteBlock("brewing_stand");
 		  mod.WriteModel("assets\\\\minecraft\\\\models\\\\block\\\\brewing_stand.json", 182, 2, 4);
@@ -60,21 +62,61 @@ public class Main {
 		  mod.end();
 		  
 		  System.out.println(v_count);
-	       
-		  CompoundTag ct = new CompoundTag();
-
-		  ct.put("byte", new ByteTag((byte) 1));
-		  ct.put("double", new DoubleTag(1.234));
-		  ct.putString("string", "stringValue");
-		  try {
-			System.out.println(SNBTUtil.toSNBT(ct));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} // {blah:5b,foo:"bär",list:[test,text]}
-	        	
+	    
 		  
+		  /*
 		  
+		MCAFile mcaFile = null;
+		mcaFile = MCAUtil.read("r.0.0.mca");
+		
+		Chunk chunk = mcaFile.getChunk(0, 0);
+		
+		Section section = chunk.getSection(1);
+		
+		//only get blocks empty secoction no
+		
+		
+		
+		int i_sec = 0;
+		do {
+		section = chunk.getSection(i_sec);	
+		
+		if (section != null) if (section.getBlockStates() !=null) {
+		
+		long i = 0;
+		int x = 0;
+		int y = 0;
+		int z = 0;
+		do {
+		CompoundTag blockState = section.getBlockStateAt(y, z, x);
+		  
+		System.out.println(SNBTUtil.toSNBT(blockState));
+		  
+		StringTag abc = (StringTag) blockState.get("Name");
+		 
+		System.out.println(i_sec);
+		
+		//String blockID = SNBTUtil.toSNBT(abc);
+		//mod.WriteModel("assets\\minecraft\\models\\block\\" + blockID.substring(11, blockID.length() - 1) + ".json", x, y, z);
+		
+		x+=1;
+		if (x == 16) {
+			x = 0;
+			y+= 1;
+			}
+		
+		if (y == 16) {
+			y = 0;
+			z+= 1;
+			}
+			
+		i+= 1;
+		} while (i <= (16*16*16)); 
+		}
+		
+		i_sec += 1;
+	  } while (i_sec < 16);
+		 
 		  ////////////
 	    try {
 	      File myObj = new File("filename.obj");
@@ -102,6 +144,6 @@ public class Main {
 	        System.out.println("An error occurred.");
 	        e.printStackTrace();
 	      }
-	    
+	    */
 	  }
 }
