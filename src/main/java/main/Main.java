@@ -4,19 +4,15 @@ import java.io.File;  // Import the File class
 import java.io.IOException;  // Import the IOException class to handle errors
 import java.io.FileWriter;   // Import the FileWriter class
 
+import net.querz.nbt.tag.*;
+import net.querz.nbt.io.*;
+import net.querz.io.*;
+import net.querz.mca.*;
 //
-
-import java.io.FileNotFoundException;
-import java.io.FileReader;
- 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import mc2obj.WriteBlock;
 
-public class main {
+public class Main {
 	//My first serious java project, better put some to-do's here.
 	//In order of importance
 	//[?] Learn java
@@ -29,7 +25,9 @@ public class main {
 		//[	] Parent handling
 		//[	] Culling
 		//[	] Proper UVS (adapt to non 16 texture sizes aswell.)
-	//[ ] create nbt modules
+	
+	//[no] create nbt modules -- Just use Querz/NBT
+	
 	//[ ] read minecraft level data
 	//[ ] export minecraft level data into .obj files
 	//[ ] configuration
@@ -63,6 +61,17 @@ public class main {
 		  
 		  System.out.println(v_count);
 	       
+		  CompoundTag ct = new CompoundTag();
+
+		  ct.put("byte", new ByteTag((byte) 1));
+		  ct.put("double", new DoubleTag(1.234));
+		  ct.putString("string", "stringValue");
+		  try {
+			System.out.println(SNBTUtil.toSNBT(ct));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} // {blah:5b,foo:"bär",list:[test,text]}
 	        	
 		  
 		  
