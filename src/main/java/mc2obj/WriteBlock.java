@@ -123,7 +123,7 @@ public class WriteBlock {
 }
 	
 	public int WriteModel(String path, int x, int y, int z) {
-	path = "data\\minecraft\\" + path;
+	path = "data\\minecraft\\" + path; //Add namespace option????? maybe???
 	
 	v_count+=4;
 		
@@ -137,38 +137,42 @@ public class WriteBlock {
 		return -1; // if path no, leave
 		}
 	
+	//Need to parenting
+	
+	try {
+	
+	//JSON parser object to parse read file
+    JSONParser jsonParser = new JSONParser();
 	
 	System.out.println(filename);
 	  
-	 //JSON parser object to parse read file
-     JSONParser jsonParser = new JSONParser();
+	FileReader reader_ = new FileReader(path);
+	JSONObject model = (JSONObject) jsonParser.parse(reader_);
 	
-     try {
-		 
-		FileReader reader2 = new FileReader("data\\minecraft\\assets\\minecraft\\models\\block\\cross.json");
-		FileReader reader = new FileReader("data\\minecraft\\assets\\minecraft\\models\\block\\wither_rose.json");
+	String parent = (String) model.get("parent");
+	do {
+		FileReader parentReader = new FileReader("data\\minecraft\\assets\\minecraft\\models\\" + parent.substring(parent.indexOf(":")+1) + ".json"); //ADD NAME SPACE HERE. currently just chops off minecraft:
+		Object parent_model = jsonParser.parse(parentReader);
+		
+		model.remove("parent");
+		
+		System.out.println(model);
+        System.out.println(parent_model);
+		
+        System.out.println("merge");
+        
+        model = deepMerge((JSONObject) model, (JSONObject) parent_model);
+		
+        System.out.println(model);
+        
+		parent = (String) model.get("parent");
+		} while (parent != null);
+		
 		
 		//v_count += 4;
 		 
 		objWriter.write("# obj made with AnvilertyuExporterJava \n");
-
-		
-         //Read JSON file
-         Object obj = jsonParser.parse(reader);
- 		 Object obj2 = jsonParser.parse(reader2);
- 		 System.out.println(obj);
-         System.out.println(obj2);
          
-         System.out.println("b");
-         
-         JSONObject obj3 = deepMerge((JSONObject) obj, (JSONObject) obj2);
-         
-         System.out.println(obj3);
-         
-         System.out.println("a");
-         
-         	
-         JSONObject model = (JSONObject) obj3;
          JSONArray elements = (JSONArray) model.get("elements");
          JSONObject textures = (JSONObject) model.get("textures");
          System.out.println(elements.get(1));//textures.get("particle"));

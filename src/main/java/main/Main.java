@@ -30,6 +30,14 @@ public class Main {
 	
 	//[no] create nbt modules -- Just use Querz/NBT
 	
+	//MISC
+	//[ ] One MTL Entry Per material.
+		//RELATED QUERIES:
+		//https://stackoverflow.com/questions/1522108/how-to-find-the-index-of-an-element-in-an-array-in-java
+		//https://stackoverflow.com/questions/13543457/how-do-you-create-a-dictionary-in-java
+	//[ ] https://alvinalexander.com/java/java-file-exists-directory-exists/
+	//[ ] https://minecraft.fandom.com/wiki/Model
+	
 	//[ ] read minecraft level data
 	//[ ] export minecraft level data into .obj files
 	//[ ] configuration
@@ -40,6 +48,8 @@ public class Main {
 	//[ ] Resource packs as seperate rather than conbined
 	//[ ] a GUI.
 	//[ ] minecraft style smooth and flat lighting (flat will be easy, smooth not so much...?)
+	//[ ] proper namespace support
+	//[ ] clean up
 	
 	//OPTIONAL
 	//[ ] Read schematic files and structure block NBT data
@@ -57,7 +67,7 @@ public class Main {
 	  public static void main(String[] args) throws IOException {
 		  
 		  mc2obj.WriteBlock mod = new  mc2obj.WriteBlock("brewing_stand");
-		  mod.WriteModel("assets\\\\minecraft\\\\models\\\\block\\\\brewing_stand.json", 182, 2, 4);
+		  mod.WriteModel("assets\\\\minecraft\\\\models\\\\block\\\\acacia_fence_gate_wall_open.json", 182, 2, 4);
 
 		  mod.end();
 		  
