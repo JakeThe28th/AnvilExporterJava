@@ -1,7 +1,13 @@
 package main;
 
 import java.io.File;  // Import the File class
+import java.io.FileReader;
 import java.io.IOException;  // Import the IOException class to handle errors
+
+import org.json.simple.*;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import java.io.FileWriter;   // Import the FileWriter class
 
 import net.querz.nbt.tag.*;
@@ -64,11 +70,21 @@ public class Main {
 	public static int vt_count = 0;
 	
 	
-	  public static void main(String[] args) throws IOException {
+	  public static void main(String[] args) throws IOException, ParseException {
 		  
+		  //JSONObject temp;
 		  mc2obj.WriteBlock mod = new  mc2obj.WriteBlock("brewing_stand");
-		  mod.WriteModel("assets\\\\minecraft\\\\models\\\\block\\\\acacia_fence_gate_wall_open.json", 182, 2, 4);
+		  //mod.WriteModel("assets\\\\minecraft\\\\models\\\\block\\\\acacia_fence_gate_wall_open.json", 182, 2, 4, 0, 0, 0, null);
 
+		  JSONParser jsonParser = new JSONParser();
+		  JSONObject states = (JSONObject) jsonParser.parse("{\"facing\":\"east\",\"half\":\"bottom\",\"open\":\"false\"}");
+		  JSONObject culling = (JSONObject) jsonParser.parse("{\"east\":1,\"west\":1,\"north\":1,\"south\":1}");
+		  
+		  System.out.println(states);
+		  System.out.println(culling);
+		  
+		  mod.WriteFromBlockstate("assets\\minecraft\\blockstates\\birch_trapdoor.json", states, 182, 2, 4, culling);
+		  
 		  mod.end();
 		  
 		  System.out.println(v_count);

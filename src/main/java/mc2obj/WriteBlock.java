@@ -39,7 +39,6 @@ public class WriteBlock {
 	public WriteBlock(String filename_) {
 		filename = filename_;
 		
-		
 		//Create file. obj.
 		  try {
 		      File myObj = new File(filename + ".obj");
@@ -111,19 +110,21 @@ public class WriteBlock {
             	
             } else {
                 // existing value for "key" - recursively deep merge:
-                if (value instanceof JSONObject) {
+                if (value instanceof JSONObject && target.get(key) != null) {
                     JSONObject valueJson = (JSONObject)value;
-                    deepMerge(valueJson, (JSONObject) target.get(key));
-                } else {
-                    target.put(key, value);
+                   deepMerge(valueJson, (JSONObject) target.get(key));
+                  } else {
+                  target.put(key, value);
                 }
             }
     }
     return target;
 }
 	
-	public int WriteModel(String path, int x, int y, int z) {
+
+	public int WriteModel(String path, int x, int y, int z, int rot_x, int rot_y, int rot_z, JSONObject Culling) {
 	path = "data\\minecraft\\" + path; //Add namespace option????? maybe???
+	
 	
 	v_count+=4;
 		
@@ -137,7 +138,6 @@ public class WriteBlock {
 		return -1; // if path no, leave
 		}
 	
-	//Need to parenting
 	
 	try {
 	
@@ -161,7 +161,7 @@ public class WriteBlock {
 		
         System.out.println("merge");
         
-        model = deepMerge((JSONObject) model, (JSONObject) parent_model);
+        if (parent_model != null) model = deepMerge((JSONObject) model, (JSONObject) parent_model);
 		
         System.out.println(model);
         
@@ -171,11 +171,11 @@ public class WriteBlock {
 		
 		//v_count += 4;
 		 
-		objWriter.write("# obj made with AnvilertyuExporterJava \n");
+		objWriter.write("# obj made with AnvilExporterJava \n");
          
          JSONArray elements = (JSONArray) model.get("elements");
          JSONObject textures = (JSONObject) model.get("textures");
-         System.out.println(elements.get(1));//textures.get("particle"));
+
          
          int i = 0;
          String face_name = "";
@@ -415,6 +415,83 @@ public class WriteBlock {
 	 return 1;
 	}
 	
+	public int WriteFromBlockstate(String path, JSONObject states, int x, int y, int z, JSONObject Culling) throws IOException, ParseException {
+		path = "data\\minecraft\\" + path; //Add namespace option????? maybe???
+			
+		System.out.println(path);
+		
+		File tmpDir = new File(path);
+		boolean exists = tmpDir.exists();
+		
+		if (!exists) {
+			System.out.println("Blockstate file does not exist.");
+			return -1; // if path no, leave
+			}
+		
+		//JSON parser object to parse read file
+	    JSONParser jsonParser = new JSONParser();
+		FileReader reader_ = new FileReader(path);
+		JSONObject model = (JSONObject) jsonParser.parse(reader_);
+		
+		if (model.get("variants") != null) {
+		JSONObject variants = (JSONObject) model.get("variants");
+		
+		String model_name = "";
+		JSONObject state = null;
+		for (Object keyO : variants.keySet()) {
+	    	String key = (String)keyO;
+            Object value = variants.get(key);
+            
+            //System.out.println(key);
+            
+            String[] split = key.split(",");
+            JSONObject states_this = (JSONObject) jsonParser.parse("{}");
+            
+            
+            int i = 0;
+            do {
+            	
+            	String[] statesplit = split[i].split("=");
+            	states_this.put((String) statesplit[0], (String) statesplit[1]);
+            	
+            	i+=1;
+            	} while (i < split.length);
+            
+            //System.out.println(states_this);
+            
+            //https://stackoverflow.com/questions/31239853/is-there-a-way-i-can-empty-the-whole-jsonobject-java
+
+            System.out.println(JSObjectMatches(states,states_this));
+            
+            if (JSObjectMatches(states,states_this)) { 
+            	state = (JSONObject) variants.get(key);
+            	//model_name = (String) variants.get(key);
+            	break;
+            	}
+            //System.out.println(states_this);
+            //System.out.println(states);
+            
+            states_this.keySet().clear();
+
+	 	}
+		
+		model_name = (String) state.get("model");
+		System.out.println("ae");
+		WriteModel("assets\\minecraft\\models\\" + model_name.substring(model_name.indexOf(":")+1).replace('/', '\\') + ".json", x,y,z, 0,0,0, Culling); //ADD NAME SPACE HERE. currently just chops off minecraft:
+		
+		System.out.println(model_name);
+		}
+		
+		if (model.get("multipart") != null) { }
+		
+		
+	return 1;
+	}
+		
+	public boolean JSObjectMatches(JSONObject source, JSONObject target) {
+		if (!source.toString().equals(target.toString())) return false;
+		 return true; // yes
+	}
 
 	
 }
