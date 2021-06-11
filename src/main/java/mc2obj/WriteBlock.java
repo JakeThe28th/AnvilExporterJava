@@ -2,6 +2,7 @@ package mc2obj;
 
 import java.io.File;  // Import the File class
 import java.io.IOException;  // Import the IOException class to handle errors
+import java.util.Random;
 import java.io.FileWriter;   // Import the FileWriter class
 
 import java.io.FileNotFoundException;
@@ -23,6 +24,8 @@ public class WriteBlock {
 	
 	public int v_count;
 	public int vt_count;
+	
+	public Random ran = new Random();
 	
 	public void end() {
 		try {
@@ -151,7 +154,7 @@ public class WriteBlock {
 	
 	String parent = (String) model.get("parent");
 	do {
-		FileReader parentReader = new FileReader("data\\minecraft\\assets\\minecraft\\models\\" + parent.substring(parent.indexOf(":")+1) + ".json"); //ADD NAME SPACE HERE. currently just chops off minecraft:
+		FileReader parentReader = new FileReader("data\\minecraft\\assets\\minecraft\\models\\" + parent.substring(parent.indexOf(":")+1) + ".json"); //ADD NAMESPACE HERE. currently just chops off minecraft:
 		Object parent_model = jsonParser.parse(parentReader);
 		
 		model.remove("parent");
@@ -352,11 +355,20 @@ public class WriteBlock {
     	     
     	     int tex_w = 16;
     	     int tex_h = 16;
-    	     float uv_x1 = (long) uv.get(0);
-    	     float uv_y1 = (long) uv.get(1);
-    	     float uv_x2 = (long) uv.get(2);
-    	     float uv_y2 = (long) uv.get(3);
     	     
+    	     //Base UV values
+    	     float uv_x1 = 0;
+	    	 float uv_y1 = 0;
+	    	 float uv_x2 = 16;
+	    	 float uv_y2 = 16;
+	    	 
+	    	 //If UV is set in JSON:
+    	     if (uv != null) {
+    	    	 uv_x1 = (long) uv.get(0);
+    	    	 uv_y1 = (long) uv.get(1);
+    	    	 uv_x2 = (long) uv.get(2);
+    	    	 uv_y2 = (long) uv.get(3);
+    	     	}
     	     if (face_name == "east" | face_name == "west" | face_name == "south" | face_name == "north") {
     	    	 uv_y2-= uv_y1;
     	         uv_y1-= uv_y1;
@@ -414,70 +426,70 @@ public class WriteBlock {
 	  
 	 return 1;
 	}
+
 	
-	public int WriteFromBlockstate(String path, JSONObject states, int x, int y, int z, JSONObject Culling) throws IOException, ParseException {
+	public int WriteFromBlockstate(String path, String states, int x, int y, int z, JSONObject Culling) throws IOException, ParseException {
 		path = "data\\minecraft\\" + path; //Add namespace option????? maybe???
-			
-		System.out.println(path);
 		
-		File tmpDir = new File(path);
-		boolean exists = tmpDir.exists();
+		System.out.println(path + "State");
 		
-		if (!exists) {
-			System.out.println("Blockstate file does not exist.");
-			return -1; // if path no, leave
-			}
+		//File tmpDir = new File(path);
+		boolean exists = new File(path).exists();
+		if (!exists) { System.out.println("Blockstate file does not exist."); return -1; }
 		
 		//JSON parser object to parse read file
 	    JSONParser jsonParser = new JSONParser();
 		FileReader reader_ = new FileReader(path);
 		JSONObject model = (JSONObject) jsonParser.parse(reader_);
 		
+		//If variants exist
 		if (model.get("variants") != null) {
 		JSONObject variants = (JSONObject) model.get("variants");
 		
 		String model_name = "";
+		Object state_obj = null;
 		JSONObject state = null;
+		
+		if (!states.isEmpty()) {
+		
+		//Iter variants
 		for (Object keyO : variants.keySet()) {
 	    	String key = (String)keyO;
-            Object value = variants.get(key);
             
-            //System.out.println(key);
-            
-            String[] split = key.split(",");
-            JSONObject states_this = (JSONObject) jsonParser.parse("{}");
-            
-            
-            int i = 0;
-            do {
+	    	
+            if (!key.isEmpty()) {
+            JSONObject states_this = StatesToObject(key); 
             	
-            	String[] statesplit = split[i].split("=");
-            	states_this.put((String) statesplit[0], (String) statesplit[1]);
-            	
-            	i+=1;
-            	} while (i < split.length);
-            
-            //System.out.println(states_this);
-            
-            //https://stackoverflow.com/questions/31239853/is-there-a-way-i-can-empty-the-whole-jsonobject-java
-
-            System.out.println(JSObjectMatches(states,states_this));
-            
-            if (JSObjectMatches(states,states_this)) { 
-            	state = (JSONObject) variants.get(key);
-            	//model_name = (String) variants.get(key);
+	    	JSONObject statestoobj = null;
+            //If the states match
+	    	statestoobj = StatesToObject((String) states);
+	    	System.out.println(states);
+	    	System.out.println(statestoobj);
+	    	System.out.println(states_this);
+	    	System.out.println("aqwdefrg");
+	    	System.out.println(JSObjectMatches(statestoobj,states_this));
+            if (JSObjectMatches(statestoobj,states_this)) { 
+            	state_obj = variants.get(key);
             	break;
             	}
-            //System.out.println(states_this);
-            //System.out.println(states);
-            
-            states_this.keySet().clear();
-
-	 	}
+            states_this.clear(); //Reset states jobject, to loop again.
+			} else state_obj = variants.get(""); 
+            }
 		
+		} else { System.out.println(variants); state_obj = variants.get(""); } //If state is "", use "".
+		
+		if (state_obj instanceof JSONArray) {
+			JSONArray state_arr = (JSONArray) state_obj;
+			int rtyu = ran.nextInt(state_arr.size());
+            System.out.println(rtyu);
+			
+            state = (JSONObject) state_arr.get(rtyu);
+		} else state = (JSONObject) state_obj;
+		
+		System.out.println(state_obj);
 		model_name = (String) state.get("model");
 		System.out.println("ae");
-		WriteModel("assets\\minecraft\\models\\" + model_name.substring(model_name.indexOf(":")+1).replace('/', '\\') + ".json", x,y,z, 0,0,0, Culling); //ADD NAME SPACE HERE. currently just chops off minecraft:
+		WriteModel("assets\\minecraft\\models\\" + model_name.substring(model_name.indexOf(":")+1).replace('/', '\\') + ".json", x,y,z, 0,0,0, Culling); //ADD NAMESPACE HERE. currently just chops off minecraft:
 		
 		System.out.println(model_name);
 		}
@@ -492,6 +504,28 @@ public class WriteBlock {
 		if (!source.toString().equals(target.toString())) return false;
 		 return true; // yes
 	}
+	
+	public JSONObject StatesToObject(String states) throws ParseException {
+		
+		//if (states.equals("")) { System.out.println("fail"); return null; }
+		
+		//Convert "x=a,y=b" to JSONObject {"x":"a","y":"b"}
+		JSONParser jsonParser = new JSONParser();
+		
+		//Parse states into JSONObject
+        String[] split = states.split(",");
+        JSONObject states_this = (JSONObject) jsonParser.parse("{}");
+        int i = 0;
+        do {
+        	//Convert array into jobject
+        	String[] statesplit = split[i].split("=");
+        	
+        	states_this.put((String) statesplit[0], (String) statesplit[1]);
+        	i+=1;
+        	} while (i < split.length);
+		
+		return states_this;
+		}
 
 	
 }

@@ -3,6 +3,8 @@ package main;
 import java.io.File;  // Import the File class
 import java.io.FileReader;
 import java.io.IOException;  // Import the IOException class to handle errors
+import java.util.Iterator;
+import java.util.Random;
 
 import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
@@ -28,8 +30,16 @@ public class Main {
 		//[	] Read UV coordinates
 		//[	] Fix coordinates to 16 pixels per unit
 		//[	] Add rotation
-		//[	] Parent handling
-		//[ ] blockstate handling
+		//[x] Parent handling
+		//[-..] blockstate handling
+			//[x] variant handling (basic)
+			//[ ] rotation and more variant properties
+			//[ ] multipart
+			//[ ] random variant selection
+			//[ ] apparently some blocks have blockstate ingame that arent part of the model file 
+				//(EG powered for doors, or persistent and distance for leaves)
+				//So, make a one layer deep "JsonMatchesNull" or such, 
+				//and ignore values that dont exist in one or the other.
 		//[	] Culling
 		//[	] Proper UVS (adapt to non 16 texture sizes aswell.)
 		//[ ] rotation
@@ -56,6 +66,8 @@ public class Main {
 	//[ ] minecraft style smooth and flat lighting (flat will be easy, smooth not so much...?)
 	//[ ] proper namespace support
 	//[ ] clean up
+	//[ ] 2d isometric preview
+	//[ ] cached ^
 	
 	//OPTIONAL
 	//[ ] Read schematic files and structure block NBT data
@@ -69,6 +81,8 @@ public class Main {
 	public static int v_count = 0;
 	public static int vt_count = 0;
 	
+	public static Random ran = new Random();
+	
 	
 	  public static void main(String[] args) throws IOException, ParseException {
 		  
@@ -77,7 +91,7 @@ public class Main {
 		  //mod.WriteModel("assets\\\\minecraft\\\\models\\\\block\\\\acacia_fence_gate_wall_open.json", 182, 2, 4, 0, 0, 0, null);
 
 		  JSONParser jsonParser = new JSONParser();
-		  JSONObject states = (JSONObject) jsonParser.parse("{\"facing\":\"east\",\"half\":\"bottom\",\"open\":\"false\"}");
+		  String states = "facing=east,half=bottom,open=false";
 		  JSONObject culling = (JSONObject) jsonParser.parse("{\"east\":1,\"west\":1,\"north\":1,\"south\":1}");
 		  
 		  System.out.println(states);
@@ -85,12 +99,12 @@ public class Main {
 		  
 		  mod.WriteFromBlockstate("assets\\minecraft\\blockstates\\birch_trapdoor.json", states, 182, 2, 4, culling);
 		  
-		  mod.end();
+		  //mod.end();
 		  
 		  System.out.println(v_count);
 	    
 		  
-		  /*
+		  //*
 		  
 		MCAFile mcaFile = null;
 		mcaFile = MCAUtil.read("r.0.0.mca");
@@ -104,6 +118,7 @@ public class Main {
 		
 		
 		int i_sec = 0;
+		System.out.println(i_sec);
 		do {
 		section = chunk.getSection(i_sec);	
 		
@@ -115,15 +130,40 @@ public class Main {
 		int z = 0;
 		do {
 		CompoundTag blockState = section.getBlockStateAt(y, z, x);
-		  
-		System.out.println(SNBTUtil.toSNBT(blockState));
-		  
-		StringTag abc = (StringTag) blockState.get("Name");
 		 
-		System.out.println(i_sec);
+		//iterate over properties
+		String states_ = "";
+		StringTag property;
+		if (blockState.get("Properties") != null) {
+			CompoundTag properties = (CompoundTag) blockState.get("Properties");
+			Iterator<String> itr = properties.keySet().iterator();
+			String prefix = "";
+			while (itr.hasNext())
+			{
+				String key = itr.next();
+				StringTag value = (StringTag) properties.get(key);
+		 
+				//System.out.println(key + "=" + value);
+				//property = (CompoundTag) properties.get(key);
+				states_ = states_+prefix+ key + "=" + SNBTUtil.toSNBT(properties.get(key));
+				prefix = ",";
+			}
+			System.out.println(states_);
+			}
 		
-		//String blockID = SNBTUtil.toSNBT(abc);
-		//mod.WriteModel("assets\\minecraft\\models\\block\\" + blockID.substring(11, blockID.length() - 1) + ".json", x, y, z);
+		String blockID = (String) SNBTUtil.toSNBT(blockState.get("Name"));
+		if (!blockID.equals("\"minecraft:air\"")) {
+			
+			
+			String BlockID_ = blockID.substring(blockID.indexOf(":")+1);
+			//String blockID = SNBTUtil.toSNBT(abc);
+			mod.WriteFromBlockstate("assets\\minecraft\\blockstates\\" + BlockID_.substring(0,BlockID_.length()-1) + ".json", states_, x, y, z, culling); //ADD NAMESPACE HERE, CHOPP CHOPP
+			
+			System.out.println(states_);
+			//System.out.println(SNBTUtil.toSNBT(blockState)); }
+
+			
+		}
 		
 		x+=1;
 		if (x == 16) {
@@ -141,6 +181,7 @@ public class Main {
 		}
 		
 		i_sec += 1;
+		System.out.println(i_sec);
 	  } while (i_sec < 16);
 		 
 		  ////////////
@@ -170,6 +211,8 @@ public class Main {
 	        System.out.println("An error occurred.");
 	        e.printStackTrace();
 	      }
-	    */
+	   // */
+	    
+	    mod.end();
 	  }
 }
