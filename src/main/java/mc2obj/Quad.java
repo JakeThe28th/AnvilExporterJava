@@ -1,26 +1,26 @@
 package mc2obj;
 
 public class Quad {
-	public Object x1 = 0;
-	public Object y1 = 0;
-	public Object z1 = 0;
+	public Double x1 = (double) 0;
+	public Double y1 = (double) 0;
+	public Double z1 = (double) 0;
 	
-	public Object x2 = 0;
-	public Object y2 = 0;
-	public Object z2 = 0;
+	public Double x2 = (double) 0;
+	public Double y2 = (double) 0;
+	public Double z2 = (double) 0;
 	
-	public Object x3 = 0;
-	public Object y3 = 0;
-	public Object z3 = 0;
+	public Double x3 = (double) 0;
+	public Double y3 = (double) 0;
+	public Double z3 = (double) 0;
 	
-	public Object x4 = 0;
-	public Object y4 = 0;
-	public Object z4 = 0;
+	public Double x4 = (double) 0;
+	public Double y4 = (double) 0;
+	public Double z4 = (double) 0;
 	
-	public Quad(Object x1_, Object y1_, Object z1_, 
-			Object x2_, Object y2_, Object z2_,
-			Object x3_, Object y3_, Object z3_,
-			Object x4_, Object y4_, Object z4_) {
+	public Quad(Double x1_, Double y1_, Double z1_, 
+			Double x2_, Double y2_, Double z2_,
+			Double x3_, Double y3_, Double z3_,
+			Double x4_, Double y4_, Double z4_) {
 		
 	x1 = x1_;
 	y1 = y1_;

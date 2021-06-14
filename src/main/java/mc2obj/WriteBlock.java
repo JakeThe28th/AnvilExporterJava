@@ -13,6 +13,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import java.math.*;
+
 //delete quad somehow?
 
 //Input: block model, xyz positon, optional rotation, mtl file, obj file
@@ -21,6 +26,8 @@ public class WriteBlock {
 	public String filename;
 	public FileWriter objWriter;
 	public FileWriter mtlWriter;
+	
+	public ArrayList<String> mtl_done = new ArrayList<String>();
 	
 	public int v_count;
 	public int vt_count;
@@ -60,7 +67,7 @@ public class WriteBlock {
 		    	FileWriter myWriter_ = new FileWriter(filename + ".obj");
 		    	objWriter = myWriter_;
 		        
-		    	objWriter.write("# obj made with AnvilExporterJava");
+		    	objWriter.write("# obj made with AnvilExporterJava \n");
 		        //myWriter.close();
 		        //System.out.println("Successfully wrote to the file.");
 		      } catch (IOException e) {
@@ -88,13 +95,15 @@ public class WriteBlock {
 			    	FileWriter myWriter_ = new FileWriter(filename + ".mtl");
 			    	mtlWriter = myWriter_;
 			        
-			    	mtlWriter.write("# obj made with AnvilExporterJava");
+			    	mtlWriter.write("# obj made with AnvilExporterJava \n");
 			        //myWriter.close();
 			        //System.out.println("Successfully wrote to the file.");
 			      } catch (IOException e) {
 			        System.out.println("An error occurred writing.");
 			        e.printStackTrace();
 			      }
+			    
+			    
 	}
 	
 	
@@ -103,7 +112,7 @@ public class WriteBlock {
 	    	String key = (String)keyO;
             Object value = source.get(key);
             
-            System.out.println(key);
+            //System.out.println(key);
             
             if (target.get(key) != null) {
                 // new value for "key":
@@ -120,85 +129,110 @@ public class WriteBlock {
                   target.put(key, value);
                 }
             }
-    }
+	    }
     return target;
 }
-	
+	public String FileHierarchy(String path) {
 
-	public int WriteModel(String path, int x, int y, int z, int rot_x, int rot_y, int rot_z, JSONObject Culling) {
-	path = "data\\minecraft\\" + path; //Add namespace option????? maybe???
-	
-	
-	v_count+=4;
+		int attempts = 0;
+		String path_ = "";
+		while(attempts<=2) {
+			if (attempts == 0) path_ = "data\\anvilexporter\\" + path; //Check AExporter. This way, if a model is blank in MC, i can overwrite it.
+			if (attempts == 1) path_ = "data\\resourcepack\\" + path; //Check the resource pack. If AE doesn't have a model, then just use the regular hierarchy.
+			if (attempts == 2) path_ = "data\\minecraft\\" + path;	 //Check MC. 
+			
+			boolean exists = new File(path_).exists();
+			if (!exists && attempts == 2 ) { 
+				System.out.println("file does not exist."); return null; 
+				}
+			if (exists) break;
+			
+			attempts+=1;
+			}
+			path = path_;
 		
-	System.out.println(path);
-	
-	File tmpDir = new File(path);
-	boolean exists = tmpDir.exists();
-	
-	if (!exists) {
-		System.out.println("Model does not exist.");
-		return -1; // if path no, leave
+		System.out.println("Filename Hierarchy: " + (String) path);
+		return path;
 		}
+
+	public static int ArrayIndexOf(List<String> arr, String str) {
+	    for (int i = 0; i < arr.size(); i++) {
+	        if (str.equals(arr.get(i))) return i;
+	    }
+	    return -1;
+	}
+	
+	public int WriteModel(String path, int x, int y, int z, int rot_x, int rot_y, int rot_z, JSONObject Culling) {
+	
+	path = FileHierarchy(path);
+	if (path == null) System.out.println("Model file does not exist."); 
 	
 	
+	System.out.println("Filename: " + (String) path);
+	
+	
+	//Code body
 	try {
 	
 	//JSON parser object to parse read file
     JSONParser jsonParser = new JSONParser();
-	
-	System.out.println(filename);
 	  
 	FileReader reader_ = new FileReader(path);
 	JSONObject model = (JSONObject) jsonParser.parse(reader_);
 	
+	if (model.get("empty") != null) return -1;
+	
+	//Loop through parents and merge them into model until parent value is null.
 	String parent = (String) model.get("parent");
 	do {
-		FileReader parentReader = new FileReader("data\\minecraft\\assets\\minecraft\\models\\" + parent.substring(parent.indexOf(":")+1) + ".json"); //ADD NAMESPACE HERE. currently just chops off minecraft:
+		if (parent != null) {
+		String parent_path = FileHierarchy("assets\\minecraft\\models\\" + parent.substring(parent.indexOf(":")+1) + ".json");
+		if (parent_path == null) System.out.println("Parent file does not exist."); 
+		
+		//ADD NAMESPACE HERE. currently just chops off minecraft:
+		
+		FileReader parentReader = new FileReader(parent_path); 
 		Object parent_model = jsonParser.parse(parentReader);
 		
-		model.remove("parent");
-		
-		System.out.println(model);
-        System.out.println(parent_model);
-		
-        System.out.println("merge");
-        
+		model.remove("parent"); //Remove previous parent value before merging, otherwise this code would loop forever.
+
         if (parent_model != null) model = deepMerge((JSONObject) model, (JSONObject) parent_model);
 		
-        System.out.println(model);
-        
 		parent = (String) model.get("parent");
+		}
 		} while (parent != null);
 		
 		
-		//v_count += 4;
-		 
-		objWriter.write("# obj made with AnvilExporterJava \n");
-         
-         JSONArray elements = (JSONArray) model.get("elements");
-         JSONObject textures = (JSONObject) model.get("textures");
+        JSONArray elements = (JSONArray) model.get("elements");
+        JSONObject textures = (JSONObject) model.get("textures");
+        
 
-         
          int i = 0;
          String face_name = "";
          
-         do {
-        				
-        	System.out.println(elements.get(i));
+         //Loop through elements.
+         do {			
         	JSONObject element = (JSONObject) elements.get(i);
         	JSONArray from = (JSONArray) element.get("from");
         	JSONArray to = (JSONArray) element.get("to");
         	
-        	Object  from_x = (Object)from.get(0);
-        	Object  from_y = (Object)from.get(1);
-        	Object  from_z = (Object)from.get(2);
+        	Object  from_x_ = (Object)from.get(0);
+        	Object  from_y_ = (Object)from.get(1);
+        	Object  from_z_ = (Object)from.get(2);
         	
-        	Object  to_x = (Object)to.get(0);
-        	Object  to_y = (Object)to.get(1);
-        	Object  to_z = (Object)to.get(2);
+        	Object  to_x_ = (Object)to.get(0);
+        	Object  to_y_ = (Object)to.get(1);
+        	Object  to_z_ = (Object)to.get(2);
         	
-        	System.out.println(from_x + " fr_x");
+        	Double from_x = (Double) Double.parseDouble(from_x_.toString());
+        	Double from_y = (Double) Double.parseDouble(from_y_.toString());
+        	Double from_z = (Double) Double.parseDouble(from_z_.toString());
+        	
+        	Double to_x = (Double) Double.parseDouble(to_x_.toString());
+        	Double to_y = (Double) Double.parseDouble(to_y_.toString());
+        	Double to_z = (Double) Double.parseDouble(to_z_.toString());
+        	
+        
         	
         	int i_faces = 0;
         	JSONObject faces = (JSONObject) element.get("faces");
@@ -219,94 +253,40 @@ public class WriteBlock {
         	
         	if (face != null) {
         		
+        	//Get texture ID In model
         	String tex = ((String) face.get("texture")).substring(1);
-        	System.out.println(tex);
         	
+        	//Get filename from that.
         	String tex2 = (String) textures.get(tex);
-        	System.out.println("data/minecraft/textures/" + tex2 + ".png");
         	
+        	while(tex2.indexOf("#") != -1) {
+        		//Get texture ID In model
+            	tex = (String) tex2.substring(1);
+            	
+            	//Get filename from that.
+            	tex2 = (String) textures.get(tex);
+        		
+        		}
+        	
+        	System.out.println("data/minecraft/textures/" + tex2 + ".png");
+        	//System.out.println("data/minecraft/textures/" + tex + ".png");
+        	
+        	if ( ArrayIndexOf(mtl_done, tex2) == -1) {
         	mtlWriter.write("newmtl " + tex2 + "\n");
         	mtlWriter.write("map_Kd  " + "data/minecraft/textures/" + tex2 + ".png" + "\n");
         	
+        	mtl_done.add(tex2);
+        	}
+
         	objWriter.write("usemtl " + tex2 + "\n");
         	
-        	/*
-        	case "south": 	
-				#region North vertices			
-					var pos_s = {
-						x1 : from_x,	y1 : to_y,		z1 : to_z,
-						x2 : to_x,		y2 : to_y,		z2 : to_z,
-						x3 : to_x,		y3 : from_y,	z3 : to_z,
-						x4 : from_x,	y4 : from_y,	z4 : to_z,
-						}
-				#endregion
-					break;
-					
-				case "north": 
-				#region South vertices
-					var pos_s = {
-						x1 : from_x,	y1 : to_y,		z1 : from_z,
-						x2 : to_x,		y2 : to_y,		z2 : from_z,
-						x3 : to_x,		y3 : from_y,	z3 : from_z,
-						x4 : from_x,	y4 : from_y,	z4 : from_z,
-						}
-				#endregion
-				break;
-				
-				case "west": 
-				#region West vertices
-					var pos_s = {
-						x1 : from_x,	y1 : to_y,		z1 : to_z,
-						x2 : from_x,	y2 : to_y,		z2 : from_z,
-						x3 : from_x,	y3 : from_y,	z3 : from_z,
-						x4 : from_x,	y4 : from_y,	z4 : to_z,
-						}
-					#endregion
-					break;
-					
-				case "east": 
-				#region East vertices
-					var pos_s = {
-						x1 : to_x,	y1 : to_y,		z1 : to_z,
-						x2 : to_x,	y2 : to_y,		z2 : from_z,
-						x3 : to_x,	y3 : from_y,	z3 : from_z,
-						x4 : to_x,	y4 : from_y,	z4 : to_z,
-						}
-				#endregion
-					break;
-					
-				case "up": 		
-				#region Up vertices
-					var pos_s = {
-						x1 : from_x,	y1 : to_y,	z1 : to_z,
-						x2 : to_x,		y2 : to_y,	z2 : to_z,
-						x3 : to_x,		y3 : to_y,	z3 : from_z,
-						x4 : from_x,	y4 : to_y,	z4 : from_z,
-						}
-				#endregion
-					break;
-					
-				case "down": 		
-				#region Down vertices
-					var pos_s = {
-						x1 : from_x,	y1 : from_y,	z1 : to_z,
-						x2 : to_x,		y2 : from_y,	z2 : to_z,
-						x3 : to_x,		y3 : from_y,	z3 : from_z,
-						x4 : from_x,	y4 : from_y,	z4 : from_z,
-						}
-				#endregion
-					break;
-				}
-        	*/
-        	
-        	System.out.println(face_name);
-        	System.out.println(i_faces);
+        	//Write the actual faces vertices
         	switch (face_name) {
-        		case "north":
-        			coords = new mc2obj.Quad(	  from_x, to_y, from_z,
-        			 							  to_x, to_y, from_z, 
-        			 							  to_x, from_y, from_z, 
-        			 							  from_x, from_y, from_z);
+        	case "north":
+    			coords = new mc2obj.Quad(	  from_x, to_y, from_z,
+    			 							  to_x, to_y, from_z, 
+    			 							  to_x, from_y, from_z, 
+    			 							  from_x, from_y, from_z);
         			break;
         		case "east":
         			coords = new mc2obj.Quad(		to_x, to_y, to_z,
@@ -337,22 +317,27 @@ public class WriteBlock {
         			 							to_x, from_y, to_z, 
         			 							to_x, from_y, from_z, 
         			 							from_x, from_y, from_z);
-        			System.out.println(from_y);
+        		
         			break;
              
         		}
         	 
-             //System.out.println(coords.x1);
-             
-        	 objWriter.write("v "+coords.x1+" "+coords.y1+" "+coords.z1+ "\n");
-        	 objWriter.write("v "+coords.x2+" "+coords.y2+" "+coords.z2+ "\n");
-        	 objWriter.write("v "+coords.x3+" "+coords.y3+" "+coords.z3+ "\n");
-        	 objWriter.write("v "+coords.x4+" "+coords.y4+" "+coords.z4+ "\n");
-    	     
+        	//Write the actual faces vertices to file
+          	//objWriter.write("v "+coords.x1+" "+coords.y1+" "+coords.z1+ "\n");
+        	//objWriter.write("v "+coords.x2+" "+coords.y2+" "+coords.z2+ "\n");
+       	 	//objWriter.write("v "+coords.x3+" "+coords.y3+" "+coords.z3+ "\n");
+       	 	//objWriter.write("v "+coords.x4+" "+coords.y4+" "+coords.z4+ "\n");
+       	 
+        	objWriter.write("v "+((coords.x1/16)+x) +" "+((coords.y1/16)+y)+" "+((coords.z1/16)+z)+ "\n");
+        	objWriter.write("v "+((coords.x2/16)+x) +" "+((coords.y2/16)+y)+" "+((coords.z2/16)+z)+ "\n");
+        	objWriter.write("v "+((coords.x3/16)+x) +" "+((coords.y3/16)+y)+" "+((coords.z2/16)+z)+ "\n");
+        	objWriter.write("v "+((coords.x4/16)+x) +" "+((coords.y4/16)+y)+" "+((coords.z4/16)+z)+ "\n");
+  	     
     	     
     	     JSONArray uv = (JSONArray) face.get("uv");
-    	     System.out.println(face);
+    	    
     	     
+    	     //NOTE: add support for different model texture resolutions
     	     int tex_w = 16;
     	     int tex_h = 16;
     	     
@@ -374,7 +359,6 @@ public class WriteBlock {
     	         uv_y1-= uv_y1;
     	     	}
     	     
-    	     
     	     uv_x1 /=tex_w;
     	     uv_y1 /=tex_h;
     	     uv_x2 /=tex_w;
@@ -385,14 +369,6 @@ public class WriteBlock {
     	     objWriter.write("vt "+uv_x2+" "+uv_y2+" "+ "\n");
     	     objWriter.write("vt "+uv_x2+" "+uv_y1+" "+ "\n");
     	     objWriter.write("vt "+uv_x1+" "+uv_y1+" "+ "\n");
-    	     
-    	     
-    	     /*
-    	     myWriter.write("vt 0 0 \n");
-    	     myWriter.write("vt 0 0 \n");
-    	     myWriter.write("vt 0 0 \n");
-    	     myWriter.write("vt 0 0 \n");
-    	     */
     	     
     	     objWriter.write("f " 
     	    		 		+ (v_count-3) + "/" + (v_count-3) + " " 
@@ -410,12 +386,8 @@ public class WriteBlock {
         	
         	i+=1	;	
          	} while (i < elements.size());
-         
-        
-         
-         //Iterate over employee array
-         //employeeList.forEach( emp -> parseEmployeeObject( (JSONObject) emp ) );
 
+         
      } catch (FileNotFoundException e) {
          e.printStackTrace();
      } catch (IOException e) {
@@ -429,13 +401,15 @@ public class WriteBlock {
 
 	
 	public int WriteFromBlockstate(String path, String states, int x, int y, int z, JSONObject Culling) throws IOException, ParseException {
-		path = "data\\minecraft\\" + path; //Add namespace option????? maybe???
-		
-		System.out.println(path + "State");
+		//path = "data\\resourcepack\\" + path;
 		
 		//File tmpDir = new File(path);
-		boolean exists = new File(path).exists();
-		if (!exists) { System.out.println("Blockstate file does not exist."); return -1; }
+		//boolean exists;
+		//if (!exists) { System.out.println("Blockstate file does not exist."); return -1; }
+		
+		path = FileHierarchy(path);
+		if (path == null) System.out.println("Blockstate file does not exist."); 
+		System.out.println("Blockstate: " + path);
 		
 		//JSON parser object to parse read file
 	    JSONParser jsonParser = new JSONParser();
@@ -456,42 +430,33 @@ public class WriteBlock {
 		for (Object keyO : variants.keySet()) {
 	    	String key = (String)keyO;
             
-	    	
             if (!key.isEmpty()) {
             JSONObject states_this = StatesToObject(key); 
             	
 	    	JSONObject statestoobj = null;
             //If the states match
 	    	statestoobj = StatesToObject((String) states);
-	    	System.out.println(states);
-	    	System.out.println(statestoobj);
-	    	System.out.println(states_this);
-	    	System.out.println("aqwdefrg");
-	    	System.out.println(JSObjectMatches(statestoobj,states_this));
             if (JSObjectMatches(statestoobj,states_this)) { 
-            	state_obj = variants.get(key);
+            	state_obj = variants.get(key); 
             	break;
             	}
             states_this.clear(); //Reset states jobject, to loop again.
 			} else state_obj = variants.get(""); 
             }
 		
-		} else { System.out.println(variants); state_obj = variants.get(""); } //If state is "", use "".
+		} else { state_obj = variants.get(""); } //If state is "", use "".
 		
 		if (state_obj instanceof JSONArray) {
 			JSONArray state_arr = (JSONArray) state_obj;
-			int rtyu = ran.nextInt(state_arr.size());
-            System.out.println(rtyu);
-			
-            state = (JSONObject) state_arr.get(rtyu);
+			int random = ran.nextInt(state_arr.size());
+
+            state = (JSONObject) state_arr.get(random);
 		} else state = (JSONObject) state_obj;
 		
-		System.out.println(state_obj);
+	
 		model_name = (String) state.get("model");
-		System.out.println("ae");
 		WriteModel("assets\\minecraft\\models\\" + model_name.substring(model_name.indexOf(":")+1).replace('/', '\\') + ".json", x,y,z, 0,0,0, Culling); //ADD NAMESPACE HERE. currently just chops off minecraft:
 		
-		System.out.println(model_name);
 		}
 		
 		if (model.get("multipart") != null) { }
@@ -501,7 +466,14 @@ public class WriteBlock {
 	}
 		
 	public boolean JSObjectMatches(JSONObject source, JSONObject target) {
-		if (!source.toString().equals(target.toString())) return false;
+		//if (!source.toString().equals(target.toString())) return false;
+
+		for (Object keyO : source.keySet()) {
+	    	String key = (String) keyO;
+	    	if (target.get(key) != null) {
+	    		if (target.get(key).equals(source.get(key))) return false;
+	    		}
+            }
 		 return true; // yes
 	}
 	

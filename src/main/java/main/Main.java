@@ -94,8 +94,8 @@ public class Main {
 		  String states = "facing=east,half=bottom,open=false";
 		  JSONObject culling = (JSONObject) jsonParser.parse("{\"east\":1,\"west\":1,\"north\":1,\"south\":1}");
 		  
-		  System.out.println(states);
-		  System.out.println(culling);
+		  //System.out.println(states);
+		  //System.out.println(culling);
 		  
 		  mod.WriteFromBlockstate("assets\\minecraft\\blockstates\\birch_trapdoor.json", states, 182, 2, 4, culling);
 		  
@@ -148,7 +148,7 @@ public class Main {
 				states_ = states_+prefix+ key + "=" + SNBTUtil.toSNBT(properties.get(key));
 				prefix = ",";
 			}
-			System.out.println(states_);
+			//System.out.println(states_);
 			}
 		
 		String blockID = (String) SNBTUtil.toSNBT(blockState.get("Name"));
@@ -157,9 +157,9 @@ public class Main {
 			
 			String BlockID_ = blockID.substring(blockID.indexOf(":")+1);
 			//String blockID = SNBTUtil.toSNBT(abc);
-			mod.WriteFromBlockstate("assets\\minecraft\\blockstates\\" + BlockID_.substring(0,BlockID_.length()-1) + ".json", states_, x, y, z, culling); //ADD NAMESPACE HERE, CHOPP CHOPP
+			mod.WriteFromBlockstate("assets\\minecraft\\blockstates\\" + BlockID_.substring(0,BlockID_.length()-1) + ".json", states_, x, z, y, culling); //ADD NAMESPACE HERE, CHOPP CHOPP
 			
-			System.out.println(states_);
+			//System.out.println(states_);
 			//System.out.println(SNBTUtil.toSNBT(blockState)); }
 
 			
