@@ -97,14 +97,14 @@ public class Main {
 		  //System.out.println(states);
 		  //System.out.println(culling);
 		  
-		  mod.WriteFromBlockstate("assets\\minecraft\\blockstates\\birch_trapdoor.json", states, 182, 2, 4, culling);
+		  mod.WriteFromBlockstate("assets\\minecraft\\blockstates\\birch_trapdoor.json", states, 0, 0, 0, culling);
 		  
 		  //mod.end();
 		  
 		  System.out.println(v_count);
 	    
 		  
-		  //*
+		//  /*
 		  
 		MCAFile mcaFile = null;
 		mcaFile = MCAUtil.read("r.0.0.mca");
@@ -211,7 +211,7 @@ public class Main {
 	        System.out.println("An error occurred.");
 	        e.printStackTrace();
 	      }
-	   // */
+	    //*/
 	    
 	    mod.end();
 	  }

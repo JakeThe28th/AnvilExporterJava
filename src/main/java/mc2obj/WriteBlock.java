@@ -29,8 +29,8 @@ public class WriteBlock {
 	
 	public ArrayList<String> mtl_done = new ArrayList<String>();
 	
-	public int v_count;
-	public int vt_count;
+	public int v_count = 4;
+	public int vt_count = 4;
 	
 	public Random ran = new Random();
 	
@@ -162,7 +162,7 @@ public class WriteBlock {
 	    return -1;
 	}
 	
-	public int WriteModel(String path, int x, int y, int z, int rot_x, int rot_y, int rot_z, JSONObject Culling) {
+	public int WriteModel(String path, int x, int y, int z, Double rot_x, Double rot_y, Double rot_z, JSONObject Culling) {
 	
 	path = FileHierarchy(path);
 	if (path == null) System.out.println("Model file does not exist."); 
@@ -328,9 +328,14 @@ public class WriteBlock {
        	 	//objWriter.write("v "+coords.x3+" "+coords.y3+" "+coords.z3+ "\n");
        	 	//objWriter.write("v "+coords.x4+" "+coords.y4+" "+coords.z4+ "\n");
        	 
+        	System.out.println(rot_x);
+        	System.out.println(rot_y);
+        	System.out.println(rot_z);
+        	coords.rotate(8, 8, 8, rot_y, rot_x, rot_z);
+        	
         	objWriter.write("v "+((coords.x1/16)+x) +" "+((coords.y1/16)+y)+" "+((coords.z1/16)+z)+ "\n");
         	objWriter.write("v "+((coords.x2/16)+x) +" "+((coords.y2/16)+y)+" "+((coords.z2/16)+z)+ "\n");
-        	objWriter.write("v "+((coords.x3/16)+x) +" "+((coords.y3/16)+y)+" "+((coords.z2/16)+z)+ "\n");
+        	objWriter.write("v "+((coords.x3/16)+x) +" "+((coords.y3/16)+y)+" "+((coords.z3/16)+z)+ "\n");
         	objWriter.write("v "+((coords.x4/16)+x) +" "+((coords.y4/16)+y)+" "+((coords.z4/16)+z)+ "\n");
   	     
     	     
@@ -455,7 +460,16 @@ public class WriteBlock {
 		
 	
 		model_name = (String) state.get("model");
-		WriteModel("assets\\minecraft\\models\\" + model_name.substring(model_name.indexOf(":")+1).replace('/', '\\') + ".json", x,y,z, 0,0,0, Culling); //ADD NAMESPACE HERE. currently just chops off minecraft:
+		Object xr_ = state.get("x");
+		Object yr_ = state.get("y");
+		Object zr_ = state.get("z");
+		if (xr_ == null) { xr_ = 0; }
+		if (yr_ == null) { yr_ = 0; }
+		if (zr_ == null) { zr_ = 0; }
+		Double xr = (Double) Double.parseDouble(xr_.toString());
+		Double yr = (Double) Double.parseDouble(yr_.toString());
+		Double zr = (Double) Double.parseDouble(zr_.toString());
+		WriteModel("assets\\minecraft\\models\\" + model_name.substring(model_name.indexOf(":")+1).replace('/', '\\') + ".json", x,y,z, xr, yr, zr, Culling); //ADD NAMESPACE HERE. currently just chops off minecraft:
 		
 		}
 		
