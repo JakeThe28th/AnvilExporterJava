@@ -48,9 +48,9 @@ public class Quad {
 	
 	public void rotate(double xx, double yy, double zz, double xx_rot, double yy_rot, double zz_rot) {
 		
-		System.out.println(xx);
-		System.out.println(yy);
-		System.out.println(zz);
+		//System.out.println(xx);
+		//System.out.println(yy);
+		//System.out.println(zz);
 		
 		
 		double sinTheta = Math.sin(yy_rot);
@@ -123,35 +123,35 @@ public class Quad {
 	
 		pt[0] = y1;
 		pt[1] = z1;
-		AffineTransform.getRotateInstance(Math.toRadians(zz_rot), yy, zz)
+		AffineTransform.getRotateInstance(Math.toRadians(xx_rot), yy, zz)
 		  .transform(pt, 0, pt, 0, 1); // specifying to use this double[] to hold coords
 		y1 = pt[0];
 		z1 = pt[1];
 		
 		pt[0] = y2;
 		pt[1] = z2;
-		AffineTransform.getRotateInstance(Math.toRadians(zz_rot), yy, zz)
+		AffineTransform.getRotateInstance(Math.toRadians(xx_rot), yy, zz)
 		  .transform(pt, 0, pt, 0, 1); // specifying to use this double[] to hold coords
 		y2 = pt[0];
 		z2 = pt[1];
 		
 		pt[0] = y3;
 		pt[1] = z3;
-		AffineTransform.getRotateInstance(Math.toRadians(zz_rot), yy, zz)
+		AffineTransform.getRotateInstance(Math.toRadians(xx_rot), yy, zz)
 		  .transform(pt, 0, pt, 0, 1); // specifying to use this double[] to hold coords
 		y3 = pt[0];
 		z3 = pt[1];
 		
 		pt[0] = y4;
 		pt[1] = z4;
-		AffineTransform.getRotateInstance(Math.toRadians(zz_rot), yy, zz)
+		AffineTransform.getRotateInstance(Math.toRadians(xx_rot), yy, zz)
 		  .transform(pt, 0, pt, 0, 1); // specifying to use this double[] to hold coords
 		y4 = pt[0];
 		z4 = pt[1];
 		
 		//( thank you https://stackoverflow.com/questions/9985473/java-rotate-point-around-another-by-specified-degree-value)
 		
-		System.out.println(cosTheta);
-		System.out.println(sinTheta);
+		//System.out.println(cosTheta);
+		//System.out.println(sinTheta);
 	}
 }

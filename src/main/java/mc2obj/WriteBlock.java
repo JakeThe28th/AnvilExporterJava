@@ -331,7 +331,17 @@ public class WriteBlock {
         	System.out.println(rot_x);
         	System.out.println(rot_y);
         	System.out.println(rot_z);
-        	coords.rotate(8, 8, 8, rot_y, rot_x, rot_z);
+        	
+        	if (rot_y == 90) {
+        		rot_z = rot_x;
+        		rot_x = (double) 0;
+        		}
+        	
+        	System.out.println(rot_x);
+        	System.out.println(rot_y);
+        	System.out.println(rot_z);
+        	
+        	coords.rotate(8, 8, 8, rot_x, rot_x, -rot_y+90);
         	
         	objWriter.write("v "+((coords.x1/16)+x) +" "+((coords.y1/16)+y)+" "+((coords.z1/16)+z)+ "\n");
         	objWriter.write("v "+((coords.x2/16)+x) +" "+((coords.y2/16)+y)+" "+((coords.z2/16)+z)+ "\n");
@@ -482,12 +492,20 @@ public class WriteBlock {
 	public boolean JSObjectMatches(JSONObject source, JSONObject target) {
 		//if (!source.toString().equals(target.toString())) return false;
 
+		System.out.println(source);
+		System.out.println(target);
+		
 		for (Object keyO : source.keySet()) {
 	    	String key = (String) keyO;
 	    	if (target.get(key) != null) {
-	    		if (target.get(key).equals(source.get(key))) return false;
+	    		String tar = ((String) target.get(key));
+	    		String sou = ((String) source.get(key));
+	    		if (!tar.equals(sou)) return false;
 	    		}
             }
+		
+		System.out.println(source);
+		System.out.println(target);
 		 return true; // yes
 	}
 	
@@ -506,7 +524,7 @@ public class WriteBlock {
         	//Convert array into jobject
         	String[] statesplit = split[i].split("=");
         	
-        	states_this.put((String) statesplit[0], (String) statesplit[1]);
+        	states_this.put((String) statesplit[0].replace("\"", ""), (String) statesplit[1].replace("\"", ""));
         	i+=1;
         	} while (i < split.length);
 		
