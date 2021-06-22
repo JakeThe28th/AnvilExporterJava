@@ -46,6 +46,15 @@ public class WriteBlock {
 		    
 	}
 	
+	public boolean match4(double a, double b, double c, double d) {
+		
+		if (a != b) return false;
+		if (b != c) return false;
+		if (c != d) return false;
+		System.out.println("winner");
+		return true;
+	}
+	
 	public WriteBlock(String filename_) {
 		filename = filename_;
 		
@@ -162,7 +171,7 @@ public class WriteBlock {
 	    return -1;
 	}
 	
-	public int WriteModel(String path, int x, int y, int z, Double rot_x, Double rot_y, Double rot_z, JSONObject Culling) {
+	public int WriteModel(String path, int x, int y, int z, Double rot_x, Double rot_y, Double rot_z, JSONObject Culling, Boolean uvlock) {
 		
 	path = FileHierarchy(path);
 	if (path == null) System.out.println("Model file does not exist."); 
@@ -384,10 +393,127 @@ public class WriteBlock {
     	     uv_y2 /=tex_h;
     	     
     	     //x1-y2;x2-y2;x2-y1;x1-y1;
-    	     objWriter.write("vt "+uv_x1+" "+uv_y2+" "+ "\n");
-    	     objWriter.write("vt "+uv_x2+" "+uv_y2+" "+ "\n");
-    	     objWriter.write("vt "+uv_x2+" "+uv_y1+" "+ "\n");
-    	     objWriter.write("vt "+uv_x1+" "+uv_y1+" "+ "\n");
+    	     if (!uvlock ) {
+    	    	objWriter.write("vt "+uv_x1+" "+uv_y2+" "+ "\n");
+    	     	objWriter.write("vt "+uv_x2+" "+uv_y2+" "+ "\n");
+    	     	objWriter.write("vt "+uv_x2+" "+uv_y1+" "+ "\n");
+    	     	objWriter.write("vt "+uv_x1+" "+uv_y1+" "+ "\n");
+    	     	} else {
+    	     		//Faces for UVlock
+    	     		/*
+    	     		// east/west, use y and z as teycoords
+	        		if (face_name=="east" || face_name=="west") {
+	        			//use y/z as u/v
+	        			double div_y1, div_y2, div_y3, div_y4;
+	        			double div_z1, div_z2, div_z3, div_z4;
+	        			if (coords.y1 == 0) {  div_y1 = 0; } else {  div_y1 = (coords.y1/tex_w); }
+	        			if (coords.y2 == 0) {  div_y2 = 0; } else {  div_y2 = (coords.y2/tex_w); }
+	        			if (coords.y3 == 0) {  div_y3 = 0; } else {  div_y3 = (coords.y3/tex_w); }
+	        			if (coords.y4 == 0) {  div_y4 = 0; } else {  div_y4 = (coords.y4/tex_w); }
+	        			
+	        			if (coords.z1 == 0) {  div_z1 = 0; } else {  div_z1 = (coords.z1/tex_h); }
+	        			if (coords.z2 == 0) {  div_z2 = 0; } else {  div_z2 = (coords.z2/tex_h); }
+	        			if (coords.z3 == 0) {  div_z3 = 0; } else {  div_z3 = (coords.z3/tex_h); }
+	        			if (coords.z4 == 0) {  div_z4 = 0; } else {  div_z4 = (coords.z4/tex_h); }
+	        			
+	        			objWriter.write("vt "+div_z1+" "+div_y1+" "+ "\n");
+	        			objWriter.write("vt "+div_z2+" "+div_y2+" "+ "\n");
+	        			objWriter.write("vt "+div_z3+" "+div_y3+" "+ "\n");
+	        			objWriter.write("vt "+div_z4+" "+div_y4+" "+ "\n");
+	        			}
+	        		
+    	     			
+    	     			// up/down, use x and z as texcoords
+    	        		if (face_name=="up" || face_name=="down") {
+    	        			//use z/x as u/v
+    	        			double div_x1, div_x2, div_x3, div_x4;
+    	        			double div_z1, div_z2, div_z3, div_z4;
+    	        			if (coords.x1 == 0) {  div_x1 = 0; } else {  div_x1 = (coords.x1/tex_w); }
+    	        			if (coords.x2 == 0) {  div_x2 = 0; } else {  div_x2 = (coords.x2/tex_w); }
+    	        			if (coords.x3 == 0) {  div_x3 = 0; } else {  div_x3 = (coords.x3/tex_w); }
+    	        			if (coords.x4 == 0) {  div_x4 = 0; } else {  div_x4 = (coords.x4/tex_w); }
+    	        			
+    	        			if (coords.z1 == 0) {  div_z1 = 0; } else {  div_z1 = (coords.z1/tex_h); }
+    	        			if (coords.z2 == 0) {  div_z2 = 0; } else {  div_z2 = (coords.z2/tex_h); }
+    	        			if (coords.z3 == 0) {  div_z3 = 0; } else {  div_z3 = (coords.z3/tex_h); }
+    	        			if (coords.z4 == 0) {  div_z4 = 0; } else {  div_z4 = (coords.z4/tex_h); }
+    	        		
+    	        			objWriter.write("vt "+div_z1+" "+div_x1+" "+ "\n");
+    	        			objWriter.write("vt "+div_z2+" "+div_x2+" "+ "\n");
+    	        			objWriter.write("vt "+div_z3+" "+div_x3+" "+ "\n");
+    	        			objWriter.write("vt "+div_z4+" "+div_x4+" "+ "\n");
+    	        			}
+    	        		
+    	        		// north/south, use x and y as texcoords
+    	        		if (face_name=="north" || face_name=="south") {
+    	        			//use x/y as u/v
+    	        			double div_x1, div_x2, div_x3, div_x4;
+    	        			double div_y1, div_y2, div_y3, div_y4;
+    	        			if (coords.x1 == 0) {  div_x1 = 0; } else {  div_x1 = (coords.x1/tex_w); }
+    	        			if (coords.x2 == 0) {  div_x2 = 0; } else {  div_x2 = (coords.x2/tex_w); }
+    	        			if (coords.x3 == 0) {  div_x3 = 0; } else {  div_x3 = (coords.x3/tex_w); }
+    	        			if (coords.x4 == 0) {  div_x4 = 0; } else {  div_x4 = (coords.x4/tex_w); }
+    	        			
+    	        			if (coords.y1 == 0) {  div_y1 = 0; } else {  div_y1 = (coords.y1/tex_h); }
+    	        			if (coords.y2 == 0) {  div_y2 = 0; } else {  div_y2 = (coords.y2/tex_h); }
+    	        			if (coords.y3 == 0) {  div_y3 = 0; } else {  div_y3 = (coords.y3/tex_h); }
+    	        			if (coords.y4 == 0) {  div_y4 = 0; } else {  div_y4 = (coords.y4/tex_h); }
+    	        			
+    	        			objWriter.write("vt "+div_x1+" "+div_y1+" "+ "\n");
+    	        			objWriter.write("vt "+div_x2+" "+div_y2+" "+ "\n");
+    	        			objWriter.write("vt "+div_x3+" "+div_y3+" "+ "\n");
+    	        			objWriter.write("vt "+div_x4+" "+div_y4+" "+ "\n");
+    	        			}
+    	        			*/
+    	     		
+    	     				double lock_u1=0, lock_u2=0, lock_u3=0, lock_u4=0;
+    	     				double lock_v1=0, lock_v2=0, lock_v3=0, lock_v4=0;
+    	     				
+    	     				//if z same, north/south
+    	     				//if y same, up/down
+    	     				//if x same, east/west
+    	     				
+    	     				if (match4(coords.z1, coords.z2, coords.z3, coords.z4)) {
+    	     					lock_u1 = coords.x1; lock_v1 = coords.y1;
+    	     					lock_u2 = coords.x2; lock_v2 = coords.y2;
+    	     					lock_u3 = coords.x3; lock_v3 = coords.y3;
+    	     					lock_u4 = coords.x4; lock_v4 = coords.y4;
+    	     					System.out.println("ns");
+    	     					}
+    	     				
+    	     				//U/D
+    	     				if (match4(coords.y1, coords.y2, coords.y3, coords.y4)) {
+    	     					lock_u1 = coords.z1; lock_v1 = coords.x1;
+    	     					lock_u2 = coords.z2; lock_v2 = coords.x2;
+    	     					lock_u3 = coords.z3; lock_v3 = coords.x3;
+    	     					lock_u4 = coords.z4; lock_v4 = coords.x4;
+    	     					System.out.println("ud");
+    	     					}
+    	     				
+    	     				//E/W
+    	     				if (match4(coords.x1, coords.x2, coords.x3, coords.x4)) {
+    	     					lock_u1 = coords.z1; lock_v1 = coords.y1;
+    	     					lock_u2 = coords.z2; lock_v2 = coords.y2;
+    	     					lock_u3 = coords.z3; lock_v3 = coords.y3;
+    	     					lock_u4 = coords.z4; lock_v4 = coords.y4;
+    	     					System.out.println("ew");
+    	     					}
+    	     				
+    	     				if (lock_u1 != 0) {  lock_u1 = (lock_u1/tex_w); }
+    	        			if (lock_u2 != 0) {  lock_u2 = (lock_u2/tex_w); }
+    	        			if (lock_u3 != 0) {  lock_u3 = (lock_u3/tex_w); }
+    	        			if (lock_u4 != 0) {  lock_u4 = (lock_u4/tex_w); }
+    	        			
+    	        			if (lock_v1 != 0) {  lock_v1 = (lock_v1/tex_h); }
+    	        			if (lock_v2 != 0) {  lock_v2 = (lock_v2/tex_h); }
+    	        			if (lock_v3 != 0) {  lock_v3 = (lock_v3/tex_h); }
+    	        			if (lock_v4 != 0) {  lock_v4 = (lock_v4/tex_h); }
+    	        			
+    	        			objWriter.write("vt "+lock_u1+" "+lock_v1+" "+ "\n");
+    	        			objWriter.write("vt "+lock_u2+" "+lock_v2+" "+ "\n");
+    	        			objWriter.write("vt "+lock_u3+" "+lock_v3+" "+ "\n");
+    	        			objWriter.write("vt "+lock_u4+" "+lock_v4+" "+ "\n");
+    	     	}
     	     
     	     objWriter.write("f " 
     	    		 		+ (v_count-3) + "/" + (v_count-3) + " " 
@@ -488,7 +614,12 @@ public class WriteBlock {
 		Double xr = (Double) Double.parseDouble(xr_.toString());
 		Double yr = (Double) Double.parseDouble(yr_.toString());
 		Double zr = (Double) Double.parseDouble(zr_.toString());
-		WriteModel("assets\\minecraft\\models\\" + model_name.substring(model_name.indexOf(":")+1).replace('/', '\\') + ".json", x,y,z, xr, yr, zr, Culling); //ADD NAMESPACE HERE. currently just chops off minecraft:
+		
+		Object uvlock_ = state.get("uvlock");
+		if (uvlock_ == null) uvlock_ = false;
+		Boolean uvlock = (Boolean) uvlock_;
+		
+		WriteModel("assets\\minecraft\\models\\" + model_name.substring(model_name.indexOf(":")+1).replace('/', '\\') + ".json", x,y,z, xr, yr, zr, Culling, uvlock); //ADD NAMESPACE HERE. currently just chops off minecraft:
 		
 		}
 		

@@ -23,10 +23,10 @@ newmtl block/oak_leaves
 map_Kd  data/minecraft/textures/block/oak_leaves.png
 newmtl block/oak_leaves_bushy1
 map_Kd  data/minecraft/textures/block/oak_leaves_bushy1.png
-newmtl block/oak_leaves_bushy
-map_Kd  data/minecraft/textures/block/oak_leaves_bushy.png
 newmtl minecraft:block/spruce_door_bottom
 map_Kd  data/minecraft/textures/minecraft:block/spruce_door_bottom.png
+newmtl block/oak_leaves_bushy
+map_Kd  data/minecraft/textures/block/oak_leaves_bushy.png
 newmtl minecraft:block/spruce_planks
 map_Kd  data/minecraft/textures/minecraft:block/spruce_planks.png
 newmtl minecraft:block/spruce_door_top
