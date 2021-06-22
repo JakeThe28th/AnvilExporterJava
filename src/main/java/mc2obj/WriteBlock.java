@@ -163,13 +163,22 @@ public class WriteBlock {
 	}
 	
 	public int WriteModel(String path, int x, int y, int z, Double rot_x, Double rot_y, Double rot_z, JSONObject Culling) {
-	
+		
 	path = FileHierarchy(path);
 	if (path == null) System.out.println("Model file does not exist."); 
 	
 	
 	System.out.println("Filename: " + (String) path);
 	
+
+	//if (rot_y == 90) {
+	//	rot_z = rot_x;
+	//	rot_x = (double) 0;
+	//	}
+	
+	System.out.println(rot_x);
+	System.out.println(rot_y);
+	System.out.println(rot_z);
 	
 	//Code body
 	try {
@@ -213,25 +222,30 @@ public class WriteBlock {
          //Loop through elements.
          do {			
         	JSONObject element = (JSONObject) elements.get(i);
-        	JSONArray from = (JSONArray) element.get("from");
-        	JSONArray to = (JSONArray) element.get("to");
+        	JSONArray from_js = (JSONArray) element.get("from");
+        	JSONArray to_js = (JSONArray) element.get("to");
         	
-        	Object  from_x_ = (Object)from.get(0);
-        	Object  from_y_ = (Object)from.get(1);
-        	Object  from_z_ = (Object)from.get(2);
+        	Object  from_x_ = (Object)from_js.get(0);
+        	Object  from_y_ = (Object)from_js.get(1);
+        	Object  from_z_ = (Object)from_js.get(2);
         	
-        	Object  to_x_ = (Object)to.get(0);
-        	Object  to_y_ = (Object)to.get(1);
-        	Object  to_z_ = (Object)to.get(2);
+        	Object  to_x_ = (Object)to_js.get(0);
+        	Object  to_y_ = (Object)to_js.get(1);
+        	Object  to_z_ = (Object)to_js.get(2);
         	
         	Double from_x = (Double) Double.parseDouble(from_x_.toString());
         	Double from_y = (Double) Double.parseDouble(from_y_.toString());
-        	Double from_z = (Double) Double.parseDouble(from_z_.toString());
+        	Double from_z = (Double) Double.parseDouble(from_z_.toString())/-1;
         	
         	Double to_x = (Double) Double.parseDouble(to_x_.toString());
         	Double to_y = (Double) Double.parseDouble(to_y_.toString());
-        	Double to_z = (Double) Double.parseDouble(to_z_.toString());
+        	Double to_z = (Double) Double.parseDouble(to_z_.toString())/-1;
         	
+        	Point3D from = new Point3D(from_x, from_y, from_z);
+        	Point3D to = new Point3D(to_x, to_y, to_z);
+        	
+        	//from.rotate(8, 8, 8, rot_x, rot_x, (rot_y-90));
+        	//to.rotate(8, 8, 8, rot_x, rot_x, (rot_y-90));
         
         	
         	int i_faces = 0;
@@ -283,40 +297,40 @@ public class WriteBlock {
         	//Write the actual faces vertices
         	switch (face_name) {
         	case "north":
-    			coords = new mc2obj.Quad(	  from_x, to_y, from_z,
-    			 							  to_x, to_y, from_z, 
-    			 							  to_x, from_y, from_z, 
-    			 							  from_x, from_y, from_z);
+    			coords = new mc2obj.Quad(	  from.x, to.y, from.z,
+    			 							  to.x, to.y, from.z, 
+    			 							  to.x, from.y, from.z, 
+    			 							  from.x, from.y, from.z);
         			break;
         		case "east":
-        			coords = new mc2obj.Quad(		to_x, to_y, to_z,
-        											to_x, to_y, from_z, 
-        											to_x, from_y, from_z, 
-        											to_x, from_y, to_z);
+        			coords = new mc2obj.Quad(		to.x, to.y, to.z,
+        											to.x, to.y, from.z, 
+        											to.x, from.y, from.z, 
+        											to.x, from.y, to.z);
         			break;
         		case "south":
-        			coords = new mc2obj.Quad(		from_x, to_y, to_z,
-        											to_x, to_y, to_z, 
-        											to_x, from_y, to_z, 
-        											from_x, from_y, to_z);
+        			coords = new mc2obj.Quad(		from.x, to.y, to.z,
+        											to.x, to.y, to.z, 
+        											to.x, from.y, to.z, 
+        											from.x, from.y, to.z);
         			break;
         		case "west":
-        			coords = new mc2obj.Quad(	  from_x, to_y, to_z,
-        										  from_x, to_y, from_z, 
-        			 							  from_x, from_y, from_z, 
-        			 							  from_x, from_y, to_z);
+        			coords = new mc2obj.Quad(	  from.x, to.y, to.z,
+        										  from.x, to.y, from.z, 
+        			 							  from.x, from.y, from.z, 
+        			 							  from.x, from.y, to.z);
         			break;
         		case "up":
-        			coords = new mc2obj.Quad(	from_x, to_y, to_z,
-							  					to_x, to_y, to_z, 
-							  					to_x, to_y, from_z, 
-							  					from_x, to_y, from_z);
+        			coords = new mc2obj.Quad(	from.x, to.y, to.z,
+							  					to.x, to.y, to.z, 
+							  					to.x, to.y, from.z, 
+							  					from.x, to.y, from.z);
         			break;
         		case "down":
-        			coords = new mc2obj.Quad(	from_x, from_y, to_z,
-        			 							to_x, from_y, to_z, 
-        			 							to_x, from_y, from_z, 
-        			 							from_x, from_y, from_z);
+        			coords = new mc2obj.Quad(	from.x, from.y, to.z,
+        			 							to.x, from.y, to.z, 
+        			 							to.x, from.y, from.z, 
+        			 							from.x, from.y, from.z);
         		
         			break;
              
@@ -328,20 +342,10 @@ public class WriteBlock {
        	 	//objWriter.write("v "+coords.x3+" "+coords.y3+" "+coords.z3+ "\n");
        	 	//objWriter.write("v "+coords.x4+" "+coords.y4+" "+coords.z4+ "\n");
        	 
-        	System.out.println(rot_x);
-        	System.out.println(rot_y);
-        	System.out.println(rot_z);
         	
-        	if (rot_y == 90) {
-        		rot_z = rot_x;
-        		rot_x = (double) 0;
-        		}
         	
-        	System.out.println(rot_x);
-        	System.out.println(rot_y);
-        	System.out.println(rot_z);
-        	
-        	coords.rotate(8, 8, 8, rot_x, rot_x, -rot_y+90);
+        	coords.rotate(8, 8, 8, rot_x, rot_z, rot_y-90);
+        	//coords.scale(1, 1, -1);
         	
         	objWriter.write("v "+((coords.x1/16)+x) +" "+((coords.y1/16)+y)+" "+((coords.z1/16)+z)+ "\n");
         	objWriter.write("v "+((coords.x2/16)+x) +" "+((coords.y2/16)+y)+" "+((coords.z2/16)+z)+ "\n");
@@ -473,6 +477,11 @@ public class WriteBlock {
 		Object xr_ = state.get("x");
 		Object yr_ = state.get("y");
 		Object zr_ = state.get("z");
+		
+		System.out.println(xr_);
+    	System.out.println(yr_);
+    	System.out.println(zr_);
+		
 		if (xr_ == null) { xr_ = 0; }
 		if (yr_ == null) { yr_ = 0; }
 		if (zr_ == null) { zr_ = 0; }

@@ -46,6 +46,25 @@ public class Quad {
 	
 	}
 	
+	public void scale(double xx_scale, double yy_scale, double zz_scale) {
+		
+		x1 = x1*xx_scale;
+		x2 = x2*xx_scale;
+		x3 = x3*xx_scale;
+		x4 = x4*xx_scale;
+		
+		y1 = y1*yy_scale;
+		y2 = y2*yy_scale;
+		y3 = y3*yy_scale;
+		y4 = y4*yy_scale;
+		
+		z1 = z1*zz_scale;
+		z2 = z2*zz_scale;
+		z3 = z3*zz_scale;
+		z4 = z4*zz_scale;
+		
+	}
+	
 	public void rotate(double xx, double yy, double zz, double xx_rot, double yy_rot, double zz_rot) {
 		
 		//System.out.println(xx);
