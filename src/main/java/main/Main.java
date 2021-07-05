@@ -19,30 +19,31 @@ import net.querz.mca.*;
 //
 
 import mc2obj.WriteBlock;
+import mc2obj.Exporter;
 
 public class Main {
 	//My first serious java project, better put some to-do's here.
 	//In order of importance
 	//[?] Learn java
-	//[x] write a basic .obj file 					//5/16/2021
+	//[x] write a basic .obj file 													//5/16/2021
 	//[-..] read minecraft json files
 	//[-..] convert minecraft json files to obj files
-		//[	] Read UV coordinates
-		//[	] Fix coordinates to 16 pixels per unit
-		//[	] Add rotation
-		//[x] Parent handling
+		//[x] Read UV coordinates													//i dont remember
+		//[x] Fix coordinates to 16 pixels per unit									//i dont remember
+		//[-..] Add rotation
+		//[x] Parent handling														//i dont remember
 		//[-..] blockstate handling
-			//[x] variant handling (basic)
-			//[ ] rotation and more variant properties
+			//[x] variant handling (basic)											//i dont remember
+			//[x] rotation and more variant properties  							//6/22/2021
 			//[ ] multipart
-			//[ ] random variant selection
-			//[ ] apparently some blocks have blockstate ingame that arent part of the model file 
+			//[x] random variant selection											//i dont remember
+			//[x] apparently some blocks have 'unused' states						//06/20/2021
 				//(EG powered for doors, or persistent and distance for leaves)
-				//So, make a one layer deep "JsonMatchesNull" or such, 
-				//and ignore values that dont exist in one or the other.
+
+		//[ ] east and west are wrong way around 
 		//[	] Culling
 		//[	] Proper UVS (adapt to non 16 texture sizes aswell.)
-		//[ ] rotation
+		
 	
 	//[no] create nbt modules -- Just use Querz/NBT
 		//[ ] Modify Querz/NBT to use any world height l
@@ -75,6 +76,16 @@ public class Main {
 	//[ ] Add entities export (armorstands and itemframes)
 	//[ ] Tris or quads export
 	//Check pack, if model doesn't exist/ has no elements, go to default. if doesn't exist / has no, go to blockentity
+
+	//add culling
+	//fix scaling /  mirroring
+	
+	//Focus on GUI for now.
+	//Render 64*64 preview of every needed block, as needed. cache this.
+	//compile previews into single image of chunk, and cache it, but occasionally refresh.
+	//selection is based off the first block which isn't air past a certain y??
+	//selection preview is a vertical column, and a preview is an iso selection square.
+	
 	
 	//5/10/2021 (c) Jake 28
 	
@@ -85,7 +96,7 @@ public class Main {
 	public static Random ran = new Random();
 	
 	
-	  public static void main(String[] args) throws IOException, ParseException {
+	public static void main(String[] args) throws IOException, ParseException {
 		  
 		  //JSONObject temp;
 		  mc2obj.WriteBlock mod = new  mc2obj.WriteBlock("brewing_stand");
@@ -109,111 +120,14 @@ public class Main {
 		  
 		MCAFile mcaFile = null;
 		mcaFile = MCAUtil.read("r.0.0.mca");
-		
-		Chunk chunk = mcaFile.getChunk(0, 0);
-		
-		Section section = chunk.getSection(1);
-		
-		//only get blocks empty secoction no
-		
-		
-		
-		int i_sec = 0;
-		System.out.println(i_sec);
-		do {
-		section = chunk.getSection(i_sec);	
-		
-		if (section != null) if (section.getBlockStates() !=null) {
-		
-		long i = 0;
-		int x = 0;
-		int y = 0;
-		int z = 0;
-		do {
-		CompoundTag blockState = section.getBlockStateAt(y, z, x);
-		 
-		//iterate over properties
-		String states_ = "";
-		StringTag property;
-		if (blockState.get("Properties") != null) {
-			CompoundTag properties = (CompoundTag) blockState.get("Properties");
-			Iterator<String> itr = properties.keySet().iterator();
-			String prefix = "";
-			while (itr.hasNext())
-			{
-				String key = itr.next();
-				StringTag value = (StringTag) properties.get(key);
-		 
-				//System.out.println(key + "=" + value);
-				//property = (CompoundTag) properties.get(key);
-				states_ = states_+prefix+ key + "=" + SNBTUtil.toSNBT(properties.get(key));
-				prefix = ",";
-			}
-			//System.out.println(states_);
-			}
-		
-		String blockID = (String) SNBTUtil.toSNBT(blockState.get("Name"));
-		if (!blockID.equals("\"minecraft:air\"")) {
-			
-			
-			String BlockID_ = blockID.substring(blockID.indexOf(":")+1);
-			//String blockID = SNBTUtil.toSNBT(abc);
-			mod.WriteFromBlockstate("assets\\minecraft\\blockstates\\" + BlockID_.substring(0,BlockID_.length()-1) + ".json", states_, x, z, y, culling); //ADD NAMESPACE HERE, CHOPP CHOPP
-			
-			//System.out.println(states_);
-			//System.out.println(SNBTUtil.toSNBT(blockState)); }
 
-			
-		}
+		Chunk chunk = mcaFile.getChunk(0, 0);
+
+		Exporter exporter = new Exporter("", "export");
 		
-		x+=1;
-		if (x == 16) {
-			x = 0;
-			y+= 1;
-			}
+		exporter.exportChunk(chunk, 0, 0, 0);
 		
-		if (y == 16) {
-			y = 0;
-			z+= 1;
-			}
-			
-		i+= 1;
-		} while (i <= (16*16*16)); 
-		}
-		
-		i_sec += 1;
-		System.out.println(i_sec);
-	  } while (i_sec < 16);
-		 
-		  ////////////
-	    try {
-	      File myObj = new File("filename.obj");
-	      if (myObj.createNewFile()) {
-	        System.out.println("File created: " + myObj.getName());
-	      } else {
-	        System.out.println("File already exists.");
-	      }
-	    } catch (IOException e) {
-	      System.out.println("An error occurred.");
-	      e.printStackTrace();
-	    }
-	    
-	    
-	    try {
-	        FileWriter myWriter = new FileWriter("filename.obj");
-	        myWriter.write("v 0 0 0 \n");
-	        myWriter.write("v 0 1 0 \n");
-	        myWriter.write("v 1 1 0 \n");
-	        myWriter.write("v 1 0 0 \n");
-	        myWriter.write("f 1 2 3 4 \n");
-	        myWriter.close();
-	        System.out.println("Successfully wrote to the file.");
-	      } catch (IOException e) {
-	        System.out.println("An error occurred.");
-	        e.printStackTrace();
-	      }
-	    //*/
-	    
+		exporter.end();
 	    mod.end();
 	  }
 }

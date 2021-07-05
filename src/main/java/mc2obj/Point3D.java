@@ -16,6 +16,14 @@ public class Point3D {
 		z = z1_;
 		}
 	
+	public void scale(double xx_scale, double yy_scale, double zz_scale) {
+		x = x*xx_scale;
+		y = y*yy_scale;
+		z = z*zz_scale;
+		
+	}
+
+	
 	public void rotate(double xx, double yy, double zz, double xx_rot, double yy_rot, double zz_rot) {
 		
 		//System.out.println(xx);

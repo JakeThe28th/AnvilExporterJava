@@ -51,7 +51,7 @@ public class WriteBlock {
 		if (a != b) return false;
 		if (b != c) return false;
 		if (c != d) return false;
-		System.out.println("winner");
+		//System.out.println("winner");
 		return true;
 	}
 	
@@ -160,7 +160,7 @@ public class WriteBlock {
 			}
 			path = path_;
 		
-		System.out.println("Filename Hierarchy: " + (String) path);
+		//System.out.println("Filename Hierarchy: " + (String) path);
 		return path;
 		}
 
@@ -177,7 +177,7 @@ public class WriteBlock {
 	if (path == null) System.out.println("Model file does not exist."); 
 	
 	
-	System.out.println("Filename: " + (String) path);
+	//System.out.println("Filename: " + (String) path);
 	
 
 	//if (rot_y == 90) {
@@ -185,9 +185,9 @@ public class WriteBlock {
 	//	rot_x = (double) 0;
 	//	}
 	
-	System.out.println(rot_x);
-	System.out.println(rot_y);
-	System.out.println(rot_z);
+	//System.out.println(rot_x);
+	//System.out.println(rot_y);
+	//System.out.println(rot_z);
 	
 	//Code body
 	try {
@@ -244,11 +244,11 @@ public class WriteBlock {
         	
         	Double from_x = (Double) Double.parseDouble(from_x_.toString());
         	Double from_y = (Double) Double.parseDouble(from_y_.toString());
-        	Double from_z = (Double) Double.parseDouble(from_z_.toString());
+        	Double from_z = (Double) Double.parseDouble(from_z_.toString())/-1;
         	
         	Double to_x = (Double) Double.parseDouble(to_x_.toString());
         	Double to_y = (Double) Double.parseDouble(to_y_.toString());
-        	Double to_z = (Double) Double.parseDouble(to_z_.toString());
+        	Double to_z = (Double) Double.parseDouble(to_z_.toString())/-1;
         	
         	Point3D from = new Point3D(from_x, from_y, from_z);
         	Point3D to = new Point3D(to_x, to_y, to_z);
@@ -291,7 +291,7 @@ public class WriteBlock {
         		
         		}
         	
-        	System.out.println("data/minecraft/textures/" + tex2 + ".png");
+        	//System.out.println("data/minecraft/textures/" + tex2 + ".png");
         	//System.out.println("data/minecraft/textures/" + tex + ".png");
         	
         	if ( ArrayIndexOf(mtl_done, tex2) == -1) {
@@ -354,7 +354,7 @@ public class WriteBlock {
         	
         	
         	coords.rotate(8, 8, 8, rot_x, rot_z, rot_y-90);
-        	coords.scale(1, 1, -1);
+        	//coords.scale(1, 1, -1);
         	
         	objWriter.write("v "+((coords.x1/16)+x) +" "+((coords.y1/16)+y)+" "+((coords.z1/16)+z)+ "\n");
         	objWriter.write("v "+((coords.x2/16)+x) +" "+((coords.y2/16)+y)+" "+((coords.z2/16)+z)+ "\n");
@@ -370,17 +370,22 @@ public class WriteBlock {
     	     int tex_h = 16;
     	     
     	     //Base UV values
-    	     float uv_x1 = 0;
-	    	 float uv_y1 = 0;
-	    	 float uv_x2 = 16;
-	    	 float uv_y2 = 16;
+    	     Double uv_x1 = (double) 0;
+    	     Double uv_y1 = (double) 0;
+    	     Double uv_x2 = (double) 16;
+    	     Double uv_y2 = (double) 16;
 	    	 
 	    	 //If UV is set in JSON:
     	     if (uv != null) {
-    	    	 uv_x1 = (long) uv.get(0);
-    	    	 uv_y1 = (long) uv.get(1);
-    	    	 uv_x2 = (long) uv.get(2);
-    	    	 uv_y2 = (long) uv.get(3);
+    	    	Object uv_x1_ = uv.get(0);
+    	    	Object uv_y1_ = uv.get(1);
+    	    	Object uv_x2_ = uv.get(2);
+    	    	Object uv_y2_ = uv.get(3);
+    	    	 
+    	    	uv_x1 = (Double) Double.parseDouble(uv_x1_.toString());
+    	       	uv_y1 = (Double) Double.parseDouble(uv_y1_.toString());
+    	       	uv_x2 = (Double) Double.parseDouble(uv_x2_.toString());
+    	       	uv_y2 = (Double) Double.parseDouble(uv_y2_.toString());
     	     	}
     	     if (face_name == "east" | face_name == "west" | face_name == "south" | face_name == "north") {
     	    	 uv_y2-= uv_y1;
@@ -394,10 +399,45 @@ public class WriteBlock {
     	     
     	     //x1-y2;x2-y2;x2-y1;x1-y1;
     	     if (!uvlock ) {
-    	    	objWriter.write("vt "+uv_x1+" "+uv_y2+" "+ "\n");
-    	     	objWriter.write("vt "+uv_x2+" "+uv_y2+" "+ "\n");
-    	     	objWriter.write("vt "+uv_x2+" "+uv_y1+" "+ "\n");
-    	     	objWriter.write("vt "+uv_x1+" "+uv_y1+" "+ "\n");
+    	     	switch (face_name) {
+            	case "north":
+            		objWriter.write("vt "+uv_x1+" "+uv_y2+" "+ "\n");
+        	     	objWriter.write("vt "+uv_x2+" "+uv_y2+" "+ "\n");
+        	     	objWriter.write("vt "+uv_x2+" "+uv_y1+" "+ "\n");
+        	     	objWriter.write("vt "+uv_x1+" "+uv_y1+" "+ "\n");
+            			break;
+            		case "west":
+            			objWriter.write("vt "+uv_x2+" "+uv_y2+" "+ "\n");
+            	     	objWriter.write("vt "+uv_x1+" "+uv_y2+" "+ "\n");
+            	     	objWriter.write("vt "+uv_x1+" "+uv_y1+" "+ "\n");
+            	     	objWriter.write("vt "+uv_x2+" "+uv_y1+" "+ "\n");
+            			break;
+            		case "south":
+            			objWriter.write("vt "+uv_x1+" "+uv_y2+" "+ "\n");
+            	     	objWriter.write("vt "+uv_x2+" "+uv_y2+" "+ "\n");
+            	     	objWriter.write("vt "+uv_x2+" "+uv_y1+" "+ "\n");
+            	     	objWriter.write("vt "+uv_x1+" "+uv_y1+" "+ "\n");
+            			break;
+            		case "east":
+            			objWriter.write("vt "+uv_x1+" "+uv_y2+" "+ "\n");
+            	     	objWriter.write("vt "+uv_x2+" "+uv_y2+" "+ "\n");
+            	     	objWriter.write("vt "+uv_x2+" "+uv_y1+" "+ "\n");
+            	     	objWriter.write("vt "+uv_x1+" "+uv_y1+" "+ "\n");
+            			break;
+            		case "up":
+            			objWriter.write("vt "+uv_x1+" "+uv_y2+" "+ "\n");
+            	     	objWriter.write("vt "+uv_x2+" "+uv_y2+" "+ "\n");
+            	     	objWriter.write("vt "+uv_x2+" "+uv_y1+" "+ "\n");
+            	     	objWriter.write("vt "+uv_x1+" "+uv_y1+" "+ "\n");
+            			break;
+            		case "down":
+            			objWriter.write("vt "+uv_x1+" "+uv_y2+" "+ "\n");
+            	     	objWriter.write("vt "+uv_x2+" "+uv_y2+" "+ "\n");
+            	     	objWriter.write("vt "+uv_x2+" "+uv_y1+" "+ "\n");
+            	     	objWriter.write("vt "+uv_x1+" "+uv_y1+" "+ "\n");
+            			break;
+                 
+            		}
     	     	} else {
     	     		//Faces for UVlock
     	     		/*
@@ -478,7 +518,7 @@ public class WriteBlock {
     	     					lock_u2 = coords.x2; lock_v2 = coords.y2;
     	     					lock_u3 = coords.x3; lock_v3 = coords.y3;
     	     					lock_u4 = coords.x4; lock_v4 = coords.y4;
-    	     					System.out.println("ns");
+    	     					//System.out.println("ns");
     	     					}
     	     				
     	     				//U/D
@@ -487,7 +527,7 @@ public class WriteBlock {
     	     					lock_u2 = coords.z2; lock_v2 = coords.x2;
     	     					lock_u3 = coords.z3; lock_v3 = coords.x3;
     	     					lock_u4 = coords.z4; lock_v4 = coords.x4;
-    	     					System.out.println("ud");
+    	     					//System.out.println("ud");
     	     					}
     	     				
     	     				//E/W
@@ -496,7 +536,7 @@ public class WriteBlock {
     	     					lock_u2 = coords.z2; lock_v2 = coords.y2;
     	     					lock_u3 = coords.z3; lock_v3 = coords.y3;
     	     					lock_u4 = coords.z4; lock_v4 = coords.y4;
-    	     					System.out.println("ew");
+    	     					//System.out.println("ew");
     	     					}
     	     				
     	     				if (lock_u1 != 0) {  lock_u1 = (lock_u1/tex_w); }
@@ -554,7 +594,7 @@ public class WriteBlock {
 		
 		path = FileHierarchy(path);
 		if (path == null) System.out.println("Blockstate file does not exist."); 
-		System.out.println("Blockstate: " + path);
+		//System.out.println("Blockstate: " + path);
 		
 		//JSON parser object to parse read file
 	    JSONParser jsonParser = new JSONParser();
@@ -604,9 +644,9 @@ public class WriteBlock {
 		Object yr_ = state.get("y");
 		Object zr_ = state.get("z");
 		
-		System.out.println(xr_);
-    	System.out.println(yr_);
-    	System.out.println(zr_);
+		//System.out.println(xr_);
+    	//System.out.println(yr_);
+    	//System.out.println(zr_);
 		
 		if (xr_ == null) { xr_ = 0; }
 		if (yr_ == null) { yr_ = 0; }
@@ -632,8 +672,8 @@ public class WriteBlock {
 	public boolean JSObjectMatches(JSONObject source, JSONObject target) {
 		//if (!source.toString().equals(target.toString())) return false;
 
-		System.out.println(source);
-		System.out.println(target);
+		//System.out.println(source);
+		//System.out.println(target);
 		
 		for (Object keyO : source.keySet()) {
 	    	String key = (String) keyO;
@@ -644,8 +684,8 @@ public class WriteBlock {
 	    		}
             }
 		
-		System.out.println(source);
-		System.out.println(target);
+		//System.out.println(source);
+		//System.out.println(target);
 		 return true; // yes
 	}
 	
