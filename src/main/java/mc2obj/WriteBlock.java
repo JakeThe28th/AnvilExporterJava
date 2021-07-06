@@ -244,11 +244,11 @@ public class WriteBlock {
         	
         	Double from_x = (Double) Double.parseDouble(from_x_.toString());
         	Double from_y = (Double) Double.parseDouble(from_y_.toString());
-        	Double from_z = (Double) Double.parseDouble(from_z_.toString())/-1;
+        	Double from_z = (Double) Double.parseDouble(from_z_.toString());
         	
         	Double to_x = (Double) Double.parseDouble(to_x_.toString());
         	Double to_y = (Double) Double.parseDouble(to_y_.toString());
-        	Double to_z = (Double) Double.parseDouble(to_z_.toString())/-1;
+        	Double to_z = (Double) Double.parseDouble(to_z_.toString());
         	
         	Point3D from = new Point3D(from_x, from_y, from_z);
         	Point3D to = new Point3D(to_x, to_y, to_z);
@@ -354,7 +354,7 @@ public class WriteBlock {
         	
         	
         	coords.rotate(8, 8, 8, rot_x, rot_z, rot_y-90);
-        	//coords.scale(1, 1, -1);
+        	coords.scale(1, 1, -1);
         	
         	objWriter.write("v "+((coords.x1/16)+x) +" "+((coords.y1/16)+y)+" "+((coords.z1/16)+z)+ "\n");
         	objWriter.write("v "+((coords.x2/16)+x) +" "+((coords.y2/16)+y)+" "+((coords.z2/16)+z)+ "\n");
