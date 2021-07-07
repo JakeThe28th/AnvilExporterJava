@@ -224,6 +224,7 @@ public class WriteBlock {
         JSONArray elements = (JSONArray) model.get("elements");
         JSONObject textures = (JSONObject) model.get("textures");
         
+        if (elements == null) System.out.println(path);
 
          int i = 0;
          String face_name = "";

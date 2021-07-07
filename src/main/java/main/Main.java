@@ -77,6 +77,9 @@ public class Main {
 	//[ ] Tris or quads export
 	//Check pack, if model doesn't exist/ has no elements, go to default. if doesn't exist / has no, go to blockentity
 
+	//error e
+	
+	//read notes
 	//add culling
 	//fix scaling /  mirroring
 	
@@ -119,13 +122,42 @@ public class Main {
 		//  /*
 		  
 		MCAFile mcaFile = null;
-		mcaFile = MCAUtil.read("r.0.0.mca");
-
-		Chunk chunk = mcaFile.getChunk(0, 0);
+		mcaFile = MCAUtil.read("region_testing\\r.0.0.mca");
+		
+		//Chunk chunk = mcaFile.getChunk(0, 0);
 
 		Exporter exporter = new Exporter("", "export");
 		
-		exporter.exportChunk(chunk, 0, 0, 0);
+
+		
+		//exporter.exportChunk(mcaFile.getChunk(0, 0), 0, 0, 0);
+		//exporter.exportChunk(mcaFile.getChunk(0, 1), 0, 0, 1);
+		//exporter.exportChunk(mcaFile.getChunk(1, 1), 0, 1, 1);
+		//exporter.exportChunk(mcaFile.getChunk(1, 0), 0, 1, 0);
+		
+		
+		int expx = -2;
+		int expz = -2;
+		int i = 0;
+		while (i < (4*4)) {
+			
+			int rx = (int) Math.floor((double) expx/32);
+			int rz = (int) Math.floor((double) expz/32);
+			//if (expx <0) rx = (int) Math.ceil(expx/32);
+			//if (expz <0) rz = (int) Math.ceil(expx/32);
+			String mcafilename = "r."+rx+"."+rz+".mca";
+			
+			mcaFile = MCAUtil.read("region_testing\\" + mcafilename);
+			System.out.println(mcafilename);
+			System.out.println(expx + " . " + expz);
+			exporter.exportChunk(mcaFile.getChunk(expx, expz), 0, expx, expz);
+			
+			expx += 1;
+			if (expx > 2) { expx = 0; expz+=1; }
+			i+=1;
+		}
+		
+
 		
 		exporter.end();
 	    mod.end();
