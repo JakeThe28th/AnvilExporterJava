@@ -1,0 +1,24 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+archivesBaseName = 'someJar'
+version = '1.0-SNAPSHOT' 
+
+repositories {
+    mavenCentral()
+	maven { url 'https://jitpack.io/' }
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'main'
+    }
+}
+
+dependencies {
+   implementation 'log4j:log4j:1.2.16'
+   implementation 'com.github.Querz:NBT:6.1'
+   implementation files('ext/json-simple-1.1.jar')
+   implementation files('ext/TruceEngine-0.0.jar')
+} 
+

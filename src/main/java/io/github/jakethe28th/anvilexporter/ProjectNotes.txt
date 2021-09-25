@@ -1,0 +1,68 @@
+//My first serious java project, better put some to-do's here.
+	//In order of importance
+	//[?] Learn java
+	//[x] write a basic .obj file 													//5/16/2021
+	//[-..] read minecraft json files
+	//[-..] convert minecraft json files to obj files
+		//[x] Read UV coordinates													//i dont remember
+		//[x] Fix coordinates to 16 pixels per unit									//i dont remember
+		//[-..] Add rotation
+		//[x] Parent handling														//i dont remember
+		//[-..] blockstate handling
+			//[x] variant handling (basic)											//i dont remember
+			//[x] rotation and more variant properties  							//6/22/2021
+			//[ ] multipart
+			//[x] random variant selection											//i dont remember
+			//[x] apparently some blocks have 'unused' states						//06/20/2021
+				//(EG powered for doors, or persistent and distance for leaves)
+
+		//[ ] east and west are wrong way around 
+		//[	] Culling
+		//[	] Proper UVS (adapt to non 16 texture sizes aswell.)
+		
+	
+	//[no] create nbt modules -- Just use Querz/NBT
+		//[ ] Modify Querz/NBT to use any world height l
+	
+	//MISC
+	//[x] One MTL Entry Per material.
+		//RELATED QUERIES:
+		//https://stackoverflow.com/questions/1522108/how-to-find-the-index-of-an-element-in-an-array-in-java
+		//https://stackoverflow.com/questions/13543457/how-do-you-create-a-dictionary-in-java
+	//[x] https://alvinalexander.com/java/java-file-exists-directory-exists/
+	//[.. ] https://minecraft.fandom.com/wiki/Model
+	
+	//[x] read minecraft level data
+	//[x] export minecraft level data into .obj files
+	//[ ] configuration
+	
+	//STRETCH GOALS
+	//[ ] Texture sheet packing
+	//[ ] Biome colors
+	//[ ] Resource packs as seperate rather than conbined
+	//[ ] a GUI.
+	//[ ] minecraft style smooth and flat lighting (flat will be easy, smooth not so much...?)
+	//[ ] proper namespace support
+	//[ ] clean up
+	//[ ] 2d isometric preview
+	//[ ] cached ^
+	//[ ] Optimization
+	//[ ] make coordinate system more consistent
+	//[ ] vertex normals
+	
+	//OPTIONAL
+	//[ ] Read schematic files and structure block NBT data
+	//[ ] Add entities export (armorstands and itemframes)
+	//[ ] Tris or quads export
+	//Check pack, if model doesn't exist/ has no elements, go to default. if doesn't exist / has no, go to blockentity
+	
+	//MORE TO DO
+	//Make a special thanks and credits file
+	
+	//LWJGL credits stuff? idk how that works
+	
+	Special thanks
+	//RobotPantaloons
+	//Azagwen
+	
+	

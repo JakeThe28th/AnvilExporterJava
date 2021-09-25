@@ -1,8 +1,13 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-archivesBaseName = 'someJar'
-version = '1.0-SNAPSHOT' 
+archivesBaseName = 'AnvilExporter'
+version = '0.0' 
+
+project.ext.lwjglVersion = "3.2.3"
+project.ext.jomlVersion = "1.10.1"
+project.ext.lwjglNatives = "natives-windows"
+
 
 repositories {
     mavenCentral()
@@ -11,7 +16,7 @@ repositories {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'main'
+        attributes 'Main-Class': 'io.github.jakethe28th.anvilexporter.Main'
     }
 }
 
@@ -19,5 +24,32 @@ dependencies {
    implementation 'log4j:log4j:1.2.16'
    implementation 'com.github.Querz:NBT:6.1'
    implementation files('ext/json-simple-1.1.jar')
+   implementation files('ext/TruceEngine-0.0.jar')
+   
+   
+   
+   //LWJGL
+    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+
+	implementation "org.lwjgl:lwjgl"
+	implementation "org.lwjgl:lwjgl-assimp"
+	implementation "org.lwjgl:lwjgl-glfw"
+	implementation "org.lwjgl:lwjgl-nanovg"
+	implementation "org.lwjgl:lwjgl-nuklear"
+	implementation "org.lwjgl:lwjgl-openal"
+	implementation "org.lwjgl:lwjgl-opengl"
+	implementation "org.lwjgl:lwjgl-par"
+	implementation "org.lwjgl:lwjgl-stb"
+	implementation "org.lwjgl:lwjgl-vulkan"
+	runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
+	runtimeOnly "org.lwjgl:lwjgl-assimp::$lwjglNatives"
+	runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+	runtimeOnly "org.lwjgl:lwjgl-nanovg::$lwjglNatives"
+	runtimeOnly "org.lwjgl:lwjgl-nuklear::$lwjglNatives"
+	runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
+	runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+	runtimeOnly "org.lwjgl:lwjgl-par::$lwjglNatives"
+	runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
+	implementation "org.joml:joml:${jomlVersion}"
 } 
 
