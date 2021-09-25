@@ -49,15 +49,15 @@ public class Main {
 		//[ ] Modify Querz/NBT to use any world height l
 	
 	//MISC
-	//[ ] One MTL Entry Per material.
+	//[x] One MTL Entry Per material.
 		//RELATED QUERIES:
 		//https://stackoverflow.com/questions/1522108/how-to-find-the-index-of-an-element-in-an-array-in-java
 		//https://stackoverflow.com/questions/13543457/how-do-you-create-a-dictionary-in-java
-	//[ ] https://alvinalexander.com/java/java-file-exists-directory-exists/
-	//[ ] https://minecraft.fandom.com/wiki/Model
+	//[x] https://alvinalexander.com/java/java-file-exists-directory-exists/
+	//[.. ] https://minecraft.fandom.com/wiki/Model
 	
-	//[ ] read minecraft level data
-	//[ ] export minecraft level data into .obj files
+	//[x] read minecraft level data
+	//[x] export minecraft level data into .obj files
 	//[ ] configuration
 	
 	//STRETCH GOALS
@@ -70,6 +70,9 @@ public class Main {
 	//[ ] clean up
 	//[ ] 2d isometric preview
 	//[ ] cached ^
+	//[ ] Optimization
+	//[ ] make coordinate system more consistent
+	//[ ] vertex normals
 	
 	//OPTIONAL
 	//[ ] Read schematic files and structure block NBT data
@@ -78,6 +81,9 @@ public class Main {
 	//Check pack, if model doesn't exist/ has no elements, go to default. if doesn't exist / has no, go to blockentity
 
 	//error e
+	
+	//Instead of a 2d pixel preview, use a top down 3d preview from the start. Add a fast mode with pixels later?
+	//Or render pixels and bake to textures, and use one plane instead of multiple geom 
 	
 	//read notes
 	//add culling
@@ -88,6 +94,13 @@ public class Main {
 	//compile previews into single image of chunk, and cache it, but occasionally refresh.
 	//selection is based off the first block which isn't air past a certain y??
 	//selection preview is a vertical column, and a preview is an iso selection square.
+	
+	//MORE TO DO
+	//Make a special thanks and credits file
+	//ADD:
+	//Robotpantaloons, and by extention the team working on Origin Realms
+	//GamesWithGabe, I used their tutorials to learn how to make GUI in Java
+		//(They're a pretty good youtuber, you should check them out of you're reading this)
 	
 	
 	//5/10/2021 (c) Jake 28
