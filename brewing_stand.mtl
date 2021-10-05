@@ -1,3 +1,3 @@
-# obj made with AnvilExporterJava 
+# obj made with AnvilExporter 
 newmtl minecraft:block/birch_trapdoor
-map_Kd  data/minecraft/textures/minecraft:block/birch_trapdoor.png
+map_Kd  data\minecraft\assets/minecraft/textures/block/birch_trapdoor.png

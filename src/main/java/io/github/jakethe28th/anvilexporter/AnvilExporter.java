@@ -39,7 +39,7 @@ public class AnvilExporter {
 	public static void Main() throws IOException, ParseException {
 		  
 		  //JSONObject temp;
-		  WriteBlock mod = new  WriteBlock("brewing_stand");
+		  WriteBlock mod = new  WriteBlock("brewing_stand", null);
 		  //mod.WriteModel("assets\\\\minecraft\\\\models\\\\block\\\\acacia_fence_gate_wall_open.json", 182, 2, 4, 0, 0, 0, null);
 
 		  JSONParser jsonParser = new JSONParser();
@@ -49,7 +49,7 @@ public class AnvilExporter {
 		  //System.out.println(states);
 		  //System.out.println(culling);
 		  
-		  mod.WriteFromBlockstate("assets\\minecraft\\blockstates\\birch_trapdoor.json", states, 0, 0, 0, culling);
+		  mod.WriteFromBlockstate("assets\\minecraft\\blockstates\\birch_trapdoor.json", states, 0, 0, 0, culling, "minecraft");
 		  
 		  //mod.end();
 		  
@@ -76,7 +76,7 @@ public class AnvilExporter {
 		int expx = -2;
 		int expz = -2;
 		int i = 0;
-		while (i < (4*4)) {
+		while (i < (1*1)) {
 			
 			int rx = (int) Math.floor((double) expx/32);
 			int rz = (int) Math.floor((double) expz/32);
@@ -98,6 +98,13 @@ public class AnvilExporter {
 		
 		exporter.end();
 	    mod.end();
+	    
+	    try {
+			program();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	  }
 	
 	public static void program() throws Exception {
@@ -129,6 +136,8 @@ public class AnvilExporter {
 		
 		while (!endProgram) {
 			
+			//if this.current_region != null drawPreview2D(cam_x, cam_y, cam_zoom)
+			
 			render.render(window, camera, new EngineObject[] { myObject, });
 			render.renderGui(window, new EngineObject[] { });
 			
@@ -152,4 +161,14 @@ public class AnvilExporter {
 		window.end();
 		render.cleanup();
 	}
+	
+	/*
+	drawPreview2d(float cam_x, float cam_y, float cam_zoom) {
+		guiUtility.drawRegion(x, z, xcoord, zcoord, scale)
+		
+		regions[x][z], if sprite_region = null makeSprite(region)
+		
+		
+	}
+	*/
 }

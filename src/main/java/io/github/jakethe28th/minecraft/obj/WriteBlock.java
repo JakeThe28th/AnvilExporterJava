@@ -14,9 +14,13 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import java.math.*;
+
+import io.github.jakethe28th.anvilexporter.Utility;
+import io.github.jakethe28th.engine.graphics.gui.Sprite;
 
 //delete quad somehow?
 
@@ -32,12 +36,18 @@ public class WriteBlock {
 	public int v_count = 4;
 	public int vt_count = 4;
 	
+	public String namespace = "minecraft";
+	
 	public Random ran = new Random();
 	
 	public void end() {
 		try {
 		objWriter.close();
 		mtlWriter.close();
+		if (texture_sheet != null) {
+			texture_sheet.save(filename + ".png");
+			texture_sheet.cleanup();
+			}
 		System.out.println("Closed MC2OBJ inst");
 		 	} catch (IOException e) {
 		      System.out.println("An error occurred when closing filewriter..");
@@ -46,101 +56,70 @@ public class WriteBlock {
 		    
 	}
 	
-	public boolean match4(double a, double b, double c, double d) {
-		
-		if (a != b) return false;
-		if (b != c) return false;
-		if (c != d) return false;
-		//System.out.println("winner");
-		return true;
-	}
+	public Sprite texture_sheet;
+	public HashMap<String, Integer> texture_index;
 	
-	public WriteBlock(String filename_) {
+	
+	public WriteBlock(String filename_, Sprite texture_sheet) {
 		filename = filename_;
 		
-		//Create file. obj.
-		  try {
-		      File myObj = new File(filename + ".obj");
-		      if (myObj.createNewFile()) {
-		        System.out.println("File created: " + myObj.getName());
-		      } else {
-		        System.out.println("File already exists.");
-		      }
-		    } catch (IOException e) {
-		      System.out.println("An error occurred starting a writeblock.");
-		      e.printStackTrace();
-		    }
-		    
-		    
-		    try {
+		this.texture_sheet = texture_sheet;
+		this.texture_index = new HashMap<String, Integer>();
+		
+		try {
+		
+		//Create OBJ file.
+			  File myObj = new File(filename + ".obj");
+			  if (myObj.createNewFile())
+				//Success
+		    	System.out.println("File created: " + myObj.getName());
+			  	//Error
+		      	else System.out.println("File already exists.");
+
+		 //Test writing to it.
 		    	FileWriter myWriter_ = new FileWriter(filename + ".obj");
 		    	objWriter = myWriter_;
 		        
-		    	objWriter.write("# obj made with AnvilExporterJava \n");
-		        //myWriter.close();
-		        //System.out.println("Successfully wrote to the file.");
-		      } catch (IOException e) {
-		        System.out.println("An error occurred writing.");
-		        e.printStackTrace();
-		      }
-		    
-		    //
-		    
-		  //Create file.
-			  try {
-			      File myObj = new File(filename + ".mtl");
-			      if (myObj.createNewFile()) {
-			        System.out.println("File created: " + myObj.getName());
-			      } else {
-			        System.out.println("File already exists.");
-			      }
-			    } catch (IOException e) {
-			      System.out.println("An error occurred starting a writeblock.");
-			      e.printStackTrace();
-			    }
-			    
-			    
-			    try {
-			    	FileWriter myWriter_ = new FileWriter(filename + ".mtl");
-			    	mtlWriter = myWriter_;
+		    	objWriter.write("# obj made with AnvilExporter \n");
+		    	
+		
+		  //Create MTL file.
+			     myObj = new File(filename + ".mtl");
+			     if (myObj.createNewFile()) 
+			     //Success
+			     System.out.println("File created: " + myObj.getName());
+			     //Error
+			     else  System.out.println("File already exists.");
+			
+		  //Test writing to it.
+			     myWriter_ = new FileWriter(filename + ".mtl");
+			     mtlWriter = myWriter_;
 			        
-			    	mtlWriter.write("# obj made with AnvilExporterJava \n");
-			        //myWriter.close();
-			        //System.out.println("Successfully wrote to the file.");
-			      } catch (IOException e) {
-			        System.out.println("An error occurred writing.");
-			        e.printStackTrace();
-			      }
+			     mtlWriter.write("# obj made with AnvilExporter \n");
+			     
+			     
 			    
-			    
+		  } catch (IOException err) {
+		      System.out.println("Failed to create WriteBlock()");
+		      err.printStackTrace();
+		    }
+		
+		try {
+			if (texture_sheet != null) {
+				mtlWriter.write("newmtl " + filename + "\n");
+				mtlWriter.write("map_Kd " + filename + ".png" + "\n");
+				
+				objWriter.write("usemtl " + filename + "\n");
+				}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			}
+		
 	}
 	
 	
-	public JSONObject deepMerge(JSONObject source, JSONObject target) {
-	    for (Object keyO : source.keySet()) {
-	    	String key = (String)keyO;
-            Object value = source.get(key);
-            
-            //System.out.println(key);
-            
-            if (target.get(key) != null) {
-                // new value for "key":
-            	if (value instanceof JSONObject) {
-                    deepMerge((JSONObject) value, (JSONObject) target.get(key));
-            		} else target.put(key, value);
-            	
-            } else {
-                // existing value for "key" - recursively deep merge:
-                if (value instanceof JSONObject && target.get(key) != null) {
-                    JSONObject valueJson = (JSONObject)value;
-                   deepMerge(valueJson, (JSONObject) target.get(key));
-                  } else {
-                  target.put(key, value);
-                }
-            }
-	    }
-    return target;
-}
+	
 	public String FileHierarchy(String path) {
 
 		int attempts = 0;
@@ -152,7 +131,7 @@ public class WriteBlock {
 			
 			boolean exists = new File(path_).exists();
 			if (!exists && attempts == 2 ) { 
-				System.out.println("file does not exist."); return null; 
+				System.out.println("file does not exist. " + path); return null; 
 				}
 			if (exists) break;
 			
@@ -164,32 +143,14 @@ public class WriteBlock {
 		return path;
 		}
 
-	public static int ArrayIndexOf(List<String> arr, String str) {
-	    for (int i = 0; i < arr.size(); i++) {
-	        if (str.equals(arr.get(i))) return i;
-	    }
-	    return -1;
-	}
 	
-	public int WriteModel(String path, int x, int y, int z, Double rot_x, Double rot_y, Double rot_z, JSONObject Culling, Boolean uvlock) {
+	
+	public int WriteModel(String path, int x, int y, int z, Double rot_x, Double rot_y, Double rot_z, JSONObject Culling, Boolean uvlock, String namespace) {
+	this.namespace = namespace;
 		
 	path = FileHierarchy(path);
 	if (path == null) System.out.println("Model file does not exist."); 
 	
-	
-	//System.out.println("Filename: " + (String) path);
-	
-
-	//if (rot_y == 90) {
-	//	rot_z = rot_x;
-	//	rot_x = (double) 0;
-	//	}
-	
-	//System.out.println(rot_x);
-	//System.out.println(rot_y);
-	//System.out.println(rot_z);
-	
-	//Code body
 	try {
 	
 	//JSON parser object to parse read file
@@ -214,7 +175,7 @@ public class WriteBlock {
 		
 		model.remove("parent"); //Remove previous parent value before merging, otherwise this code would loop forever.
 
-        if (parent_model != null) model = deepMerge((JSONObject) model, (JSONObject) parent_model);
+        if (parent_model != null) model = Utility.deepMerge((JSONObject) model, (JSONObject) parent_model);
 		
 		parent = (String) model.get("parent");
 		}
@@ -254,9 +215,6 @@ public class WriteBlock {
         	Point3D from = new Point3D(from_x, from_y, from_z);
         	Point3D to = new Point3D(to_x, to_y, to_z);
         	
-        	//from.rotate(8, 8, 8, rot_x, rot_x, (rot_y-90));
-        	//to.rotate(8, 8, 8, rot_x, rot_x, (rot_y-90));
-        
         	
         	int i_faces = 0;
         	JSONObject faces = (JSONObject) element.get("faces");
@@ -269,7 +227,6 @@ public class WriteBlock {
         		case 3: face_name = "west"; break;
         		case 4: face_name = "up"; break;
         		case 5: face_name = "down"; break;
-        	
         		}
         		 
         	JSONObject face = (JSONObject) faces.get(face_name);
@@ -289,71 +246,40 @@ public class WriteBlock {
             	
             	//Get filename from that.
             	tex2 = (String) textures.get(tex);
-        		
+            	
         		}
         	
-        	//System.out.println("data/minecraft/textures/" + tex2 + ".png");
-        	//System.out.println("data/minecraft/textures/" + tex + ".png");
-        	
-        	if ( ArrayIndexOf(mtl_done, tex2) == -1) {
-        	mtlWriter.write("newmtl " + tex2 + "\n");
-        	mtlWriter.write("map_Kd  " + "data/minecraft/textures/" + tex2 + ".png" + "\n");
-        	
-        	mtl_done.add(tex2);
-        	}
+        	//Fix filename to remove namespace
+        	String tex3 = tex2;
+        	if (tex2.indexOf(":") != -1) tex3 = tex2.split(":")[1];
 
-        	objWriter.write("usemtl " + tex2 + "\n");
+        	if ( texture_sheet == null ) {	
+        		if ( Utility.ArrayIndexOf(mtl_done, tex2) == -1) {
+        			mtlWriter.write("newmtl " + tex2 + "\n");
+        			mtlWriter.write("map_Kd  " + FileHierarchy("assets/" + namespace + "/textures/" + tex3 + ".png") + "\n");
         	
-        	//Write the actual faces vertices
-        	switch (face_name) {
-        	case "north":
-    			coords = new Quad(	  from.x, to.y, from.z,
-    			 							  to.x, to.y, from.z, 
-    			 							  to.x, from.y, from.z, 
-    			 							  from.x, from.y, from.z);
-        			break;
-        		case "east":
-        			coords = new Quad(		to.x, to.y, to.z,
-        											to.x, to.y, from.z, 
-        											to.x, from.y, from.z, 
-        											to.x, from.y, to.z);
-        			break;
-        		case "south":
-        			coords = new Quad(		from.x, to.y, to.z,
-        											to.x, to.y, to.z, 
-        											to.x, from.y, to.z, 
-        											from.x, from.y, to.z);
-        			break;
-        		case "west":
-        			coords = new Quad(	  from.x, to.y, to.z,
-        										  from.x, to.y, from.z, 
-        			 							  from.x, from.y, from.z, 
-        			 							  from.x, from.y, to.z);
-        			break;
-        		case "up":
-        			coords = new Quad(	from.x, to.y, to.z,
-							  					to.x, to.y, to.z, 
-							  					to.x, to.y, from.z, 
-							  					from.x, to.y, from.z);
-        			break;
-        		case "down":
-        			coords = new Quad(	from.x, from.y, to.z,
-        			 							to.x, from.y, to.z, 
-        			 							to.x, from.y, from.z, 
-        			 							from.x, from.y, from.z);
-        		
-        			break;
-             
+        			mtl_done.add(tex2);
         		}
-        	 
-        	//Write the actual faces vertices to file
-          	//objWriter.write("v "+coords.x1+" "+coords.y1+" "+coords.z1+ "\n");
-        	//objWriter.write("v "+coords.x2+" "+coords.y2+" "+coords.z2+ "\n");
-       	 	//objWriter.write("v "+coords.x3+" "+coords.y3+" "+coords.z3+ "\n");
-       	 	//objWriter.write("v "+coords.x4+" "+coords.y4+" "+coords.z4+ "\n");
-       	 
+        	} else {
+        		//Add texture to sheet
+        		
+        		String texture_filename = FileHierarchy("assets/" + namespace + "/textures/" + tex3 + ".png");//.replace("\"", "/");
+        		//System.out.println(" Adding sprite " + texture_filename);
+        		if (texture_filename !=null && texture_index.get(tex2) == null ) 
+        			texture_index.put(tex2, texture_sheet.addSprite(texture_filename));
+        		}
+
+        	if ( texture_sheet == null ) {
+        		
+        		objWriter.write("usemtl " + tex2 + "\n");
+        		
+        		}
         	
         	
+        	//Write the actual face's vertices
+        	coords = createFace(from, to, face_name);
+        	
+        	//Rotate / flip
         	coords.rotate(8, 8, 8, rot_x, rot_z, rot_y-90);
         	coords.scale(1, 1, -1);
         	
@@ -363,21 +289,26 @@ public class WriteBlock {
         	objWriter.write("v "+((coords.x4/16)+x) +" "+((coords.y4/16)+y)+" "+((coords.z4/16)+z)+ "\n");
   	     
     	     
-    	     JSONArray uv = (JSONArray) face.get("uv");
+    	    JSONArray uv = (JSONArray) face.get("uv");
     	    
     	     
-    	     //NOTE: add support for different model texture resolutions
-    	     int tex_w = 16;
-    	     int tex_h = 16;
+    	    //NOTE: add support for different model texture resolutions
+    	    int tex_w = 16;
+    	    int tex_h = 16;
+    	    
+    	    if ( texture_sheet != null ) {
+    	    	tex_w = texture_sheet.width;
+    	    	tex_h = texture_sheet.height;
+    	    } 
     	     
-    	     //Base UV values
-    	     Double uv_x1 = (double) 0;
-    	     Double uv_y1 = (double) 0;
-    	     Double uv_x2 = (double) 16;
-    	     Double uv_y2 = (double) 16;
+    	    //Base UV values
+    	    Double uv_x1 = (double) 0;
+    	    Double uv_y1 = (double) 0;
+    	    Double uv_x2 = (double) 16;
+    	    Double uv_y2 = (double) 16;
 	    	 
-	    	 //If UV is set in JSON:
-    	     if (uv != null) {
+	    	//If UV is set in JSON:
+    	    if (uv != null) {
     	    	Object uv_x1_ = uv.get(0);
     	    	Object uv_y1_ = uv.get(1);
     	    	Object uv_x2_ = uv.get(2);
@@ -388,10 +319,17 @@ public class WriteBlock {
     	       	uv_x2 = (Double) Double.parseDouble(uv_x2_.toString());
     	       	uv_y2 = (Double) Double.parseDouble(uv_y2_.toString());
     	     	}
-    	     if (face_name == "east" | face_name == "west" | face_name == "south" | face_name == "north") {
+    	    if (face_name == "east" | face_name == "west" | face_name == "south" | face_name == "north") {
     	    	 uv_y2-= uv_y1;
     	         uv_y1-= uv_y1;
     	     	}
+    	    
+    	    if ( texture_sheet != null ) {
+    	    	uv_x1 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
+    	    	uv_y1 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
+    	    	uv_x2 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
+    	    	uv_y2 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
+    	    }
     	     
     	     uv_x1 /=tex_w;
     	     uv_y1 /=tex_h;
@@ -401,11 +339,11 @@ public class WriteBlock {
     	     //x1-y2;x2-y2;x2-y1;x1-y1;
     	     if (!uvlock ) {
     	     	switch (face_name) {
-            	case "north":
-            		objWriter.write("vt "+uv_x1+" "+uv_y2+" "+ "\n");
-        	     	objWriter.write("vt "+uv_x2+" "+uv_y2+" "+ "\n");
-        	     	objWriter.write("vt "+uv_x2+" "+uv_y1+" "+ "\n");
-        	     	objWriter.write("vt "+uv_x1+" "+uv_y1+" "+ "\n");
+    	     		case "north":
+    	     			objWriter.write("vt "+uv_x1+" "+uv_y2+" "+ "\n");
+        	     		objWriter.write("vt "+uv_x2+" "+uv_y2+" "+ "\n");
+        	     		objWriter.write("vt "+uv_x2+" "+uv_y1+" "+ "\n");
+        	     		objWriter.write("vt "+uv_x1+" "+uv_y1+" "+ "\n");
             			break;
             		case "west":
             			objWriter.write("vt "+uv_x2+" "+uv_y2+" "+ "\n");
@@ -441,71 +379,6 @@ public class WriteBlock {
             		}
     	     	} else {
     	     		//Faces for UVlock
-    	     		/*
-    	     		// east/west, use y and z as teycoords
-	        		if (face_name=="east" || face_name=="west") {
-	        			//use y/z as u/v
-	        			double div_y1, div_y2, div_y3, div_y4;
-	        			double div_z1, div_z2, div_z3, div_z4;
-	        			if (coords.y1 == 0) {  div_y1 = 0; } else {  div_y1 = (coords.y1/tex_w); }
-	        			if (coords.y2 == 0) {  div_y2 = 0; } else {  div_y2 = (coords.y2/tex_w); }
-	        			if (coords.y3 == 0) {  div_y3 = 0; } else {  div_y3 = (coords.y3/tex_w); }
-	        			if (coords.y4 == 0) {  div_y4 = 0; } else {  div_y4 = (coords.y4/tex_w); }
-	        			
-	        			if (coords.z1 == 0) {  div_z1 = 0; } else {  div_z1 = (coords.z1/tex_h); }
-	        			if (coords.z2 == 0) {  div_z2 = 0; } else {  div_z2 = (coords.z2/tex_h); }
-	        			if (coords.z3 == 0) {  div_z3 = 0; } else {  div_z3 = (coords.z3/tex_h); }
-	        			if (coords.z4 == 0) {  div_z4 = 0; } else {  div_z4 = (coords.z4/tex_h); }
-	        			
-	        			objWriter.write("vt "+div_z1+" "+div_y1+" "+ "\n");
-	        			objWriter.write("vt "+div_z2+" "+div_y2+" "+ "\n");
-	        			objWriter.write("vt "+div_z3+" "+div_y3+" "+ "\n");
-	        			objWriter.write("vt "+div_z4+" "+div_y4+" "+ "\n");
-	        			}
-	        		
-    	     			
-    	     			// up/down, use x and z as texcoords
-    	        		if (face_name=="up" || face_name=="down") {
-    	        			//use z/x as u/v
-    	        			double div_x1, div_x2, div_x3, div_x4;
-    	        			double div_z1, div_z2, div_z3, div_z4;
-    	        			if (coords.x1 == 0) {  div_x1 = 0; } else {  div_x1 = (coords.x1/tex_w); }
-    	        			if (coords.x2 == 0) {  div_x2 = 0; } else {  div_x2 = (coords.x2/tex_w); }
-    	        			if (coords.x3 == 0) {  div_x3 = 0; } else {  div_x3 = (coords.x3/tex_w); }
-    	        			if (coords.x4 == 0) {  div_x4 = 0; } else {  div_x4 = (coords.x4/tex_w); }
-    	        			
-    	        			if (coords.z1 == 0) {  div_z1 = 0; } else {  div_z1 = (coords.z1/tex_h); }
-    	        			if (coords.z2 == 0) {  div_z2 = 0; } else {  div_z2 = (coords.z2/tex_h); }
-    	        			if (coords.z3 == 0) {  div_z3 = 0; } else {  div_z3 = (coords.z3/tex_h); }
-    	        			if (coords.z4 == 0) {  div_z4 = 0; } else {  div_z4 = (coords.z4/tex_h); }
-    	        		
-    	        			objWriter.write("vt "+div_z1+" "+div_x1+" "+ "\n");
-    	        			objWriter.write("vt "+div_z2+" "+div_x2+" "+ "\n");
-    	        			objWriter.write("vt "+div_z3+" "+div_x3+" "+ "\n");
-    	        			objWriter.write("vt "+div_z4+" "+div_x4+" "+ "\n");
-    	        			}
-    	        		
-    	        		// north/south, use x and y as texcoords
-    	        		if (face_name=="north" || face_name=="south") {
-    	        			//use x/y as u/v
-    	        			double div_x1, div_x2, div_x3, div_x4;
-    	        			double div_y1, div_y2, div_y3, div_y4;
-    	        			if (coords.x1 == 0) {  div_x1 = 0; } else {  div_x1 = (coords.x1/tex_w); }
-    	        			if (coords.x2 == 0) {  div_x2 = 0; } else {  div_x2 = (coords.x2/tex_w); }
-    	        			if (coords.x3 == 0) {  div_x3 = 0; } else {  div_x3 = (coords.x3/tex_w); }
-    	        			if (coords.x4 == 0) {  div_x4 = 0; } else {  div_x4 = (coords.x4/tex_w); }
-    	        			
-    	        			if (coords.y1 == 0) {  div_y1 = 0; } else {  div_y1 = (coords.y1/tex_h); }
-    	        			if (coords.y2 == 0) {  div_y2 = 0; } else {  div_y2 = (coords.y2/tex_h); }
-    	        			if (coords.y3 == 0) {  div_y3 = 0; } else {  div_y3 = (coords.y3/tex_h); }
-    	        			if (coords.y4 == 0) {  div_y4 = 0; } else {  div_y4 = (coords.y4/tex_h); }
-    	        			
-    	        			objWriter.write("vt "+div_x1+" "+div_y1+" "+ "\n");
-    	        			objWriter.write("vt "+div_x2+" "+div_y2+" "+ "\n");
-    	        			objWriter.write("vt "+div_x3+" "+div_y3+" "+ "\n");
-    	        			objWriter.write("vt "+div_x4+" "+div_y4+" "+ "\n");
-    	        			}
-    	        			*/
     	     		
     	     				double lock_u1=0, lock_u2=0, lock_u3=0, lock_u4=0;
     	     				double lock_v1=0, lock_v2=0, lock_v3=0, lock_v4=0;
@@ -514,7 +387,7 @@ public class WriteBlock {
     	     				//if y same, up/down
     	     				//if x same, east/west
     	     				
-    	     				if (match4(coords.z1, coords.z2, coords.z3, coords.z4)) {
+    	     				if (Utility.match4(coords.z1, coords.z2, coords.z3, coords.z4)) {
     	     					lock_u1 = coords.x1; lock_v1 = coords.y1;
     	     					lock_u2 = coords.x2; lock_v2 = coords.y2;
     	     					lock_u3 = coords.x3; lock_v3 = coords.y3;
@@ -523,7 +396,7 @@ public class WriteBlock {
     	     					}
     	     				
     	     				//U/D
-    	     				if (match4(coords.y1, coords.y2, coords.y3, coords.y4)) {
+    	     				if (Utility.match4(coords.y1, coords.y2, coords.y3, coords.y4)) {
     	     					lock_u1 = coords.z1; lock_v1 = coords.x1;
     	     					lock_u2 = coords.z2; lock_v2 = coords.x2;
     	     					lock_u3 = coords.z3; lock_v3 = coords.x3;
@@ -532,7 +405,7 @@ public class WriteBlock {
     	     					}
     	     				
     	     				//E/W
-    	     				if (match4(coords.x1, coords.x2, coords.x3, coords.x4)) {
+    	     				if (Utility.match4(coords.x1, coords.x2, coords.x3, coords.x4)) {
     	     					lock_u1 = coords.z1; lock_v1 = coords.y1;
     	     					lock_u2 = coords.z2; lock_v2 = coords.y2;
     	     					lock_u3 = coords.z3; lock_v3 = coords.y3;
@@ -586,7 +459,9 @@ public class WriteBlock {
 	}
 
 	
-	public int WriteFromBlockstate(String path, String states, int x, int y, int z, JSONObject Culling) throws IOException, ParseException {
+	public int WriteFromBlockstate(String path, String states, int x, int y, int z, JSONObject Culling, String namespace) throws IOException, ParseException {
+		this.namespace = namespace;
+		//System.out.println(" namespace=" + path);
 		//path = "data\\resourcepack\\" + path;
 		
 		//File tmpDir = new File(path);
@@ -617,12 +492,12 @@ public class WriteBlock {
 	    	String key = (String)keyO;
             
             if (!key.isEmpty()) {
-            JSONObject states_this = StatesToObject(key); 
+            JSONObject states_this = Utility.StatesToObject(key); 
             	
 	    	JSONObject statestoobj = null;
             //If the states match
-	    	statestoobj = StatesToObject((String) states);
-            if (JSObjectMatches(statestoobj,states_this)) { 
+	    	statestoobj = Utility.StatesToObject((String) states);
+            if (Utility.JSObjectMatches(statestoobj,states_this)) { 
             	state_obj = variants.get(key); 
             	break;
             	}
@@ -645,10 +520,6 @@ public class WriteBlock {
 		Object yr_ = state.get("y");
 		Object zr_ = state.get("z");
 		
-		//System.out.println(xr_);
-    	//System.out.println(yr_);
-    	//System.out.println(zr_);
-		
 		if (xr_ == null) { xr_ = 0; }
 		if (yr_ == null) { yr_ = 0; }
 		if (zr_ == null) { zr_ = 0; }
@@ -660,7 +531,7 @@ public class WriteBlock {
 		if (uvlock_ == null) uvlock_ = false;
 		Boolean uvlock = (Boolean) uvlock_;
 		
-		WriteModel("assets\\minecraft\\models\\" + model_name.substring(model_name.indexOf(":")+1).replace('/', '\\') + ".json", x,y,z, xr, yr, zr, Culling, uvlock); //ADD NAMESPACE HERE. currently just chops off minecraft:
+		WriteModel("assets\\" + namespace + "\\models\\" + model_name.substring(model_name.indexOf(":")+1).replace('/', '\\') + ".json", x,y,z, xr, yr, zr, Culling, uvlock, namespace); 
 		
 		}
 		
@@ -670,47 +541,63 @@ public class WriteBlock {
 	return 1;
 	}
 		
-	public boolean JSObjectMatches(JSONObject source, JSONObject target) {
-		//if (!source.toString().equals(target.toString())) return false;
+	/**
+	Create the vertices for a specific face on a cube.
+	@param from A 3D point representing the start XYZ position
+	@param to A 3D point representing the end XYZ position
+	@param face_name north, south, east, west, up, or down.
+	@return Quad
+	*/
+	public Quad createFace(Point3D from, Point3D to, String face_name) {
+		
+		//Create a quad with the vertices of a face on a cube.
 
-		//System.out.println(source);
-		//System.out.println(target);
+		Quad coords = null;
 		
-		for (Object keyO : source.keySet()) {
-	    	String key = (String) keyO;
-	    	if (target.get(key) != null) {
-	    		String tar = ((String) target.get(key));
-	    		String sou = ((String) source.get(key));
-	    		if (!tar.equals(sou)) return false;
-	    		}
-            }
-		
-		//System.out.println(source);
-		//System.out.println(target);
-		 return true; // yes
+    	switch (face_name) {
+    	case "north":
+			coords = new Quad(	  from.x, to.y, from.z,
+			 							  to.x, to.y, from.z, 
+			 							  to.x, from.y, from.z, 
+			 							  from.x, from.y, from.z);
+    			break;
+    		case "east":
+    			coords = new Quad(		to.x, to.y, to.z,
+    											to.x, to.y, from.z, 
+    											to.x, from.y, from.z, 
+    											to.x, from.y, to.z);
+    			break;
+    		case "south":
+    			coords = new Quad(		from.x, to.y, to.z,
+    											to.x, to.y, to.z, 
+    											to.x, from.y, to.z, 
+    											from.x, from.y, to.z);
+    			break;
+    		case "west":
+    			coords = new Quad(	  from.x, to.y, to.z,
+    										  from.x, to.y, from.z, 
+    			 							  from.x, from.y, from.z, 
+    			 							  from.x, from.y, to.z);
+    			break;
+    		case "up":
+    			coords = new Quad(	from.x, to.y, to.z,
+						  					to.x, to.y, to.z, 
+						  					to.x, to.y, from.z, 
+						  					from.x, to.y, from.z);
+    			break;
+    		case "down":
+    			coords = new Quad(	from.x, from.y, to.z,
+    			 							to.x, from.y, to.z, 
+    			 							to.x, from.y, from.z, 
+    			 							from.x, from.y, from.z);
+    		
+    			break;
+         
+    		}
+    	
+    	return coords;	
 	}
 	
-	public JSONObject StatesToObject(String states) throws ParseException {
-		
-		//if (states.equals("")) { System.out.println("fail"); return null; }
-		
-		//Convert "x=a,y=b" to JSONObject {"x":"a","y":"b"}
-		JSONParser jsonParser = new JSONParser();
-		
-		//Parse states into JSONObject
-        String[] split = states.split(",");
-        JSONObject states_this = (JSONObject) jsonParser.parse("{}");
-        int i = 0;
-        do {
-        	//Convert array into jobject
-        	String[] statesplit = split[i].split("=");
-        	
-        	states_this.put((String) statesplit[0].replace("\"", ""), (String) statesplit[1].replace("\"", ""));
-        	i+=1;
-        	} while (i < split.length);
-		
-		return states_this;
-		}
 
 	
 }

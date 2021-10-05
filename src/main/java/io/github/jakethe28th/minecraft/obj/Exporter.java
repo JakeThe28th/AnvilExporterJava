@@ -1,6 +1,7 @@
 package io.github.jakethe28th.minecraft.obj;
 
-import mc2obj.WriteBlock;
+import io.github.jakethe28th.engine.graphics.gui.Sprite;
+import io.github.jakethe28th.minecraft.obj.WriteBlock;
 
 import net.querz.nbt.tag.*;
 import net.querz.nbt.io.*;
@@ -24,7 +25,7 @@ public class Exporter {
 	
 	public Exporter(String region_folder_path, String filename_) { 
 		
-	BlockWriter = new WriteBlock(filename_);
+	BlockWriter = new WriteBlock(filename_, new Sprite(512, 512));
 		
 	}
 	
@@ -70,7 +71,10 @@ public class Exporter {
 				} }
 			
 				String blockID = (String) SNBTUtil.toSNBT(blockState.get("Name"));
-				String BlockID_ = blockID.substring(blockID.indexOf(":")+1); //Remove namespace
+				String BlockID_ = blockID.split(":")[1];			 	//ID
+					   BlockID_ = BlockID_.substring(0,BlockID_.length()-1);
+				String namespace = blockID.split(":")[0].substring(1);	//Namespace
+
 				
 				if (BlockID_ != "air") { //Need to add a list of empty blocks later.
 				
@@ -108,7 +112,7 @@ public class Exporter {
 
 				//System.out.println(sides);
 				
-				if (sides > 0 ) BlockWriter.WriteFromBlockstate("assets\\minecraft\\blockstates\\" + BlockID_.substring(0,BlockID_.length()-1) + ".json", states_, x+(chunk_z*16), z+(i_sec*16), y+(chunk_x*16), culling); //ADD NAMESPACE HERE, CHOPP CHOPP
+				if (sides > 0 ) BlockWriter.WriteFromBlockstate("assets\\minecraft\\blockstates\\" + BlockID_ + ".json", states_, x+(chunk_z*16), z+(i_sec*16), y+(chunk_x*16), culling, namespace); //ADD NAMESPACE HERE, CHOPP CHOPP
 			
 				}
 				

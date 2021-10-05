@@ -24,7 +24,7 @@ dependencies {
    implementation 'log4j:log4j:1.2.16'
    implementation 'com.github.Querz:NBT:6.1'
    implementation files('ext/json-simple-1.1.jar')
-   implementation files('ext/TruceEngine-0.0.jar')
+   implementation files('ext/TruceEngine-0.1.jar')
    
    
    
