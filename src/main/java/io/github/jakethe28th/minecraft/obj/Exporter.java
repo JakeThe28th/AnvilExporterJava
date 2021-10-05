@@ -1,5 +1,6 @@
 package io.github.jakethe28th.minecraft.obj;
 
+import io.github.jakethe28th.engine.graphics.Mesh;
 import io.github.jakethe28th.engine.graphics.gui.Sprite;
 import io.github.jakethe28th.minecraft.obj.WriteBlock;
 
@@ -22,6 +23,8 @@ public class Exporter {
 
 	JSONParser jsonParser = new JSONParser();
 	WriteBlock BlockWriter;
+	
+	public Mesh myMesh;
 	
 	public Exporter(String region_folder_path, String filename_) { 
 		
@@ -133,5 +136,6 @@ public class Exporter {
 	
 	public void end() {
 		BlockWriter.end();
+		this.myMesh = BlockWriter.myMesh;
 		}
 }

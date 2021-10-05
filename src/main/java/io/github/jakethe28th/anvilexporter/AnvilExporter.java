@@ -9,6 +9,7 @@ import java.util.Random;
 import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.lwjgl.glfw.GLFW;
 
 import io.github.jakethe28th.engine.EngineObject;
 import io.github.jakethe28th.engine.graphics.Camera;
@@ -17,6 +18,7 @@ import io.github.jakethe28th.engine.graphics.Renderer;
 import io.github.jakethe28th.engine.graphics.Texture;
 import io.github.jakethe28th.engine.graphics.Vertex;
 import io.github.jakethe28th.engine.graphics.Window;
+import io.github.jakethe28th.engine.graphics.gui.Sprite;
 import io.github.jakethe28th.engine.math.Vector2f;
 import io.github.jakethe28th.engine.math.Vector3f;
 
@@ -37,33 +39,56 @@ public class AnvilExporter {
 	public static Random ran = new Random();
 	
 	public static void Main() throws IOException, ParseException {
-		  
-		  //JSONObject temp;
-		  WriteBlock mod = new  WriteBlock("brewing_stand", null);
-		  //mod.WriteModel("assets\\\\minecraft\\\\models\\\\block\\\\acacia_fence_gate_wall_open.json", 182, 2, 4, 0, 0, 0, null);
+		
+		try {
+			
+		boolean endProgram = false;
+		
+		Window window = new Window(600, 600, "AnvilExporter");
+		Renderer render = new Renderer();
+		Texture texture;
+		
+		texture = new Texture("assets/engine/textures/jesse.png");
+		
+		Mesh myMesh = new Mesh(new Vertex[] {
+				new Vertex(new Vector3f(-0.5f, -0.5f,  0.0f), new Vector3f(1, 0.5f, 1), new Vector2f(0.0f, 0.0f)),
+				new Vertex(new Vector3f(-0.5f, 0.5f,  0.0f), new Vector3f(0.2f, 0.7f, 1), new Vector2f(0, 1.0f)),
+				new Vertex(new Vector3f(0.5f, -0.5f,  0.0f), new Vector3f(1, 1, 0.2f), new Vector2f(1.0f, 0.0f)),
+				new Vertex(new Vector3f(0.5f, 0.5f,  0.0f), new Vector3f(1, 0.5f, 1), new Vector2f(1.0f, 1.0f)),
+				new Vertex(new Vector3f(-0.5f, 0.5f,  0.0f), new Vector3f(0.2f, 0.7f, 1), new Vector2f(0, 1.0f)),
+				new Vertex(new Vector3f(0.5f, -0.5f,  0.0f), new Vector3f(1, 1, 0.2f), new Vector2f(1.0f, 0.0f))
+							}, new int[] {
+									 // Front face
+								    0, 1, 2, 3, 4, 5
+								}, texture);
+								
+		
+		EngineObject myObject = new EngineObject(myMesh);
+		myObject.setPosition(0, 0, -2);
+		myObject.setScale(1, 1, 1);
+		
+		
+		Camera camera = new Camera();
+		
 
-		  JSONParser jsonParser = new JSONParser();
-		  String states = "facing=east,half=bottom,open=false";
-		  JSONObject culling = (JSONObject) jsonParser.parse("{\"east\":1,\"west\":1,\"north\":1,\"south\":1}");
+		//window ^
 		  
-		  //System.out.println(states);
-		  //System.out.println(culling);
+		//JSONObject temp;
+		WriteBlock mod = new  WriteBlock("brewing_stand", new Sprite(16, 16));
+
+		JSONParser jsonParser = new JSONParser();
+		String states = "facing=east,half=bottom,open=false";
+		JSONObject culling = (JSONObject) jsonParser.parse("{\"east\":1,\"west\":1,\"north\":1,\"south\":1}");
 		  
-		  mod.WriteFromBlockstate("assets\\minecraft\\blockstates\\birch_trapdoor.json", states, 0, 0, 0, culling, "minecraft");
-		  
-		  //mod.end();
-		  
-		  System.out.println(v_count);
-	    
-		  
-		//  /*
-		  
+		mod.WriteFromBlockstate("assets\\minecraft\\blockstates\\birch_trapdoor.json", states, 0, 0, 0, culling, "minecraft");
+
+		
 		MCAFile mcaFile = null;
 		mcaFile = MCAUtil.read("region_testing\\r.0.0.mca");
 		
 		//Chunk chunk = mcaFile.getChunk(0, 0);
 
-		Exporter exporter = new Exporter("", "export");
+		/*Exporter exporter = new Exporter("", "export");
 		
 
 		
@@ -85,8 +110,6 @@ public class AnvilExporter {
 			String mcafilename = "r."+rx+"."+rz+".mca";
 			
 			mcaFile = MCAUtil.read("region_testing\\" + mcafilename);
-			System.out.println(mcafilename);
-			System.out.println(expx + " . " + expz);
 			exporter.exportChunk(mcaFile.getChunk(expx, expz), 0, expx, expz);
 			
 			expx += 1;
@@ -97,69 +120,72 @@ public class AnvilExporter {
 
 		
 		exporter.end();
+		*/
 	    mod.end();
 	    
-	    try {
-			program();
+	    Mesh exporterMesh = mod.myMesh;
+	    
+	   // Mesh exporterMesh = exporter.myMesh;
+	    
+	    	//window v
+	    
+		exporterMesh.cleanUp();
+		exporterMesh.buildMesh();
+	    
+	    EngineObject exporterObject = new EngineObject(exporterMesh);
+		//exporterObject.setScaleMode(EngineObject.SCALE_MODE_SKEW);
+		exporterObject.setPosition(0, -4, 5);
+		exporterObject.setScale(1, 1, 1);
+		
+	
+			
+			while (!endProgram) {
+				
+				
+				
+				//if this.current_region != null drawPreview2D(cam_x, cam_y, cam_zoom)
+				
+				render.render(window, camera, new EngineObject[] { myObject, exporterObject });
+				//render.renderGui(window, new EngineObject[] { exporterObject, });
+				
+				myObject.setRotation(myObject.getRotation().x+1, myObject.getRotation().y+1, myObject.getRotation().z+1);
+				exporterObject.setRotation(exporterObject.getRotation().x+1, exporterObject.getRotation().y+1, exporterObject.getRotation().z+1);
+				window.loop();
+
+				if (window.mouseButton(Window.MB_LEFT)) {
+					window.mouseInput();
+					float moveX = (window.getMouseDisplacement().x/5);
+					float moveY = (window.getMouseDisplacement().y/5);
+					
+					camera.setRotation((camera.getRotation().x) + moveX, (camera.getRotation().y) + moveY, 0);
+
+					window.setMousePos(window.getWidth()/2,window.getHeight()/2);
+					window.mouseInput();
+					}
+				
+				if (window.isKeyPressed(GLFW.GLFW_KEY_E)) {
+					exporterObject.setPosition(0, (float) (exporterObject.getPosition().y+.1), 5);
+					}
+				if (window.isKeyPressed(GLFW.GLFW_KEY_Q)) {
+					exporterObject.setPosition(0, (float) (exporterObject.getPosition().y-.1), 5);
+					}
+
+
+			
+				if (window.shouldClose()) endProgram = true;
+			}
+			window.end();
+			render.cleanup();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	  }
 	
-	public static void program() throws Exception {
-		boolean endProgram = false;
+	public static void program(Mesh exporterMesh) throws Exception {
 		
-		Window window = new Window(600, 600, "AnvilExporter");
-		Renderer render = new Renderer();
-		Texture texture = new Texture("assets/engine/textures/jesse.png");
 			
-		Mesh myMesh = new Mesh(new Vertex[] {
-				new Vertex(new Vector3f(-0.5f, -0.5f,  0.0f), new Vector3f(1, 0.5f, 1), new Vector2f(0.0f, 0.0f)),
-				new Vertex(new Vector3f(-0.5f, 0.5f,  0.0f), new Vector3f(0.2f, 0.7f, 1), new Vector2f(0, 1.0f)),
-				new Vertex(new Vector3f(0.5f, -0.5f,  0.0f), new Vector3f(1, 1, 0.2f), new Vector2f(1.0f, 0.0f)),
-				new Vertex(new Vector3f(0.5f, 0.5f,  0.0f), new Vector3f(1, 0.5f, 1), new Vector2f(1.0f, 1.0f)),
-				new Vertex(new Vector3f(-0.5f, 0.5f,  0.0f), new Vector3f(0.2f, 0.7f, 1), new Vector2f(0, 1.0f)),
-				new Vertex(new Vector3f(0.5f, -0.5f,  0.0f), new Vector3f(1, 1, 0.2f), new Vector2f(1.0f, 0.0f))
-							}, new int[] {
-									 // Front face
-								    0, 1, 2, 3, 4, 5
-								}, texture);
-								
 		
-		EngineObject myObject = new EngineObject(myMesh);
-		myObject.setPosition(0, 0, -2);
-		myObject.setScale(1, 1, 1);
-		
-		
-		Camera camera = new Camera();
-		
-		while (!endProgram) {
-			
-			//if this.current_region != null drawPreview2D(cam_x, cam_y, cam_zoom)
-			
-			render.render(window, camera, new EngineObject[] { myObject, });
-			render.renderGui(window, new EngineObject[] { });
-			
-			myObject.setRotation(myObject.getRotation().x+1, myObject.getRotation().y+1, myObject.getRotation().z+1);
-			window.loop();
-
-			if (window.mouseButton(Window.MB_LEFT)) {
-				window.mouseInput();
-				float moveX = (window.getMouseDisplacement().x/5);
-				float moveY = (window.getMouseDisplacement().y/5);
-				
-				camera.setRotation((camera.getRotation().x) + moveX, (camera.getRotation().y) + moveY, 0);
-
-				window.setMousePos(window.getWidth()/2,window.getHeight()/2);
-				window.mouseInput();
-				}
-
-		
-			if (window.shouldClose()) endProgram = true;
-		}
-		window.end();
-		render.cleanup();
 	}
 	
 	/*

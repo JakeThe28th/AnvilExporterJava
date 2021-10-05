@@ -20,7 +20,12 @@ import java.util.List;
 import java.math.*;
 
 import io.github.jakethe28th.anvilexporter.Utility;
+import io.github.jakethe28th.engine.graphics.Mesh;
+import io.github.jakethe28th.engine.graphics.Texture;
+import io.github.jakethe28th.engine.graphics.Vertex;
 import io.github.jakethe28th.engine.graphics.gui.Sprite;
+import io.github.jakethe28th.engine.math.Vector2f;
+import io.github.jakethe28th.engine.math.Vector3f;
 
 //delete quad somehow?
 
@@ -40,6 +45,7 @@ public class WriteBlock {
 	
 	public Random ran = new Random();
 	
+	public Mesh myMesh;
 	public void end() {
 		try {
 		objWriter.close();
@@ -47,6 +53,12 @@ public class WriteBlock {
 		if (texture_sheet != null) {
 			texture_sheet.save(filename + ".png");
 			texture_sheet.cleanup();
+			try {
+				this.myMesh.setTexture(new Texture(filename + ".png"));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			}
 		System.out.println("Closed MC2OBJ inst");
 		 	} catch (IOException e) {
@@ -65,6 +77,12 @@ public class WriteBlock {
 		
 		this.texture_sheet = texture_sheet;
 		this.texture_index = new HashMap<String, Integer>();
+		
+		this.myMesh = new Mesh(new Vertex[] {}, new int[] {}, null);	
+		
+		if (this.texture_sheet != null) {
+			
+			}
 		
 		try {
 		
@@ -329,6 +347,12 @@ public class WriteBlock {
     	    	uv_y1 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
     	    	uv_x2 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
     	    	uv_y2 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
+    	    	
+    	    	
+
+    	    	//error e
+    	    	//-Stairs are borked (appear in corner?)
+    	    	//-textures larger than 16x16px are borked (the tex coords for some reason)
     	    }
     	     
     	     uv_x1 /=tex_w;
@@ -336,8 +360,42 @@ public class WriteBlock {
     	     uv_x2 /=tex_w;
     	     uv_y2 /=tex_h;
     	     
+    	     this.myMesh.addVertices(new Vertex[] {
+     	    		new Vertex(new 	Vector3f((coords.x1.floatValue()/16)+x,
+     	    								 (coords.y1.floatValue()/16)+y,
+     	    								 (coords.z1.floatValue()/16)+z), 
+     	    								 new Vector3f(1, 1, 1), 
+     	    								 new Vector2f(uv_x1.floatValue(), uv_y2.floatValue())),
+     	    		
+     	    		new Vertex(new 	Vector3f((coords.x2.floatValue()/16)+x,
+     	    								 (coords.y2.floatValue()/16)+y,
+     	    								 (coords.z2.floatValue()/16)+z), 
+     	    								 new Vector3f(1, 1, 1), 
+     	    								 new Vector2f(uv_x2.floatValue(), uv_y2.floatValue())),
+     	    		
+     	    		new Vertex(new 	Vector3f((coords.x3.floatValue()/16)+x,
+     	    								 (coords.y3.floatValue()/16)+y,
+     	    								 (coords.z3.floatValue()/16)+z), 
+     	    								 new Vector3f(1, 1, 1), 
+     	    								 new Vector2f(uv_x2.floatValue(), uv_y1.floatValue())),
+     	    		
+     	    		new Vertex(new 	Vector3f((coords.x4.floatValue()/16)+x,
+     	    								 (coords.y4.floatValue()/16)+y,
+     	    								 (coords.z4.floatValue()/16)+z), 
+ 							 				 new Vector3f(1, 1, 1), 
+ 							 				 new Vector2f(uv_x1.floatValue(), uv_y1.floatValue())),
+     	    			
+     	    		}, new int[] {0, 1, 2, 0, 3, 2 });
+    	     
+    	     		System.out.println("X " + coords.x1 + " Y " + coords.y1 + " Z " + coords.z1);
+    	     		System.out.println("X " + coords.x2 + " Y " + coords.y2 + " Z " + coords.z2);
+    	     		System.out.println("X " + coords.x3 + " Y " + coords.y3 + " Z " + coords.z3);
+    	     		System.out.println("X " + coords.x4 + " Y " + coords.y4 + " Z " + coords.z4);
+    	     		System.out.println(face_name);
     	     //x1-y2;x2-y2;x2-y1;x1-y1;
+    	    
     	     if (!uvlock ) {
+    	    	 /*
     	     	switch (face_name) {
     	     		case "north":
     	     			objWriter.write("vt "+uv_x1+" "+uv_y2+" "+ "\n");
@@ -377,6 +435,11 @@ public class WriteBlock {
             			break;
                  
             		}
+            		*/
+    	     	objWriter.write("vt "+uv_x1+" "+uv_y2+" "+ "\n");
+	     		objWriter.write("vt "+uv_x2+" "+uv_y2+" "+ "\n");
+	     		objWriter.write("vt "+uv_x2+" "+uv_y1+" "+ "\n");
+	     		objWriter.write("vt "+uv_x1+" "+uv_y1+" "+ "\n");
     	     	} else {
     	     		//Faces for UVlock
     	     		
@@ -422,6 +485,8 @@ public class WriteBlock {
     	        			if (lock_v2 != 0) {  lock_v2 = (lock_v2/tex_h); }
     	        			if (lock_v3 != 0) {  lock_v3 = (lock_v3/tex_h); }
     	        			if (lock_v4 != 0) {  lock_v4 = (lock_v4/tex_h); }
+    	        			
+    	        			
     	        			
     	        			objWriter.write("vt "+lock_u1+" "+lock_v1+" "+ "\n");
     	        			objWriter.write("vt "+lock_u2+" "+lock_v2+" "+ "\n");
