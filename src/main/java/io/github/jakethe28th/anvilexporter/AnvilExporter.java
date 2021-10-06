@@ -88,7 +88,7 @@ public class AnvilExporter {
 		
 		//Chunk chunk = mcaFile.getChunk(0, 0);
 
-		/*Exporter exporter = new Exporter("", "export");
+		Exporter exporter = new Exporter("", "export");
 		
 
 		
@@ -98,8 +98,8 @@ public class AnvilExporter {
 		//exporter.exportChunk(mcaFile.getChunk(1, 0), 0, 1, 0);
 		
 		
-		int expx = -2;
-		int expz = -2;
+		int expx = -0;
+		int expz = -0;
 		int i = 0;
 		while (i < (1*1)) {
 			
@@ -120,38 +120,42 @@ public class AnvilExporter {
 
 		
 		exporter.end();
-		*/
 	    mod.end();
 	    
-	    Mesh exporterMesh = mod.myMesh;
+	    Mesh exporterMesh = exporter.myMesh;
 	    
 	   // Mesh exporterMesh = exporter.myMesh;
 	    
 	    	//window v
 	    
 		exporterMesh.cleanUp();
+		exporterMesh.flip();
+		//exporterMesh.offset(0, 0, 0);
 		exporterMesh.buildMesh();
 	    
 	    EngineObject exporterObject = new EngineObject(exporterMesh);
-		//exporterObject.setScaleMode(EngineObject.SCALE_MODE_SKEW);
-		exporterObject.setPosition(0, -4, 5);
-		exporterObject.setScale(1, 1, 1);
+		exporterObject.setScaleMode(EngineObject.SCALE_MODE_SKEW);
+		exporterObject.setPosition(300, 900, 0);
+		exporterObject.setScale(10, 10, 0.000001f);
+		exporterObject.setOrigin(31, 0, 31);
+		exporterMesh.setTexture(new Texture("export.png"));
 		
-	
+		exporterMesh.minMax();
+		System.out.println("Min X " + exporterMesh.min_xyz.x + " Y " + exporterMesh.min_xyz.y + " Z " + exporterMesh.min_xyz.z);
+		System.out.println("Max X " + exporterMesh.max_xyz.x + " Y " + exporterMesh.max_xyz.y + " Z " + exporterMesh.max_xyz.z);
 			
 			while (!endProgram) {
-				
-				
-				
+
 				//if this.current_region != null drawPreview2D(cam_x, cam_y, cam_zoom)
 				
-				render.render(window, camera, new EngineObject[] { myObject, exporterObject });
-				//render.renderGui(window, new EngineObject[] { exporterObject, });
+				render.render(window, camera, new EngineObject[] { myObject, });
+				render.renderGui(window, new EngineObject[] { exporterObject, });
 				
 				myObject.setRotation(myObject.getRotation().x+1, myObject.getRotation().y+1, myObject.getRotation().z+1);
-				exporterObject.setRotation(exporterObject.getRotation().x+1, exporterObject.getRotation().y+1, exporterObject.getRotation().z+1);
+				exporterObject.setRotation(45, exporterObject.getRotation().y+1, 0);
 				window.loop();
 
+				boolean flipping = false;
 				if (window.mouseButton(Window.MB_LEFT)) {
 					window.mouseInput();
 					float moveX = (window.getMouseDisplacement().x/5);
@@ -164,15 +168,39 @@ public class AnvilExporter {
 					}
 				
 				if (window.isKeyPressed(GLFW.GLFW_KEY_E)) {
-					exporterObject.setPosition(0, (float) (exporterObject.getPosition().y+.1), 5);
+					exporterObject.setPosition(exporterObject.getPosition().x, (float) (exporterObject.getPosition().y+1), exporterObject.getPosition().z);
 					}
 				if (window.isKeyPressed(GLFW.GLFW_KEY_Q)) {
-					exporterObject.setPosition(0, (float) (exporterObject.getPosition().y-.1), 5);
+					exporterObject.setPosition(exporterObject.getPosition().x, (float) (exporterObject.getPosition().y-1), exporterObject.getPosition().z);
+					}
+				
+				if (window.isKeyPressed(GLFW.GLFW_KEY_A)) {
+					exporterObject.setPosition(exporterObject.getPosition().x-1, (float) (exporterObject.getPosition().y), exporterObject.getPosition().z);
+					}
+				if (window.isKeyPressed(GLFW.GLFW_KEY_D)) {
+					exporterObject.setPosition(exporterObject.getPosition().x+1, (float) (exporterObject.getPosition().y), exporterObject.getPosition().z);
+					}
+				
+				if (window.isKeyPressed(GLFW.GLFW_KEY_SPACE) && !flipping) {
+					exporterMesh.flip();
+					exporterMesh.buildMesh();
+					flipping = true;
+					exporterMesh.setTexture(new Texture("export.png"));
+					} else flipping = false;
+
+				if (window.isKeyPressed(GLFW.GLFW_KEY_W)) {
+					exporterObject.setScale(exporterObject.getScale().x+1, (float) (exporterObject.getScale().y+1), exporterObject.getScale().z);
+					}
+				
+				if (window.isKeyPressed(GLFW.GLFW_KEY_S)) {
+					exporterObject.setScale(exporterObject.getScale().x-1, (float) (exporterObject.getScale().y-1), exporterObject.getScale().z);
 					}
 
-
+				
 			
 				if (window.shouldClose()) endProgram = true;
+				
+				//System.out.println("x" + exporterObject.getPosition().x+1 + "y" +  (float) (exporterObject.getPosition().y));
 			}
 			window.end();
 			render.cleanup();

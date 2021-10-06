@@ -360,38 +360,46 @@ public class WriteBlock {
     	     uv_x2 /=tex_w;
     	     uv_y2 /=tex_h;
     	     
+    	     //System.out.println("uv_x1 " + uv_x1.floatValue() + "uv_x2 " + uv_x2.floatValue());
+    	     //System.out.println("uv_y1 " + uv_y1.floatValue() + "uv_y2 " + uv_y2.floatValue());
+    	     //System.out.println("w " + tex_w + "h " + tex_h);
+    	     
+    	     int vc = myMesh.getVertices().length;
+    	     
     	     this.myMesh.addVertices(new Vertex[] {
      	    		new Vertex(new 	Vector3f((coords.x1.floatValue()/16)+x,
      	    								 (coords.y1.floatValue()/16)+y,
      	    								 (coords.z1.floatValue()/16)+z), 
      	    								 new Vector3f(1, 1, 1), 
-     	    								 new Vector2f(uv_x1.floatValue(), uv_y2.floatValue())),
+     	    								 new Vector2f(uv_x1.floatValue(), uv_y2.floatValue()*-1)),
      	    		
      	    		new Vertex(new 	Vector3f((coords.x2.floatValue()/16)+x,
      	    								 (coords.y2.floatValue()/16)+y,
      	    								 (coords.z2.floatValue()/16)+z), 
      	    								 new Vector3f(1, 1, 1), 
-     	    								 new Vector2f(uv_x2.floatValue(), uv_y2.floatValue())),
+     	    								 new Vector2f(uv_x2.floatValue(), uv_y2.floatValue()*-1)),
      	    		
      	    		new Vertex(new 	Vector3f((coords.x3.floatValue()/16)+x,
      	    								 (coords.y3.floatValue()/16)+y,
      	    								 (coords.z3.floatValue()/16)+z), 
      	    								 new Vector3f(1, 1, 1), 
-     	    								 new Vector2f(uv_x2.floatValue(), uv_y1.floatValue())),
+     	    								 new Vector2f(uv_x2.floatValue(), uv_y1.floatValue()*-1)),
      	    		
      	    		new Vertex(new 	Vector3f((coords.x4.floatValue()/16)+x,
      	    								 (coords.y4.floatValue()/16)+y,
      	    								 (coords.z4.floatValue()/16)+z), 
  							 				 new Vector3f(1, 1, 1), 
- 							 				 new Vector2f(uv_x1.floatValue(), uv_y1.floatValue())),
+ 							 				 new Vector2f(uv_x1.floatValue(), uv_y1.floatValue()*-1)),
      	    			
-     	    		}, new int[] {0, 1, 2, 0, 3, 2 });
-    	     
+     	    		}, new int[] {vc+0, vc+1, vc+2, vc+0, vc+3, vc+2 });
+    	     /*
     	     		System.out.println("X " + coords.x1 + " Y " + coords.y1 + " Z " + coords.z1);
     	     		System.out.println("X " + coords.x2 + " Y " + coords.y2 + " Z " + coords.z2);
     	     		System.out.println("X " + coords.x3 + " Y " + coords.y3 + " Z " + coords.z3);
     	     		System.out.println("X " + coords.x4 + " Y " + coords.y4 + " Z " + coords.z4);
     	     		System.out.println(face_name);
+    	     		System.out.println(vc);
+    	     */
     	     //x1-y2;x2-y2;x2-y1;x1-y1;
     	    
     	     if (!uvlock ) {
