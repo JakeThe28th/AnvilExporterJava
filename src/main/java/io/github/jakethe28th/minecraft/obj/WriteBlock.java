@@ -183,7 +183,7 @@ public class WriteBlock {
 	String parent = (String) model.get("parent");
 	do {
 		if (parent != null) {
-		String parent_path = FileHierarchy("assets\\minecraft\\models\\" + parent.substring(parent.indexOf(":")+1) + ".json");
+		String parent_path = FileHierarchy("assets\\" + namespace + "\\models\\" + parent.substring(parent.indexOf(":")+1) + ".json");
 		if (parent_path == null) System.out.println("Parent file does not exist."); 
 		
 		//ADD NAMESPACE HERE. currently just chops off minecraft:
@@ -608,6 +608,8 @@ public class WriteBlock {
 		if (uvlock_ == null) uvlock_ = false;
 		Boolean uvlock = (Boolean) uvlock_;
 		
+		//System.out.println(states);
+		//System.out.println(model_name);
 		WriteModel("assets\\" + namespace + "\\models\\" + model_name.substring(model_name.indexOf(":")+1).replace('/', '\\') + ".json", x,y,z, xr, yr, zr, Culling, uvlock, namespace); 
 		
 		}

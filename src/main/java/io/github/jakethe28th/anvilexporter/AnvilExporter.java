@@ -103,9 +103,9 @@ public class AnvilExporter {
 		
 		//Chunk chunk = mcaFile.getChunk(0, 0);
 
+		
 		Exporter exporter = new Exporter("", "export");
 		
-
 		
 		//exporter.exportChunk(mcaFile.getChunk(0, 0), 0, 0, 0);
 		//exporter.exportChunk(mcaFile.getChunk(0, 1), 0, 0, 1);
@@ -113,8 +113,10 @@ public class AnvilExporter {
 		//exporter.exportChunk(mcaFile.getChunk(1, 0), 0, 1, 0);
 		
 		
-		int expx = -2;
-		int expz = -2;
+		long cTime = System.nanoTime();
+		
+		int expx = -4;
+		int expz = -4;
 		int i = 0;
 		while (i < (4*4)) {
 			
@@ -134,9 +136,12 @@ public class AnvilExporter {
 			exporter.exportChunk(mcaFile.getChunk(expx, expz), 0, expx, expz);
 			
 			expx += 1;
-			if (expx > 2) { expx = 0; expz+=1; }
+			if (expx > 4) { expx = 0; expz+=1; }
 			i+=1;
 		}
+		
+		long cTime2 = System.nanoTime();
+		System.out.println("Time (seconds): " + ((cTime2 - cTime)/1000000000));
 		
 
 		

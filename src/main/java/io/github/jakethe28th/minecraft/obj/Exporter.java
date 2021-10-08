@@ -87,7 +87,7 @@ public class Exporter {
 				String namespace = blockID.split(":")[0].substring(1);	//Namespace
 
 				
-				if (BlockID_ != "air") { //Need to add a list of empty blocks later.
+				if (!BlockID_.equals("air")) { //Need to add a list of empty blocks later.
 				
 				HashMap<String,Boolean> culling = new HashMap<String,Boolean>();
 				String BiD_temp;
