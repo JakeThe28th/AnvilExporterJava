@@ -3,6 +3,7 @@ package io.github.jakethe28th.anvilexporter;
 import java.io.File;  // Import the File class
 import java.io.FileReader;
 import java.io.IOException;  // Import the IOException class to handle errors
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -82,8 +83,18 @@ public class AnvilExporter {
 
 		JSONParser jsonParser = new JSONParser();
 		String states = "facing=east,half=bottom,open=false";
-		JSONObject culling = (JSONObject) jsonParser.parse("{\"east\":1,\"west\":1,\"north\":1,\"south\":1}");
-		  
+		//JSONObject culling = (JSONObject) jsonParser.parse("{\"east\":1,\"west\":1,\"north\":1,\"south\":1}");
+		 
+		HashMap<String,Boolean>  culling = new HashMap<String,Boolean>();
+		culling.put("north", true);
+		culling.put("south", true);
+		
+		culling.put("east", true);
+		culling.put("west", true);
+		culling.put("up", true);
+		culling.put("down", true);
+		
+		
 		mod.WriteFromBlockstate("assets\\minecraft\\blockstates\\birch_trapdoor.json", states, 0, 0, 0, culling, "minecraft");
 
 		
@@ -102,8 +113,8 @@ public class AnvilExporter {
 		//exporter.exportChunk(mcaFile.getChunk(1, 0), 0, 1, 0);
 		
 		
-		int expx = -1;
-		int expz = -1;
+		int expx = -2;
+		int expz = -2;
 		int i = 0;
 		while (i < (4*4)) {
 			

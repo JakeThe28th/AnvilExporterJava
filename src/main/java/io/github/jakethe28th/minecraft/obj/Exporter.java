@@ -8,6 +8,7 @@ import net.querz.nbt.tag.*;
 import net.querz.nbt.io.*;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import org.json.simple.JSONObject;
@@ -42,6 +43,13 @@ public class Exporter {
 		if (block_id.equals("minecraft:grass")) return true;
 		if (block_id.equals("minecraft:tall_grass")) return true;
 		if (block_id.equals("minecraft:glass")) return true;
+		if (block_id.equals("minecraft:oak_sign")) return true;
+		if (block_id.equals("minecraft:end_gateway")) return true;
+		if (block_id.equals("minecraft:glass_pane")) return true;
+		if (block_id.equals("minecraft:chest")) return true;
+		if (block_id.equals("minecraft:anvil")) return true;
+		if (block_id.equals("minecraft:lantern")) return true;
+		if (block_id.equals("minecraft:command_block")) return true;
 		//System.out.println(block_id + " false");
 		
 		return false;
@@ -81,14 +89,14 @@ public class Exporter {
 				
 				if (BlockID_ != "air") { //Need to add a list of empty blocks later.
 				
-				JSONObject culling = (JSONObject) jsonParser.parse("{\"east\":1,\"west\":1,\"north\":1,\"south\":1}");
+				HashMap<String,Boolean> culling = new HashMap<String,Boolean>();
 				String BiD_temp;
 				
 				
 				//fullblock culling
 				int sides = 6;
 				
-					CompoundTag blockStateTemp = section.getBlockStateAt(y, z, x+1);
+					CompoundTag blockStateTemp = section.getBlockStateAt(y, z, x-1);
 					BiD_temp = (String) SNBTUtil.toSNBT(blockStateTemp.get("Name"));
 					if (!isTransparent(BiD_temp)) sides -= 1;
 				culling.put("north", isTransparent(BiD_temp));
@@ -96,7 +104,7 @@ public class Exporter {
 					BiD_temp = (String) SNBTUtil.toSNBT(blockStateTemp.get("Name"));
 					if (!isTransparent(BiD_temp)) sides -= 1;
 				culling.put("east", isTransparent(BiD_temp));
-					blockStateTemp = section.getBlockStateAt(y, z, x-1);
+					blockStateTemp = section.getBlockStateAt(y, z, x+1);
 					BiD_temp = (String) SNBTUtil.toSNBT(blockStateTemp.get("Name"));
 					if (!isTransparent(BiD_temp)) sides -= 1;
 				culling.put("south", isTransparent(BiD_temp));
@@ -106,9 +114,11 @@ public class Exporter {
 				culling.put("west", isTransparent(BiD_temp));
 					blockStateTemp = section.getBlockStateAt(y, z+1, x);
 					BiD_temp = (String) SNBTUtil.toSNBT(blockStateTemp.get("Name"));
+					if (z+1 < 0) BiD_temp = "minecraft:air";
 					if (!isTransparent(BiD_temp)) sides -= 1;
 				culling.put("up", isTransparent(BiD_temp));
 					blockStateTemp = section.getBlockStateAt(y, z-1, x);
+					if (z-1 < 0) BiD_temp = "minecraft:air";
 					BiD_temp = (String) SNBTUtil.toSNBT(blockStateTemp.get("Name"));
 					if (!isTransparent(BiD_temp)) sides -= 1;
 				culling.put("down", isTransparent(BiD_temp));

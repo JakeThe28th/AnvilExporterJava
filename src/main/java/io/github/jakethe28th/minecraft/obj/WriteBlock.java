@@ -163,7 +163,7 @@ public class WriteBlock {
 
 	
 	
-	public int WriteModel(String path, int x, int y, int z, Double rot_x, Double rot_y, Double rot_z, JSONObject Culling, Boolean uvlock, String namespace) {
+	public int WriteModel(String path, int x, int y, int z, Double rot_x, Double rot_y, Double rot_z, HashMap<String, Boolean> Culling, Boolean uvlock, String namespace) {
 	this.namespace = namespace;
 		
 	path = FileHierarchy(path);
@@ -250,7 +250,7 @@ public class WriteBlock {
         	JSONObject face = (JSONObject) faces.get(face_name);
         	Quad coords = null;
         	
-        	if (face != null) {
+        	if (face != null && Culling.get(face_name)) {
         		
         	//Get texture ID In model
         	String tex = ((String) face.get("texture")).substring(1);
@@ -536,7 +536,7 @@ public class WriteBlock {
 	}
 
 	
-	public int WriteFromBlockstate(String path, String states, int x, int y, int z, JSONObject Culling, String namespace) throws IOException, ParseException {
+	public int WriteFromBlockstate(String path, String states, int x, int y, int z, HashMap<String, Boolean> Culling, String namespace) throws IOException, ParseException {
 		this.namespace = namespace;
 		//System.out.println(" namespace=" + path);
 		//path = "data\\resourcepack\\" + path;
