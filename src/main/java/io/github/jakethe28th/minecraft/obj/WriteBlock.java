@@ -283,9 +283,13 @@ public class WriteBlock {
         		
         		String texture_filename = FileHierarchy("assets/" + namespace + "/textures/" + tex3 + ".png");//.replace("\"", "/");
         		//System.out.println(" Adding sprite " + texture_filename);
-        		if (texture_filename !=null && texture_index.get(tex2) == null ) 
-        			texture_index.put(tex2, texture_sheet.addSprite(texture_filename));
+        		if (texture_filename !=null && texture_index.get(tex2) == null ) {
+        			File f = new File(texture_filename + ".mcmeta");
+        			if (!f.exists()) {
+        				texture_index.put(tex2, texture_sheet.addSprite(texture_filename));
+        				} else { texture_index.put(tex2, texture_sheet.addSprite("data/minecraft/assets/" + namespace + "/textures/block/stone.png")); }
         		}
+        	}
 
         	if ( texture_sheet == null ) {
         		

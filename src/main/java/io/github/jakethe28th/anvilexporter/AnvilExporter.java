@@ -40,6 +40,10 @@ public class AnvilExporter {
 	
 	public static void Main() throws IOException, ParseException {
 		
+		 System.out.println("Free memory (bytes): " + 
+				  (Runtime.getRuntime().maxMemory() - 
+		 				((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory()))));
+		
 		try {
 			
 		boolean endProgram = false;
@@ -98,16 +102,22 @@ public class AnvilExporter {
 		//exporter.exportChunk(mcaFile.getChunk(1, 0), 0, 1, 0);
 		
 		
-		int expx = -0;
-		int expz = -0;
+		int expx = -1;
+		int expz = -1;
 		int i = 0;
-		while (i < (1*1)) {
+		while (i < (4*4)) {
 			
 			int rx = (int) Math.floor((double) expx/32);
 			int rz = (int) Math.floor((double) expz/32);
 			//if (expx <0) rx = (int) Math.ceil(expx/32);
 			//if (expz <0) rz = (int) Math.ceil(expx/32);
 			String mcafilename = "r."+rx+"."+rz+".mca";
+			
+			long fm = (Runtime.getRuntime().maxMemory() - 
+	 				 (Runtime.getRuntime().totalMemory()-
+	 						Runtime.getRuntime().freeMemory()))/1000000;
+			
+			System.out.println("Free memory (MEGA - bytes): " + fm);
 			
 			mcaFile = MCAUtil.read("region_testing\\" + mcafilename);
 			exporter.exportChunk(mcaFile.getChunk(expx, expz), 0, expx, expz);
