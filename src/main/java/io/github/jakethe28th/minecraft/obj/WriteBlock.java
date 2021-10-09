@@ -282,8 +282,8 @@ public class WriteBlock {
         		//Add texture to sheet
         		
         		String texture_filename = FileHierarchy("assets/" + namespace + "/textures/" + tex3 + ".png");//.replace("\"", "/");
-        		//System.out.println(" Adding sprite " + texture_filename);
         		if (texture_filename !=null && texture_index.get(tex2) == null ) {
+        			System.out.println(" Adding sprite " + texture_filename);
         			File f = new File(texture_filename + ".mcmeta");
         			if (!f.exists()) {
         				texture_index.put(tex2, texture_sheet.addSprite(texture_filename));
@@ -538,7 +538,7 @@ public class WriteBlock {
 	
 	public int WriteFromBlockstate(String path, String states, int x, int y, int z, HashMap<String, Boolean> Culling, String namespace) throws IOException, ParseException {
 		this.namespace = namespace;
-		//System.out.println(" namespace=" + path);
+		//System.out.println(" path= " + path + " state= " + states);
 		//path = "data\\resourcepack\\" + path;
 		
 		//File tmpDir = new File(path);
@@ -571,9 +571,9 @@ public class WriteBlock {
             if (!key.isEmpty()) {
             JSONObject states_this = Utility.StatesToObject(key); 
             	
-	    	JSONObject statestoobj = null;
+	    	//JSONObject statestoobj = null;
             //If the states match
-	    	statestoobj = Utility.StatesToObject((String) states);
+            JSONObject statestoobj = Utility.StatesToObject((String) states);
             if (Utility.JSObjectMatches(statestoobj,states_this)) { 
             	state_obj = variants.get(key); 
             	break;
@@ -610,6 +610,8 @@ public class WriteBlock {
 		
 		//System.out.println(states);
 		//System.out.println(model_name);
+		
+		//System.out.println(state);
 		WriteModel("assets\\" + namespace + "\\models\\" + model_name.substring(model_name.indexOf(":")+1).replace('/', '\\') + ".json", x,y,z, xr, yr, zr, Culling, uvlock, namespace); 
 		
 		}

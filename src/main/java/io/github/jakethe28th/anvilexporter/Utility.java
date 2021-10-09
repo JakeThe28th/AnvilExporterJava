@@ -25,6 +25,7 @@ public class Utility {
 	    		if (!tar.equals(sou)) return false;
 	    		}
             }
+		
 		 return true; // yes
 	}
 	
@@ -45,8 +46,7 @@ public class Utility {
         	String[] statesplit = split[i].split("=");
         	
         	states_this.put((String) statesplit[0].replace("\"", ""), (String) statesplit[1].replace("\"", ""));
-        	i+=1;
-        	} //while (i < split.length);
+        	}
 		
 		return states_this;
 		}

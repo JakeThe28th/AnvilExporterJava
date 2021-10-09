@@ -136,7 +136,7 @@ public class AnvilExporter {
 			exporter.exportChunk(mcaFile.getChunk(expx, expz), 0, expx, expz);
 			
 			expx += 1;
-			if (expx > 4) { expx = 0; expz+=1; }
+			if (expx > 0) { expx = -4; expz+=1; }
 			i+=1;
 		}
 		
@@ -156,7 +156,7 @@ public class AnvilExporter {
 	    
 		exporterMesh.cleanUp();
 		exporterMesh.flip();
-		//exporterMesh.offset(0, 0, 0);
+	//	exporterMesh.offset(-exporterMesh.min_xyz.x, 0, exporterMesh.min_xyz.z);
 		exporterMesh.buildMesh();
 	    
 	    EngineObject exporterObject = new EngineObject(exporterMesh);
@@ -164,6 +164,7 @@ public class AnvilExporter {
 		exporterObject.setPosition(300, 900, 0);
 		exporterObject.setScale(10, 10, 0.000001f);
 		exporterObject.setOrigin(31, 0, 31);
+		exporterObject.setRotation(45, 0, 0);
 		exporterMesh.setTexture(new Texture("export.png"));
 		
 		exporterMesh.minMax();
@@ -178,7 +179,6 @@ public class AnvilExporter {
 				render.renderGui(window, new EngineObject[] { exporterObject, });
 				
 				myObject.setRotation(myObject.getRotation().x+1, myObject.getRotation().y+1, myObject.getRotation().z+1);
-				exporterObject.setRotation(45, exporterObject.getRotation().y+1, 0);
 				window.loop();
 
 				boolean flipping = false;
@@ -221,6 +221,25 @@ public class AnvilExporter {
 				if (window.isKeyPressed(GLFW.GLFW_KEY_S)) {
 					exporterObject.setScale(exporterObject.getScale().x-1, (float) (exporterObject.getScale().y-1), exporterObject.getScale().z);
 					}
+				
+				if (window.isKeyPressed(GLFW.GLFW_KEY_Z)) {
+					exporterObject.setRotation(exporterObject.getRotation().x, exporterObject.getRotation().y+5, 0);
+					}
+				
+				if (window.isKeyPressed(GLFW.GLFW_KEY_X)) {
+					exporterObject.setRotation(exporterObject.getRotation().x, exporterObject.getRotation().y-5, 0);
+					}
+				
+				if (window.isKeyPressed(GLFW.GLFW_KEY_C)) {
+					exporterObject.setRotation(exporterObject.getRotation().x-5, exporterObject.getRotation().y, 0);
+					}
+				
+				if (window.isKeyPressed(GLFW.GLFW_KEY_V)) {
+					exporterObject.setRotation(exporterObject.getRotation().x+5, exporterObject.getRotation().y, 0);
+					}
+				
+				
+				
 
 				
 			
