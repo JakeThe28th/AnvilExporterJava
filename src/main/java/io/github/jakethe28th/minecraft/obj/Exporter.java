@@ -50,6 +50,10 @@ public class Exporter {
 		if (block_id.equals("minecraft:anvil")) return true;
 		if (block_id.equals("minecraft:lantern")) return true;
 		if (block_id.equals("minecraft:command_block")) return true;
+		if (block_id.equals("minecraft:note_block")) return true;
+		if (block_id.equals("minecraft:tripwire")) return true;
+		if (block_id.equals("minecraft:string")) return true;
+		if (block_id.equals("minecraft:cauldron")) return true;
 		//System.out.println(block_id + " false");
 		
 		return false;

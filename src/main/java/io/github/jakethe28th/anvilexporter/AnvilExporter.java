@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;  // Import the IOException class to handle errors
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 
 import org.json.simple.*;
@@ -118,7 +119,8 @@ public class AnvilExporter {
 		int expx = -4;
 		int expz = -4;
 		int i = 0;
-		while (i < (4*4)) {
+		/*
+		while (i < (1*1)) {
 			
 			int rx = (int) Math.floor((double) expx/32);
 			int rz = (int) Math.floor((double) expz/32);
@@ -142,14 +144,39 @@ public class AnvilExporter {
 		
 		long cTime2 = System.nanoTime();
 		System.out.println("Time (seconds): " + ((cTime2 - cTime)/1000000000));
-		
+		*/
 
 		
 		exporter.end();
 	    mod.end();
 	    
-	    Mesh exporterMesh = exporter.myMesh;
+	    Mesh exporterMesh = mod.myMesh;
 	    
+	    Sprite spr = new Sprite(1024, 1024);
+	    
+	     expx = 0;
+		 expz = 0;
+		 i = 0;
+		 
+		 
+		
+		while (i < (8*8)) {
+			
+		Chunk ch = mcaFile.getChunk(expx, expz);
+				
+				if (ch!=null) {
+	    int chun = GuiPreview.genChunkPreview((LongArrayTag) ch.getHeightMaps().get("WORLD_SURFACE"), spr);
+				}
+		expx += 1;
+		if (expx > 7) { expx = 0; expz+=1; }
+		i+=1;
+		}
+		
+		Map<String, ChunkMap> chunkMap = new HashMap<String, ChunkMap>();
+	    
+		
+		GuiPreview.genChunkPreviewNoChunk(spr);
+		GuiPreview.genChunkPreviewNoMCA(spr);
 	   // Mesh exporterMesh = exporter.myMesh;
 	    
 	    	//window v
@@ -171,12 +198,24 @@ public class AnvilExporter {
 		System.out.println("Min X " + exporterMesh.min_xyz.x + " Y " + exporterMesh.min_xyz.y + " Z " + exporterMesh.min_xyz.z);
 		System.out.println("Max X " + exporterMesh.max_xyz.x + " Y " + exporterMesh.max_xyz.y + " Z " + exporterMesh.max_xyz.z);
 			
+		
+		Sprite sprii = new Sprite(256, 256);
+		MCAFile mcaFF = MCAUtil.read("region_testing\\r.-1.0.mca");
+		Chunk chunk = mcaFF.getChunk(-8, 1);
+		int id = GuiPreview.genChunkPreview((LongArrayTag) chunk.getHeightMaps().get("WORLD_SURFACE"), sprii);
+		
+		int offx = 0, offz = 0;
 			while (!endProgram) {
 
 				//if this.current_region != null drawPreview2D(cam_x, cam_y, cam_zoom)
 				
 				render.render(window, camera, new EngineObject[] { myObject, });
 				render.renderGui(window, new EngineObject[] { exporterObject, });
+				
+				render2dPreview(window, chunkMap, render, offx, offz, 2);
+				
+				
+				//render.renderSpriteGui(window, sprii, id,  new Vector3f(0,0,0),  new Vector3f(2,2,0),  new Vector3f(0,0,0),  new Vector3f(1,1,1), id);
 				
 				myObject.setRotation(myObject.getRotation().x+1, myObject.getRotation().y+1, myObject.getRotation().z+1);
 				window.loop();
@@ -194,17 +233,17 @@ public class AnvilExporter {
 					}
 				
 				if (window.isKeyPressed(GLFW.GLFW_KEY_E)) {
-					exporterObject.setPosition(exporterObject.getPosition().x, (float) (exporterObject.getPosition().y+1), exporterObject.getPosition().z);
+					exporterObject.setPosition(exporterObject.getPosition().x, (float) (exporterObject.getPosition().y+5), exporterObject.getPosition().z);
 					}
 				if (window.isKeyPressed(GLFW.GLFW_KEY_Q)) {
-					exporterObject.setPosition(exporterObject.getPosition().x, (float) (exporterObject.getPosition().y-1), exporterObject.getPosition().z);
+					exporterObject.setPosition(exporterObject.getPosition().x, (float) (exporterObject.getPosition().y-5), exporterObject.getPosition().z);
 					}
 				
 				if (window.isKeyPressed(GLFW.GLFW_KEY_A)) {
-					exporterObject.setPosition(exporterObject.getPosition().x-1, (float) (exporterObject.getPosition().y), exporterObject.getPosition().z);
+					exporterObject.setPosition(exporterObject.getPosition().x-5, (float) (exporterObject.getPosition().y), exporterObject.getPosition().z);
 					}
 				if (window.isKeyPressed(GLFW.GLFW_KEY_D)) {
-					exporterObject.setPosition(exporterObject.getPosition().x+1, (float) (exporterObject.getPosition().y), exporterObject.getPosition().z);
+					exporterObject.setPosition(exporterObject.getPosition().x+5, (float) (exporterObject.getPosition().y), exporterObject.getPosition().z);
 					}
 				
 				if (window.isKeyPressed(GLFW.GLFW_KEY_SPACE) && !flipping) {
@@ -223,24 +262,36 @@ public class AnvilExporter {
 					}
 				
 				if (window.isKeyPressed(GLFW.GLFW_KEY_Z)) {
-					exporterObject.setRotation(exporterObject.getRotation().x, exporterObject.getRotation().y+5, 0);
+					exporterObject.setRotation(exporterObject.getRotation().x, exporterObject.getRotation().y+2, 0);
 					}
 				
 				if (window.isKeyPressed(GLFW.GLFW_KEY_X)) {
-					exporterObject.setRotation(exporterObject.getRotation().x, exporterObject.getRotation().y-5, 0);
+					exporterObject.setRotation(exporterObject.getRotation().x, exporterObject.getRotation().y-2, 0);
 					}
 				
 				if (window.isKeyPressed(GLFW.GLFW_KEY_C)) {
-					exporterObject.setRotation(exporterObject.getRotation().x-5, exporterObject.getRotation().y, 0);
+					exporterObject.setRotation(exporterObject.getRotation().x-2, exporterObject.getRotation().y, 0);
 					}
 				
 				if (window.isKeyPressed(GLFW.GLFW_KEY_V)) {
-					exporterObject.setRotation(exporterObject.getRotation().x+5, exporterObject.getRotation().y, 0);
+					exporterObject.setRotation(exporterObject.getRotation().x+2, exporterObject.getRotation().y, 0);
 					}
 				
+				if (window.isKeyPressed(GLFW.GLFW_KEY_UP)) {
+					offz += 16;
+					}
 				
+				if (window.isKeyPressed(GLFW.GLFW_KEY_DOWN)) {
+					offz -= 16;
+					}
 				
-
+				if (window.isKeyPressed(GLFW.GLFW_KEY_LEFT)) {
+					offx += 16;
+					}
+				
+				if (window.isKeyPressed(GLFW.GLFW_KEY_RIGHT)) {
+					offx -= 16;
+					}
 				
 			
 				if (window.shouldClose()) endProgram = true;
@@ -255,6 +306,72 @@ public class AnvilExporter {
 		}
 	  }
 	
+	public static void render2dPreview(Window window, Map<String, ChunkMap> chunkMap, Renderer render, int offset_x, int offset_y, float scale) throws IOException { 
+		//render in bounds
+		//translate (camera)
+		//etc
+		
+		//float scale = 1;
+		//float offset_x = 0;
+		//float offset_y = 0;
+		
+		int chunks_x_count = (int) Math.floor(window.getWidth()/(16*scale));
+		int chunk_start_x =  (int) Math.floor(offset_x/(16*scale));
+		
+		int chunks_y_count = (int) Math.floor(window.getHeight()/(16*scale));
+		int chunk_start_y =  (int) Math.floor(offset_y/(16*scale));
+		
+		int ix = chunk_start_x;
+		int iy = chunk_start_y;
+		
+		int iix = 0;
+		int iiy = 0;
+		
+		long time =  System.currentTimeMillis() + 50;
+		
+		while (iix < chunks_x_count) {
+			while (iiy < chunks_y_count) {
+				
+				
+				String mcaName = (int) Math.floor(((float) ix)/32) + "." + (int) Math.floor(((float) iy)/32);
+				if (time > System.currentTimeMillis()) {
+					//if (time < System.currentTimeMillis()) return;
+					
+					if (chunkMap.get(mcaName) == null) {
+						System.out.println("MCA " + mcaName + " is NULL");
+						chunkMap.put(mcaName, new ChunkMap((int) Math.floor(((float) ix)/32), (int) Math.floor(((float) iy)/32)));
+						}
+					
+					//System.out.println("CHUNK " + ix + " " + iy + " is " + mcaName);
+					//System.out.println("CHUNKD " + (ix/32) + " " + (iy/32) + " is ");
+					//System.out.println("CHUNKF " + Math.floor(ix/32) + " " + Math.floor(iy/32) + " is ");
+					
+				}
+					
+				ChunkMap map = chunkMap.get(mcaName);
+					
+				if (map != null) {
+					if (time > System.currentTimeMillis() || map.isChunkProcessed(ix, iy)) {
+				
+				int chunk_spr = map.getChunkSprite(ix, iy);
+				
+				if (chunk_spr >=0) {
+				render.renderSpriteGui(window, map.getSprite(), chunk_spr, new Vector3f((ix*(16*scale))-offset_x, (iy*(16*scale))-offset_y , 0), new Vector3f(scale, scale, 0), new Vector3f(0,0,0), new Vector3f(1,1,1), 1);
+				} } }
+				
+				
+				
+			iy+=1;
+			iiy+=1;
+			}
+			ix+=1;
+			iiy = 0;
+			iix+=1;
+			iy = chunk_start_y;
+		}
+		
+	}
+
 	public static void program(Mesh exporterMesh) throws Exception {
 		
 			

@@ -2,6 +2,7 @@
 /data/resourcepack/
 /.gradle/
 /build/
+/bin/
 /region_testing/
 export.png
 export.obj

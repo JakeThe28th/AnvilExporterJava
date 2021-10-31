@@ -351,12 +351,7 @@ public class WriteBlock {
     	    	uv_y1 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
     	    	uv_x2 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
     	    	uv_y2 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
-    	    	
-    	    	
 
-    	    	//error e
-    	    	//-Stairs are borked (appear in corner?)
-    	    	//-textures larger than 16x16px are borked (the tex coords for some reason)
     	    }
     	     
     	     uv_x1 /=tex_w;
@@ -498,6 +493,20 @@ public class WriteBlock {
     	        			if (lock_v3 != 0) {  lock_v3 = (lock_v3/tex_h); }
     	        			if (lock_v4 != 0) {  lock_v4 = (lock_v4/tex_h); }
     	        			
+    	        			 if ( texture_sheet != null ) {
+    	        				    lock_u1 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
+    	        				    lock_u2 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
+    	        				    lock_u3 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
+    	        				    lock_u4 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
+    	        				    
+    	        				    lock_v1 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
+    	        				    lock_v2 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
+    	        				    lock_v3 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
+    	        				    lock_v4 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
+									
+									//broken
+
+    	        	    	    }
     	        			
     	        			
     	        			objWriter.write("vt "+lock_u1+" "+lock_v1+" "+ "\n");
@@ -592,6 +601,7 @@ public class WriteBlock {
 		} else state = (JSONObject) state_obj;
 		
 	
+		if (state != null) {
 		model_name = (String) state.get("model");
 		Object xr_ = state.get("x");
 		Object yr_ = state.get("y");
@@ -613,7 +623,7 @@ public class WriteBlock {
 		
 		//System.out.println(state);
 		WriteModel("assets\\" + namespace + "\\models\\" + model_name.substring(model_name.indexOf(":")+1).replace('/', '\\') + ".json", x,y,z, xr, yr, zr, Culling, uvlock, namespace); 
-		
+		} else System.out.println("Model had no Variants: " + path);
 		}
 		
 		if (model.get("multipart") != null) { }
