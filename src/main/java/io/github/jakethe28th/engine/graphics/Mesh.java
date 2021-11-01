@@ -215,6 +215,15 @@ public class Mesh {
     
     public void minMax() { 
     	int i = 0;
+    	//Initialize values (0 = bad)
+    	min_xyz.x = vertices[0].getPosition().x;
+    	min_xyz.y = vertices[0].getPosition().y;
+    	min_xyz.z = vertices[0].getPosition().z;
+    	
+    	max_xyz.x = vertices[0].getPosition().x;
+    	max_xyz.y = vertices[0].getPosition().y;
+    	max_xyz.z = vertices[0].getPosition().z;
+    	
     	while (i < vertices.length) {
     	if (vertices[i].getPosition().x < min_xyz.x)  min_xyz.x = vertices[i].getPosition().x;
     	if (vertices[i].getPosition().y < min_xyz.y)  min_xyz.y = vertices[i].getPosition().y;

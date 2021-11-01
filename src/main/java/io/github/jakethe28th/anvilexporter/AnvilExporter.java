@@ -38,6 +38,8 @@ public class AnvilExporter {
 	public static int v_count = 0;
 	public static int vt_count = 0;
 	
+	public static final float FAR_PLANE =  -.9999f;
+	
 	public static Random ran = new Random();
 	
 	public static void Main() throws IOException, ParseException {
@@ -119,8 +121,8 @@ public class AnvilExporter {
 		int expx = -4;
 		int expz = -4;
 		int i = 0;
-		/*
-		while (i < (1*1)) {
+		//*
+		while (i < (8*8)) {
 			
 			int rx = (int) Math.floor((double) expx/32);
 			int rz = (int) Math.floor((double) expz/32);
@@ -138,19 +140,19 @@ public class AnvilExporter {
 			exporter.exportChunk(mcaFile.getChunk(expx, expz), 0, expx, expz);
 			
 			expx += 1;
-			if (expx > 0) { expx = -4; expz+=1; }
+			if (expx > 3) { expx = -4; expz+=1; }
 			i+=1;
 		}
 		
 		long cTime2 = System.nanoTime();
 		System.out.println("Time (seconds): " + ((cTime2 - cTime)/1000000000));
-		*/
+		//*/
 
 		
 		exporter.end();
 	    mod.end();
 	    
-	    Mesh exporterMesh = mod.myMesh;
+	    //Mesh exporterMesh = mod.myMesh;
 	    
 	    Sprite spr = new Sprite(1024, 1024);
 	    
@@ -177,7 +179,7 @@ public class AnvilExporter {
 		
 		GuiPreview.genChunkPreviewNoChunk(spr);
 		GuiPreview.genChunkPreviewNoMCA(spr);
-	   // Mesh exporterMesh = exporter.myMesh;
+	    Mesh exporterMesh = exporter.myMesh;
 	    
 	    	//window v
 	    
@@ -188,9 +190,9 @@ public class AnvilExporter {
 	    
 	    EngineObject exporterObject = new EngineObject(exporterMesh);
 		exporterObject.setScaleMode(EngineObject.SCALE_MODE_SKEW);
-		exporterObject.setPosition(300, 900, 0);
+		exporterObject.setPosition(window.getWidth()/2, window.getHeight()/2, 0);
 		exporterObject.setScale(10, 10, 0.000001f);
-		exporterObject.setOrigin(31, 0, 31);
+		exporterObject.setOrigin(0, 0, 0);
 		exporterObject.setRotation(45, 0, 0);
 		exporterMesh.setTexture(new Texture("export.png"));
 		
@@ -198,6 +200,11 @@ public class AnvilExporter {
 		System.out.println("Min X " + exporterMesh.min_xyz.x + " Y " + exporterMesh.min_xyz.y + " Z " + exporterMesh.min_xyz.z);
 		System.out.println("Max X " + exporterMesh.max_xyz.x + " Y " + exporterMesh.max_xyz.y + " Z " + exporterMesh.max_xyz.z);
 			
+		float xOrig = -(exporterMesh.max_xyz.x+exporterMesh.min_xyz.x)/2;
+		float yOrig = -(exporterMesh.max_xyz.y+exporterMesh.min_xyz.y)/2;
+		float zOrig = -(exporterMesh.max_xyz.z+exporterMesh.min_xyz.z)/2;
+				
+		exporterObject.setOrigin(xOrig, yOrig, zOrig);
 		
 		Sprite sprii = new Sprite(256, 256);
 		MCAFile mcaFF = MCAUtil.read("region_testing\\r.-1.0.mca");
@@ -208,11 +215,13 @@ public class AnvilExporter {
 			while (!endProgram) {
 
 				//if this.current_region != null drawPreview2D(cam_x, cam_y, cam_zoom)
+				render.clear();
+				render2dPreview(window, chunkMap, render, offx, offz, 2);
 				
 				render.render(window, camera, new EngineObject[] { myObject, });
 				render.renderGui(window, new EngineObject[] { exporterObject, });
 				
-				render2dPreview(window, chunkMap, render, offx, offz, 2);
+				
 				
 				
 				//render.renderSpriteGui(window, sprii, id,  new Vector3f(0,0,0),  new Vector3f(2,2,0),  new Vector3f(0,0,0),  new Vector3f(1,1,1), id);
@@ -356,7 +365,7 @@ public class AnvilExporter {
 				int chunk_spr = map.getChunkSprite(ix, iy);
 				
 				if (chunk_spr >=0) {
-				render.renderSpriteGui(window, map.getSprite(), chunk_spr, new Vector3f((ix*(16*scale))-offset_x, (iy*(16*scale))-offset_y , 0), new Vector3f(scale, scale, 0), new Vector3f(0,0,0), new Vector3f(1,1,1), 1);
+				render.renderSpriteGui(window, map.getSprite(), chunk_spr, new Vector3f((ix*(16*scale))-offset_x, (iy*(16*scale))-offset_y , FAR_PLANE), new Vector3f(scale, scale, 0), new Vector3f(0,0,0), new Vector3f(1,1,1), 1);
 				} } }
 				
 				

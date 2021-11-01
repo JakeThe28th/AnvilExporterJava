@@ -63,7 +63,7 @@ public class Renderer {
     }
 
     public void render(Window window, Camera camera, EngineObject[] EngineObjects) throws Exception {
-        clear();
+        //clear();
 
         if (window.isResized()) {
             glViewport(0, 0, window.getWidth(), window.getHeight());
