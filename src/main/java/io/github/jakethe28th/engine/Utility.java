@@ -20,4 +20,10 @@ public class Utility {
 		
 		return result.toString();
 	} 
+
+	public static byte Nibble4(byte[] arr, int index){
+			return (byte) (index%2 == 0 ? arr[index/2]&0x0F : (arr[index/2]>>4)&0x0F);
+			//https://minecraft.fandom.com/wiki/Chunk_format#Block_format
+		}
+	
 }

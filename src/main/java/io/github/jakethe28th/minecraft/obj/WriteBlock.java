@@ -32,6 +32,8 @@ import io.github.jakethe28th.engine.math.Vector3f;
 //Input: block model, xyz positon, optional rotation, mtl file, obj file
 public class WriteBlock {
 	
+	public float color = 1.0f;
+	
 	public String filename;
 	public FileWriter objWriter;
 	public FileWriter mtlWriter;
@@ -364,30 +366,41 @@ public class WriteBlock {
     	     //System.out.println("w " + tex_w + "h " + tex_h);
     	     
     	     int vc = myMesh.getVertices().length;
+    	     float col = this.color;
+    	     switch (face_name) {
+     			case "north": col -= .2	; break;
+     			case "south": col -= .2	; break;
+     			case "east":  col -= .3	; break;
+     			case "west":  col -= .3	; break;
+     			case "up":	  col -= .0	; break;
+     			case "down":  col -= .4	; break;
+     			}
+    	 
+    	     if (col < 0 ) col = 0;
     	     
     	     this.myMesh.addVertices(new Vertex[] {
      	    		new Vertex(new 	Vector3f((coords.x1.floatValue()/16)+x,
      	    								 (coords.y1.floatValue()/16)+y,
      	    								 (coords.z1.floatValue()/16)+z), 
-     	    								 new Vector3f(1, 1, 1), 
+     	    								 new Vector3f(col, col, col), 
      	    								 new Vector2f(uv_x1.floatValue(), uv_y2.floatValue()*-1)),
      	    		
      	    		new Vertex(new 	Vector3f((coords.x2.floatValue()/16)+x,
      	    								 (coords.y2.floatValue()/16)+y,
      	    								 (coords.z2.floatValue()/16)+z), 
-     	    								 new Vector3f(1, 1, 1), 
+     	    								 new Vector3f(col, col, col), 
      	    								 new Vector2f(uv_x2.floatValue(), uv_y2.floatValue()*-1)),
      	    		
      	    		new Vertex(new 	Vector3f((coords.x3.floatValue()/16)+x,
      	    								 (coords.y3.floatValue()/16)+y,
      	    								 (coords.z3.floatValue()/16)+z), 
-     	    								 new Vector3f(1, 1, 1), 
+     	    								 new Vector3f(col, col, col), 
      	    								 new Vector2f(uv_x2.floatValue(), uv_y1.floatValue()*-1)),
      	    		
      	    		new Vertex(new 	Vector3f((coords.x4.floatValue()/16)+x,
      	    								 (coords.y4.floatValue()/16)+y,
      	    								 (coords.z4.floatValue()/16)+z), 
- 							 				 new Vector3f(1, 1, 1), 
+ 							 				 new Vector3f(col, col, col), 
  							 				 new Vector2f(uv_x1.floatValue(), uv_y1.floatValue()*-1)),
      	    			
      	    		}, new int[] {vc+0, vc+1, vc+2, vc+0, vc+3, vc+2 });

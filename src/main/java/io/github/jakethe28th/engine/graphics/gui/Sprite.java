@@ -117,10 +117,10 @@ public class Sprite {
 			
 			int meshID = id;
 			meshes.put(id, new Mesh(new Vertex[] {
-					new Vertex(new Vector3f(0, 0,  0.0f), new Vector3f(1, 0.5f, 1), 	new Vector2f(u1, v1)),
-					new Vertex(new Vector3f(0, h,  0.0f), new Vector3f(0.2f, 0.7f, 1),  new Vector2f(u1, v2)),
-					new Vertex(new Vector3f(w, h,  0.0f), new Vector3f(1, 1, 0.2f), 	new Vector2f(u2, v2)),
-					new Vertex(new Vector3f(w, 0,  0.0f), new Vector3f(1, 0.5f, 1), 	new Vector2f(u2, v1))
+					new Vertex(new Vector3f(0, 0,  0.0f), new Vector3f(1, 1, 1), 	new Vector2f(u1, v1)),
+					new Vertex(new Vector3f(0, h,  0.0f), new Vector3f(1, 1, 1),    new Vector2f(u1, v2)),
+					new Vertex(new Vector3f(w, h,  0.0f), new Vector3f(1, 1, 1), 	new Vector2f(u2, v2)),
+					new Vertex(new Vector3f(w, 0,  0.0f), new Vector3f(1, 1, 1), 	new Vector2f(u2, v1))
 								}, new int[] {
 										 // Front face
 									    0, 1, 2, 2, 3, 0
@@ -204,10 +204,10 @@ public class Sprite {
 			
 			int meshID = id;
 			meshes.put(id, new Mesh(new Vertex[] {
-					new Vertex(new Vector3f(0, 0,  0.0f), new Vector3f(1, 0.5f, 1), 	new Vector2f(u1, v1)),
-					new Vertex(new Vector3f(0, h,  0.0f), new Vector3f(0.2f, 0.7f, 1),  new Vector2f(u1, v2)),
-					new Vertex(new Vector3f(w, h,  0.0f), new Vector3f(1, 1, 0.2f), 	new Vector2f(u2, v2)),
-					new Vertex(new Vector3f(w, 0,  0.0f), new Vector3f(1, 0.5f, 1), 	new Vector2f(u2, v1))
+					new Vertex(new Vector3f(0, 0,  0.0f), new Vector3f(1, 1, 1), 	new Vector2f(u1, v1)),
+					new Vertex(new Vector3f(0, h,  0.0f), new Vector3f(1, 1, 1),    new Vector2f(u1, v2)),
+					new Vertex(new Vector3f(w, h,  0.0f), new Vector3f(1, 1, 1), 	new Vector2f(u2, v2)),
+					new Vertex(new Vector3f(w, 0,  0.0f), new Vector3f(1, 1, 1), 	new Vector2f(u2, v1))
 								}, new int[] {
 										 // Front face
 									    0, 1, 2, 2, 3, 0

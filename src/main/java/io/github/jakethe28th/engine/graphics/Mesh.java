@@ -74,6 +74,7 @@ public class Mesh {
     }
     
     public void flip() {
+    	if (vertices.length == 0) return;
     	if (vertices != null) {
     	Vertex[] newVertices = new Vertex[this.vertices.length];
 
@@ -83,9 +84,10 @@ public class Mesh {
     		
     		Vector3f coords = vertices[i].getPosition();
     		Vector2f texcoords = vertices[i].getTextureCoord();
+    		Vector3f colors = vertices[i].getColor();
     		
     		newVertices[i] = new Vertex(new Vector3f(coords.x, -coords.y, coords.z),
-    									new Vector3f(1, 1, 1), 
+    									new Vector3f(colors.x, colors.y, colors.z), 
     									new Vector2f(texcoords.x, texcoords.y));
     		i+=1;
     		}
@@ -214,6 +216,7 @@ public class Mesh {
     public int[] 	getIndices()	{ return indices;		}
     
     public void minMax() { 
+    	if (vertices.length == 0) return;
     	int i = 0;
     	//Initialize values (0 = bad)
     	min_xyz.x = vertices[0].getPosition().x;

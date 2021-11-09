@@ -63,8 +63,8 @@ public class AnvilExporter {
 				new Vertex(new Vector3f(-0.5f, 0.5f,  0.0f), new Vector3f(0.2f, 0.7f, 1), new Vector2f(0, 1.0f)),
 				new Vertex(new Vector3f(0.5f, -0.5f,  0.0f), new Vector3f(1, 1, 0.2f), new Vector2f(1.0f, 0.0f)),
 				new Vertex(new Vector3f(0.5f, 0.5f,  0.0f), new Vector3f(1, 0.5f, 1), new Vector2f(1.0f, 1.0f)),
-				new Vertex(new Vector3f(-0.5f, 0.5f,  0.0f), new Vector3f(0.2f, 0.7f, 1), new Vector2f(0, 1.0f)),
-				new Vertex(new Vector3f(0.5f, -0.5f,  0.0f), new Vector3f(1, 1, 0.2f), new Vector2f(1.0f, 0.0f))
+				new Vertex(new Vector3f(-0.5f, 0.5f,  0.0f), new Vector3f(0, 0, 0), new Vector2f(0, 1.0f)),
+				new Vertex(new Vector3f(0.5f, -0.5f,  0.0f), new Vector3f(0, 0, 0), new Vector2f(1.0f, 0.0f))
 							}, new int[] {
 									 // Front face
 								    0, 1, 2, 3, 4, 5
@@ -115,14 +115,18 @@ public class AnvilExporter {
 		//exporter.exportChunk(mcaFile.getChunk(1, 1), 0, 1, 1);
 		//exporter.exportChunk(mcaFile.getChunk(1, 0), 0, 1, 0);
 		
+		exporter.addChunkToQueue(mcaFile.getChunk(0, 0), 0, 0, 0);
+		//exporter.addChunkToQueue(mcaFile.getChunk(0, 1), 0, 0, 1);
+		//exporter.addChunkToQueue(mcaFile.getChunk(1, 1), 0, 1, 1);
+		//exporter.addChunkToQueue(mcaFile.getChunk(1, 0), 0, 1, 0);
 		
 		long cTime = System.nanoTime();
 		
 		int expx = -4;
 		int expz = -4;
 		int i = 0;
-		//*
-		while (i < (8*8)) {
+		/*
+		while (i < (4*4)) {
 			
 			int rx = (int) Math.floor((double) expx/32);
 			int rz = (int) Math.floor((double) expz/32);
@@ -140,16 +144,16 @@ public class AnvilExporter {
 			exporter.exportChunk(mcaFile.getChunk(expx, expz), 0, expx, expz);
 			
 			expx += 1;
-			if (expx > 3) { expx = -4; expz+=1; }
+			if (expx > 1) { expx = -2; expz+=1; }
 			i+=1;
 		}
 		
 		long cTime2 = System.nanoTime();
 		System.out.println("Time (seconds): " + ((cTime2 - cTime)/1000000000));
-		//*/
+		*/
 
 		
-		exporter.end();
+		//exporter.end();
 	    mod.end();
 	    
 	    //Mesh exporterMesh = mod.myMesh;
@@ -182,11 +186,13 @@ public class AnvilExporter {
 	    Mesh exporterMesh = exporter.myMesh;
 	    
 	    	//window v
-	    
+	  /*  
 		exporterMesh.cleanUp();
 		exporterMesh.flip();
 	//	exporterMesh.offset(-exporterMesh.min_xyz.x, 0, exporterMesh.min_xyz.z);
 		exporterMesh.buildMesh();
+	    
+	   */ 
 	    
 	    EngineObject exporterObject = new EngineObject(exporterMesh);
 		exporterObject.setScaleMode(EngineObject.SCALE_MODE_SKEW);
@@ -196,6 +202,7 @@ public class AnvilExporter {
 		exporterObject.setRotation(45, 0, 0);
 		exporterMesh.setTexture(new Texture("export.png"));
 		
+		/*
 		exporterMesh.minMax();
 		System.out.println("Min X " + exporterMesh.min_xyz.x + " Y " + exporterMesh.min_xyz.y + " Z " + exporterMesh.min_xyz.z);
 		System.out.println("Max X " + exporterMesh.max_xyz.x + " Y " + exporterMesh.max_xyz.y + " Z " + exporterMesh.max_xyz.z);
@@ -205,24 +212,54 @@ public class AnvilExporter {
 		float zOrig = -(exporterMesh.max_xyz.z+exporterMesh.min_xyz.z)/2;
 				
 		exporterObject.setOrigin(xOrig, yOrig, zOrig);
+		*/
 		
-		Sprite sprii = new Sprite(256, 256);
-		MCAFile mcaFF = MCAUtil.read("region_testing\\r.-1.0.mca");
-		Chunk chunk = mcaFF.getChunk(-8, 1);
-		int id = GuiPreview.genChunkPreview((LongArrayTag) chunk.getHeightMaps().get("WORLD_SURFACE"), sprii);
+		//Sprite sprii = new Sprite(256, 256);
+		//MCAFile mcaFF = MCAUtil.read("region_testing\\r.-1.0.mca");
+		//Chunk chunk = mcaFF.getChunk(-8, 1);
+		//int id = GuiPreview.genChunkPreview((LongArrayTag) chunk.getHeightMaps().get("WORLD_SURFACE"), sprii);
 		
+		Boolean queue = true;
 		int offx = 0, offz = 0;
 			while (!endProgram) {
+				
+				if (exporter.chunks.size() > 0 ) { 
+				exporterMesh.flip();
+				exporter.step();
+				exporterMesh.flip();
+				
+				exporterMesh.cleanUp();
+				exporterMesh.buildMesh();
+				
+				exporterMesh.minMax();
+				float xOrig = -(exporterMesh.max_xyz.x+exporterMesh.min_xyz.x)/2;
+				float yOrig = -(exporterMesh.max_xyz.y+exporterMesh.min_xyz.y)/2;
+				float zOrig = -(exporterMesh.max_xyz.z+exporterMesh.min_xyz.z)/2;
+						
+				
+				exporterObject.setOrigin(xOrig, yOrig, zOrig);
+				queue = true;
+				} else if (queue == true) {
+					exporter.end();
+					exporterMesh.setTexture(new Texture("export.png"));
+					
+					queue = false;
+					System.out.println("Done exporting");
+				}
+				
+				//exporterMesh.flip();
+				
 
 				//if this.current_region != null drawPreview2D(cam_x, cam_y, cam_zoom)
 				render.clear();
-				render2dPreview(window, chunkMap, render, offx, offz, 2);
+				render2dPreview(window, chunkMap, render, offx, offz, 7);
 				
 				render.render(window, camera, new EngineObject[] { myObject, });
 				render.renderGui(window, new EngineObject[] { exporterObject, });
 				
 				
 				
+				//exporterMesh.buildMesh();
 				
 				//render.renderSpriteGui(window, sprii, id,  new Vector3f(0,0,0),  new Vector3f(2,2,0),  new Vector3f(0,0,0),  new Vector3f(1,1,1), id);
 				
@@ -309,6 +346,8 @@ public class AnvilExporter {
 			}
 			window.end();
 			render.cleanup();
+			
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
