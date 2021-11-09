@@ -375,6 +375,7 @@ public class WriteBlock {
      			case "up":	  col -= .0	; break;
      			case "down":  col -= .4	; break;
      			}
+    	     
     	 
     	     if (col < 0 ) col = 0;
     	     

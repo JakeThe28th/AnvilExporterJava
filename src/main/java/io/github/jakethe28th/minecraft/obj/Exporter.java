@@ -172,13 +172,8 @@ class ChunkExporter {
 					
 					//fullblock culling
 					int sides = 6;
-					culling.put("north", true);
-					culling.put("east", true);
-					culling.put("south", true);
-					culling.put("west", true);
-					culling.put("up", true);
-					culling.put("down", true);
-					/*
+					
+					
 					culling.put("north", Exporter.isTransparent(section, 	y, z, x-1));
 									if (!Exporter.isTransparent(section, 	y, z, x-1)) sides-=1;
 					culling.put("east", Exporter.isTransparent(section, 	y+1, z, x));
@@ -191,7 +186,14 @@ class ChunkExporter {
 									if (!Exporter.isTransparent(section, 	y, z+1, x)) sides-=1;
 					culling.put("down", Exporter.isTransparent(section, 	y, z-1, x));
 									if (!Exporter.isTransparent(section, 	y, z-1, x)) sides-=1;
-					*/
+					
+									culling.put("north", true);
+									culling.put("east", true);
+									culling.put("south", true);
+									culling.put("west", true);
+									culling.put("up", true);
+									culling.put("down", true);
+									
 					//if (section.getBlockLight() != null) {
 					//System.out.println("l");
 					//byte lightLevel = section.getBlockLight()[(int) Math.floor((y*16*16 + z*16 + x)/2)];
