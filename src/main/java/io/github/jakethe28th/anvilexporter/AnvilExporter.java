@@ -38,7 +38,7 @@ public class AnvilExporter {
 	public static int v_count = 0;
 	public static int vt_count = 0;
 	
-	public static final float FAR_PLANE =  -.9999f;
+	public static final float FAR_PLANE =  -999.9999f;
 	
 	public static Random ran = new Random();
 	
@@ -197,7 +197,7 @@ public class AnvilExporter {
 	    EngineObject exporterObject = new EngineObject(exporterMesh);
 		exporterObject.setScaleMode(EngineObject.SCALE_MODE_SKEW);
 		exporterObject.setPosition(window.getWidth()/2, window.getHeight()/2, 0);
-		exporterObject.setScale(10, 10, 0.000001f);
+		exporterObject.setScale(10, 10, 10f);
 		exporterObject.setOrigin(0, 0, 0);
 		exporterObject.setRotation(45, 0, 0);
 		exporterMesh.setTexture(new Texture("export.png"));

@@ -58,7 +58,7 @@ public class Transformation {
     
     public final Matrix4f getOrthoProjectionMatrix(float left, float right, float bottom, float top) {
         orthoMatrix.identity();
-        orthoMatrix.setOrtho(left, right, bottom, top, -1f, 1f);
+        orthoMatrix.setOrtho(left, right, bottom, top, -1000f, 1000f);
         return orthoMatrix;
     }
     
