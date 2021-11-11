@@ -26,4 +26,54 @@ public class Utility {
 			//https://minecraft.fandom.com/wiki/Chunk_format#Block_format
 		}
 	
+	public static String loadFromGLSL(String str, String name) {
+		//Format: name { content } name { content }
+		//Content can include { } brackets, so need to keep track of how many are open / closed.
+		//Basically, add characters to nameTemp until you reach a {,
+		//check if the characters = the name you're searching for,
+		//go through the { } content until you can resolve the last },
+		//if that part was for the current name, then add it to the temp contents
+		//if it wasn't, clear the name, and repeat
+		//then return the contents
+		
+		int i = 0;
+		int count = 0;
+		String get = "";
+		String nameTemp = "";
+		String temp = "";
+		while (i < str.length()) {
+			
+			if (str.charAt(i) == '{') {
+				count += 1;
+				nameTemp = nameTemp.replace(" ", "").replace("\n", "").replace("\r", "");
+				i+=1; //skip over {
+				while (count != 0) {
+					
+					if (nameTemp.equals(name)) temp = temp + str.charAt(i);
+					
+					i+=1;
+					
+					if (str.charAt(i) == '{') count +=1;
+					if (str.charAt(i) == '}') count -=1;
+					
+					
+				} 
+				nameTemp = "";
+				i+=1; //skip over }
+			}
+			
+			nameTemp = nameTemp + str.charAt(i);
+			System.out.println(nameTemp);
+			
+			
+			i+=1;
+		}
+		
+		System.out.println("Output: ");
+		System.out.println(name);
+		System.out.println(temp);
+		System.out.println(count);
+		return temp;
+	}
+	
 }

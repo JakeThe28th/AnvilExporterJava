@@ -244,7 +244,8 @@ public class Mesh {
     	// Activate first texture unit
     	glActiveTexture(GL_TEXTURE0);
     	// Bind the texture
-    	glBindTexture(GL_TEXTURE_2D, texture.getId());
+    	if (texture != null) { glBindTexture(GL_TEXTURE_2D, texture.getId()); 
+    					} else glDisable(GL_TEXTURE_2D);
     	
     	//no more blurry
     	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, tex_mag_filter);

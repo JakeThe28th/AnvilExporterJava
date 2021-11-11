@@ -82,10 +82,11 @@ public class Exporter {
 		// iterate list of chunk objects
 		
 		int done = 0;
+		if (chunks.size() <= 0) return false;
 		for (int key : chunks.keySet()) {
 			done = chunks.get(key).step();
 			//System.out.println(done);
-			if (done == 1) chunks.remove(key);
+			if (done == 1) { chunks.remove(key); return false; }
 		}
 		
 		

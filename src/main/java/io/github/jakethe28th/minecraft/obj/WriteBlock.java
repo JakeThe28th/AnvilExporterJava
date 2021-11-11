@@ -356,10 +356,12 @@ public class WriteBlock {
 
     	    }
     	     
+
     	     uv_x1 /=tex_w;
     	     uv_y1 /=tex_h;
     	     uv_x2 /=tex_w;
     	     uv_y2 /=tex_h;
+    	     
     	     
     	     //System.out.println("uv_x1 " + uv_x1.floatValue() + "uv_x2 " + uv_x2.floatValue());
     	     //System.out.println("uv_y1 " + uv_y1.floatValue() + "uv_y2 " + uv_y2.floatValue());

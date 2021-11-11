@@ -75,184 +75,100 @@ public class AnvilExporter {
 		myObject.setPosition(0, 0, -2);
 		myObject.setScale(1, 1, 1);
 		
-		
 		Camera camera = new Camera();
-		
-
-		//window ^
-		  
-		//JSONObject temp;
-		WriteBlock mod = new  WriteBlock("brewing_stand", new Sprite(16, 16));
-
-		JSONParser jsonParser = new JSONParser();
-		String states = "facing=east,half=bottom,open=false";
-		//JSONObject culling = (JSONObject) jsonParser.parse("{\"east\":1,\"west\":1,\"north\":1,\"south\":1}");
-		 
-		HashMap<String,Boolean>  culling = new HashMap<String,Boolean>();
-		culling.put("north", true);
-		culling.put("south", true);
-		
-		culling.put("east", true);
-		culling.put("west", true);
-		culling.put("up", true);
-		culling.put("down", true);
-		
-		
-		mod.WriteFromBlockstate("assets\\minecraft\\blockstates\\birch_trapdoor.json", states, 0, 0, 0, culling, "minecraft");
-
 		
 		MCAFile mcaFile = null;
 		mcaFile = MCAUtil.read("region_testing\\r.0.0.mca");
 		
-		//Chunk chunk = mcaFile.getChunk(0, 0);
-
-		
 		Exporter exporter = new Exporter("", "export");
-		
-		
-		//exporter.exportChunk(mcaFile.getChunk(0, 0), 0, 0, 0);
-		//exporter.exportChunk(mcaFile.getChunk(0, 1), 0, 0, 1);
-		//exporter.exportChunk(mcaFile.getChunk(1, 1), 0, 1, 1);
-		//exporter.exportChunk(mcaFile.getChunk(1, 0), 0, 1, 0);
 		
 		exporter.addChunkToQueue(mcaFile.getChunk(0, 0), 0, 0, 0);
 		//exporter.addChunkToQueue(mcaFile.getChunk(0, 1), 0, 0, 1);
 		//exporter.addChunkToQueue(mcaFile.getChunk(1, 1), 0, 1, 1);
 		//exporter.addChunkToQueue(mcaFile.getChunk(1, 0), 0, 1, 0);
-		
-		long cTime = System.nanoTime();
-		
-		int expx = -4;
-		int expz = -4;
-		int i = 0;
-		/*
-		while (i < (4*4)) {
-			
-			int rx = (int) Math.floor((double) expx/32);
-			int rz = (int) Math.floor((double) expz/32);
-			//if (expx <0) rx = (int) Math.ceil(expx/32);
-			//if (expz <0) rz = (int) Math.ceil(expx/32);
-			String mcafilename = "r."+rx+"."+rz+".mca";
-			
-			long fm = (Runtime.getRuntime().maxMemory() - 
-	 				 (Runtime.getRuntime().totalMemory()-
-	 						Runtime.getRuntime().freeMemory()))/1000000;
-			
-			System.out.println("Free memory (MEGA - bytes): " + fm);
-			
-			mcaFile = MCAUtil.read("region_testing\\" + mcafilename);
-			exporter.exportChunk(mcaFile.getChunk(expx, expz), 0, expx, expz);
-			
-			expx += 1;
-			if (expx > 1) { expx = -2; expz+=1; }
-			i+=1;
-		}
-		
-		long cTime2 = System.nanoTime();
-		System.out.println("Time (seconds): " + ((cTime2 - cTime)/1000000000));
-		*/
 
-		
-		//exporter.end();
-	    mod.end();
-	    
-	    //Mesh exporterMesh = mod.myMesh;
-	    
-	    Sprite spr = new Sprite(1024, 1024);
-	    
-	     expx = 0;
-		 expz = 0;
-		 i = 0;
-		 
-		 
-		
-		while (i < (8*8)) {
-			
-		Chunk ch = mcaFile.getChunk(expx, expz);
-				
-				if (ch!=null) {
-	    int chun = GuiPreview.genChunkPreview((LongArrayTag) ch.getHeightMaps().get("WORLD_SURFACE"), spr);
-				}
-		expx += 1;
-		if (expx > 7) { expx = 0; expz+=1; }
-		i+=1;
-		}
-		
 		Map<String, ChunkMap> chunkMap = new HashMap<String, ChunkMap>();
-	    
-		
-		GuiPreview.genChunkPreviewNoChunk(spr);
-		GuiPreview.genChunkPreviewNoMCA(spr);
+
 	    Mesh exporterMesh = exporter.myMesh;
 	    
-	    	//window v
-	  /*  
-		exporterMesh.cleanUp();
-		exporterMesh.flip();
-	//	exporterMesh.offset(-exporterMesh.min_xyz.x, 0, exporterMesh.min_xyz.z);
-		exporterMesh.buildMesh();
-	    
-	   */ 
 	    
 	    EngineObject exporterObject = new EngineObject(exporterMesh);
-		exporterObject.setScaleMode(EngineObject.SCALE_MODE_SKEW);
+		exporterObject.setScaleMode(EngineObject.SCALE_MODE_RESIZE);
 		exporterObject.setPosition(window.getWidth()/2, window.getHeight()/2, 0);
 		exporterObject.setScale(10, 10, 10f);
 		exporterObject.setOrigin(0, 0, 0);
 		exporterObject.setRotation(45, 0, 0);
 		exporterMesh.setTexture(new Texture("export.png"));
 		
-		/*
-		exporterMesh.minMax();
-		System.out.println("Min X " + exporterMesh.min_xyz.x + " Y " + exporterMesh.min_xyz.y + " Z " + exporterMesh.min_xyz.z);
-		System.out.println("Max X " + exporterMesh.max_xyz.x + " Y " + exporterMesh.max_xyz.y + " Z " + exporterMesh.max_xyz.z);
-			
-		float xOrig = -(exporterMesh.max_xyz.x+exporterMesh.min_xyz.x)/2;
-		float yOrig = -(exporterMesh.max_xyz.y+exporterMesh.min_xyz.y)/2;
-		float zOrig = -(exporterMesh.max_xyz.z+exporterMesh.min_xyz.z)/2;
-				
-		exporterObject.setOrigin(xOrig, yOrig, zOrig);
-		*/
-		
-		//Sprite sprii = new Sprite(256, 256);
-		//MCAFile mcaFF = MCAUtil.read("region_testing\\r.-1.0.mca");
-		//Chunk chunk = mcaFF.getChunk(-8, 1);
-		//int id = GuiPreview.genChunkPreview((LongArrayTag) chunk.getHeightMaps().get("WORLD_SURFACE"), sprii);
-		
 		Boolean queue = true;
 		int offx = 0, offz = 0;
 			while (!endProgram) {
+				int ww = window.getWidth();
+				int wh = window.getHeight();
 				
+				//Exporter stepping logic
 				if (exporter.chunks.size() > 0 ) { 
-				exporterMesh.flip();
-				exporter.step();
-				exporterMesh.flip();
+					exporterMesh.flip();
+					exporter.step();
+					exporterMesh.flip();
 				
-				exporterMesh.cleanUp();
-				exporterMesh.buildMesh();
+					exporterMesh.cleanUp();
+					exporterMesh.buildMesh();
 				
-				exporterMesh.minMax();
-				float xOrig = -(exporterMesh.max_xyz.x+exporterMesh.min_xyz.x)/2;
-				float yOrig = -(exporterMesh.max_xyz.y+exporterMesh.min_xyz.y)/2;
-				float zOrig = -(exporterMesh.max_xyz.z+exporterMesh.min_xyz.z)/2;
+					exporterMesh.minMax();
+					float xOrig = -(exporterMesh.max_xyz.x+exporterMesh.min_xyz.x)/2;
+					float yOrig = -(exporterMesh.max_xyz.y+exporterMesh.min_xyz.y)/2;
+					float zOrig = -(exporterMesh.max_xyz.z+exporterMesh.min_xyz.z)/2;
+					
+					//exporterObject.setScale(10, 10, 10f);
+					
+					float ratio = (window.getWidth()/3) / ((exporterMesh.max_xyz.x-exporterMesh.min_xyz.x));
+					exporterObject.setPosition((window.getWidth()/2)+(window.getWidth()/3), window.getHeight()/2, 0);
+					exporterObject.setScale(ratio, ratio, ratio); 
 						
 				
-				exporterObject.setOrigin(xOrig, yOrig, zOrig);
-				queue = true;
-				} else if (queue == true) {
-					exporter.end();
-					exporterMesh.setTexture(new Texture("export.png"));
+					exporterObject.setOrigin(xOrig, yOrig, zOrig);
+					queue = true;
+					} else if (queue == true) {
+						exporter.end();
+						exporterMesh.setTexture(new Texture("export.png"));
 					
-					queue = false;
-					System.out.println("Done exporting");
-				}
+						queue = false;
+						System.out.println("Done exporting");
+						
+						
+						}
 				
-				//exporterMesh.flip();
+				//Center the export on the right of the window
+				float ratio = (window.getWidth()/4) / ((exporterMesh.max_xyz.x-exporterMesh.min_xyz.x));
+				exporterObject.setPosition((window.getWidth()/2)+(window.getWidth()/3), exporterObject.getPosition().y, 0);
+				exporterObject.setScale(ratio, ratio, ratio); 
 				
 
-				//if this.current_region != null drawPreview2D(cam_x, cam_y, cam_zoom)
 				render.clear();
 				render2dPreview(window, chunkMap, render, offx, offz, 7);
+				
+				
+				//GUI
+				
+				EngineObject panel_right =  new EngineObject(new Mesh(new Vertex[] {
+						new Vertex(new Vector3f(ww-(ww/3), 	0,  (FAR_PLANE+1)), 	new Vector3f(1, 1, 1), 		new Vector2f(0, 0)),
+						new Vertex(new Vector3f(ww-(ww/3), 	wh, (FAR_PLANE+1)), 	new Vector3f(1, 1, 1),   	new Vector2f(0, 0)),
+						new Vertex(new Vector3f(ww		 ,	wh, (FAR_PLANE+1)), 	new Vector3f(1, 1, 1), 		new Vector2f(0, 0)),
+						new Vertex(new Vector3f(ww		 ,  0,  (FAR_PLANE+1)), 	new Vector3f(1, 1, 1), 		new Vector2f(0, 0)) }, new int[] {
+								 // Front face
+							    0, 1, 2, 2, 3, 0
+							}, null));
+				
+				panel_right.getMesh().buildMesh();
+				
+				render.renderGui(window, panel_right);
+				
+				panel_right.getMesh().cleanUp();
+				
+									
+										
+				//
 				
 				render.render(window, camera, new EngineObject[] { myObject, });
 				render.renderGui(window, new EngineObject[] { exporterObject, });
@@ -363,10 +279,17 @@ public class AnvilExporter {
 		//float offset_x = 0;
 		//float offset_y = 0;
 		
-		int chunks_x_count = (int) Math.floor(window.getWidth()/(16*scale));
+		int ww = window.getWidth();
+			ww -= (ww/3);
+			ww += 100;
+			
+		int wh = window.getHeight();
+			wh += 100;
+		
+		int chunks_x_count = (int) Math.floor(ww/(16*scale));
 		int chunk_start_x =  (int) Math.floor(offset_x/(16*scale));
 		
-		int chunks_y_count = (int) Math.floor(window.getHeight()/(16*scale));
+		int chunks_y_count = (int) Math.floor(wh/(16*scale));
 		int chunk_start_y =  (int) Math.floor(offset_y/(16*scale));
 		
 		int ix = chunk_start_x;
