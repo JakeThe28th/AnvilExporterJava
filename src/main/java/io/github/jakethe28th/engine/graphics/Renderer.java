@@ -177,6 +177,9 @@ public class Renderer {
         Matrix4f ortho = transformation.getOrthoProjectionMatrix(0, window.getWidth(), window.getHeight(), 0);
         //
             Mesh mesh = sheet.getMesh(id);
+            mesh.setColor(col);
+            mesh.buildMesh();
+            
             // Set orthographic and model matrix for this HUD item
             Matrix4f projModelMatrix = transformation.getOrthoProjModelMatrix(EngineObject.SCALE_MODE_SKEW, new org.joml.Vector3f(pos.x, pos.y, pos.z), new org.joml.Vector3f(scale.x, scale.y, scale.z), new org.joml.Vector3f(rot.x, rot.y, rot.z), ortho);
             shaderGui.setUniform("projModelMatrix", projModelMatrix);

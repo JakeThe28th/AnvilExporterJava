@@ -273,4 +273,29 @@ public class Mesh {
         glBindVertexArray(0);
         glDeleteVertexArrays(vaoId);
     }
+
+
+	public void setColor(Vector3f col) {
+		if (vertices.length == 0) return;
+    	if (vertices != null) {
+    	Vertex[] newVertices = new Vertex[this.vertices.length];
+
+    	int i = 0;
+    	while (i < this.vertices.length) {
+    		
+    		Vector3f coords = vertices[i].getPosition();
+    		Vector2f texcoords = vertices[i].getTextureCoord();
+    		Vector3f colors = vertices[i].getColor();
+    		
+    		newVertices[i] = new Vertex(new Vector3f(coords.x, coords.y, coords.z),
+    									col, 
+    									new Vector2f(texcoords.x, texcoords.y));
+    		i+=1;
+    		}
+    	
+    	this.vertices = newVertices;
+    	//buildMesh(this.vertices, this.indices);
+    	}
+		
+	}
 }

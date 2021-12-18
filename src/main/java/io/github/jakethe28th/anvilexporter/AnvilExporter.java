@@ -152,25 +152,62 @@ public class AnvilExporter {
 				//GUI
 				
 				EngineObject panel_right =  new EngineObject(new Mesh(new Vertex[] {
-						new Vertex(new Vector3f(ww-(ww/3), 	0,  (FAR_PLANE+1)), 	new Vector3f(1, 1, 1), 		new Vector2f(0, 0)),
-						new Vertex(new Vector3f(ww-(ww/3), 	wh, (FAR_PLANE+1)), 	new Vector3f(1, 1, 1),   	new Vector2f(0, 0)),
-						new Vertex(new Vector3f(ww		 ,	wh, (FAR_PLANE+1)), 	new Vector3f(1, 1, 1), 		new Vector2f(0, 0)),
-						new Vertex(new Vector3f(ww		 ,  0,  (FAR_PLANE+1)), 	new Vector3f(1, 1, 1), 		new Vector2f(0, 0)) }, new int[] {
+						new Vertex(new Vector3f(ww-(ww/3), 	0,  (FAR_PLANE+1)), 	new Vector3f(.95f, .95f, .95f), 		new Vector2f(0, 0)),
+						new Vertex(new Vector3f(ww-(ww/3), 	wh, (FAR_PLANE+1)), 	new Vector3f(.95f, .95f, .95f),   	new Vector2f(0, 0)),
+						new Vertex(new Vector3f(ww		 ,	wh, (FAR_PLANE+1)), 	new Vector3f(.95f, .95f, .95f), 		new Vector2f(0, 0)),
+						new Vertex(new Vector3f(ww		 ,  0,  (FAR_PLANE+1)), 	new Vector3f(.95f, .95f, .95f), 		new Vector2f(0, 0)) }, new int[] {
 								 // Front face
 							    0, 1, 2, 2, 3, 0
 							}, null));
 				
+				EngineObject panel_right_button =  new EngineObject(new Mesh(new Vertex[] {
+						new Vertex(new Vector3f(ww-(ww/3)+5	, 	wh-(wh/4)+5,  	(FAR_PLANE+4)), 	new Vector3f(.75f, .75f, .75f), 		new Vector2f(0, 0)),
+						new Vertex(new Vector3f(ww-(ww/3)+5	, 	wh-5, 			(FAR_PLANE+4)), 	new Vector3f(.75f, .75f, .75f),   		new Vector2f(0, 0)),
+						new Vertex(new Vector3f(ww-5	 	,	wh-5, 			(FAR_PLANE+4)), 	new Vector3f(.75f, .75f, .75f), 		new Vector2f(0, 0)),
+						new Vertex(new Vector3f(ww-5		,  	wh-(wh/4)+5,   	(FAR_PLANE+4)), 		new Vector3f(.75f, .75f, .75f), 		new Vector2f(0, 0)),
+						
+						new Vertex(new Vector3f(ww-(ww/3)+6	, 	wh-(wh/4)+6,  	(FAR_PLANE+5)), 	new Vector3f(1, 1, 1), 		new Vector2f(0, 0)),
+						new Vertex(new Vector3f(ww-(ww/3)+6	, 	wh-10, 			(FAR_PLANE+5)), 	new Vector3f(1, 1, 1),   	new Vector2f(0, 0)),
+						new Vertex(new Vector3f(ww-6	 	,	wh-10, 			(FAR_PLANE+5)), 	new Vector3f(1, 1, 1), 		new Vector2f(0, 0)),
+						new Vertex(new Vector3f(ww-6		,  	wh-(wh/4)+6,   (FAR_PLANE+5)), 		new Vector3f(1, 1, 1), 		new Vector2f(0, 0)) 
+						
+				
+				}, 	new int[] { 0, 1, 2, 2, 3, 0, 
+						4, 5, 6, 6, 7, 4 }, null));
+				
+				
+				EngineObject bar_top =  new EngineObject(new Mesh(new Vertex[] {
+						//Bar
+						new Vertex(new Vector3f(0, 	0,  (FAR_PLANE+2)), 	new Vector3f(1, 1, 1), 		new Vector2f(0, 0)),
+						new Vertex(new Vector3f(0, 	20, (FAR_PLANE+2)), 	new Vector3f(1, 1, 1),   	new Vector2f(0, 0)),
+						new Vertex(new Vector3f(ww,	20, (FAR_PLANE+2)), 	new Vector3f(1, 1, 1), 		new Vector2f(0, 0)),
+						new Vertex(new Vector3f(ww, 0,  (FAR_PLANE+2)), 	new Vector3f(1, 1, 1), 		new Vector2f(0, 0)), 
+						
+						//bottom line
+						new Vertex(new Vector3f(0, 	20,  (FAR_PLANE+2)), 	new Vector3f(.75f, .75f, .75f), 		new Vector2f(0, 0)),
+						new Vertex(new Vector3f(0, 	21, (FAR_PLANE+2)), 	new Vector3f(.75f, .75f, .75f),   		new Vector2f(0, 0)),
+						new Vertex(new Vector3f(ww,	21, (FAR_PLANE+2)), 	new Vector3f(.75f, .75f, .75f), 		new Vector2f(0, 0)),
+						new Vertex(new Vector3f(ww, 20,  (FAR_PLANE+2)), 	new Vector3f(.75f, .75f, .75f), 		new Vector2f(0, 0))
+				
+					}, 	new int[] { 0, 1, 2, 2, 3, 0, 
+									4, 5, 6, 6, 7, 4 }, null));
+				
 				panel_right.getMesh().buildMesh();
+				bar_top.getMesh().buildMesh();
+				panel_right_button.getMesh().buildMesh();
 				
 				render.renderGui(window, panel_right);
+				render.renderGui(window, bar_top);
+				render.renderGui(window, panel_right_button);
 				
 				panel_right.getMesh().cleanUp();
-				
+				bar_top.getMesh().cleanUp();
+				panel_right_button.getMesh().cleanUp();
 									
 										
 				//
 				
-				render.render(window, camera, new EngineObject[] { myObject, });
+				//render.render(window, camera, new EngineObject[] { myObject, });
 				render.renderGui(window, new EngineObject[] { exporterObject, });
 				
 				

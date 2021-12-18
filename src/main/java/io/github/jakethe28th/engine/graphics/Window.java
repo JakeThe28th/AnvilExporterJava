@@ -109,7 +109,7 @@ public class Window {
 			GL.createCapabilities();
 
 			// Set the clear color
-			glClearColor(0.3f, 0.0f, 0.0f, 0.0f);
+			glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
 			
 			//Enable Z-testing
 			glEnable(GL_DEPTH_TEST);
@@ -188,6 +188,8 @@ public class Window {
             currentPos.y = y;
 			glfwSetCursorPos(window, x, y);
 		}	
+		
+		public Vector2d getMousePos() { return currentPos; }
 		
 		public void mouseInit() {
 		        glfwSetCursorPosCallback(window, (windowHandle, xpos, ypos) -> {

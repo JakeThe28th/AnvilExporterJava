@@ -26,6 +26,31 @@ public class Utility {
 			//https://minecraft.fandom.com/wiki/Chunk_format#Block_format
 		}
 	
+	public static boolean pointInRect(int x1, int y1, int x2, int y2, int px, int py) {
+		
+		int tempx = 0;
+		if (x1 > x2) {
+			tempx = x1;
+			x1 = x2;
+			x2 = tempx;
+			}
+		
+		int tempy = 0;
+		if (y1 > y2) {
+			tempy = y1;
+			y1 = y2;
+			y2 = tempy;
+			}
+		
+		boolean x = false;
+		boolean y = false;
+		if (x1 < px & x2 > px) x = true;
+		if (y1 < py & y2 > py) y = true;
+		
+		if (x & y) return true;
+		return false;
+	}
+	
 	public static String loadFromGLSL(String str, String name) {
 		//Format: name { content } name { content }
 		//Content can include { } brackets, so need to keep track of how many are open / closed.
@@ -63,16 +88,18 @@ public class Utility {
 			}
 			
 			nameTemp = nameTemp + str.charAt(i);
-			System.out.println(nameTemp);
+			//System.out.println(nameTemp);
 			
 			
 			i+=1;
 		}
 		
+		/*
 		System.out.println("Output: ");
 		System.out.println(name);
 		System.out.println(temp);
 		System.out.println(count);
+		*/
 		return temp;
 	}
 	

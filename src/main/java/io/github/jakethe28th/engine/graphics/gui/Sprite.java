@@ -136,6 +136,7 @@ public class Sprite {
 			if (this.cur_y + newImage.getHeight() > this.max_y)
 					this.max_y = this.cur_y + newImage.getHeight();
 			
+			tex.cleanup();
 			this.tex = new Texture(sheet);
 			
 		} catch (IOException e) {
