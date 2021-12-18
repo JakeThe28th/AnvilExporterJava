@@ -21,10 +21,10 @@ public class ChunkMap {
 	
 	Map<String, Integer> chunkMap = new HashMap<String, Integer>();
 	
-	ChunkMap(int x, int z) throws IOException {
+	ChunkMap(int x, int z, String region) throws IOException {
 		String mcaName = x + "." + z; 
 		
-		String fName = "region_testing/r." + mcaName + ".mca";
+		String fName = region + "/r." + mcaName + ".mca";
 		
 		if ((new File(fName)).exists()) 
 			{ this.mca = MCAUtil.read(fName); } 

@@ -27,6 +27,6 @@ import io.github.jakethe28th.engine.math.Vector3f;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
-		AnvilExporter.Main();	
+		new AnvilExporter().Main();	
 	}
 }

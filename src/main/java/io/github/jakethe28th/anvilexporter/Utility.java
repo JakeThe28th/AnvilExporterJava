@@ -1,10 +1,13 @@
 package io.github.jakethe28th.anvilexporter;
 
+import java.awt.Color;
 import java.util.List;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import io.github.jakethe28th.engine.math.Vector3f;
 
 public class Utility {
 
@@ -62,6 +65,12 @@ public class Utility {
 	        if (str.equals(arr.get(i))) return i;
 	    }
 	    return -1;
+	}
+	
+	public static Vector3f hexToRGB(String hex) {
+		Color a = Color.decode(hex);
+		//System.out.println((float) a.getRed() + " " + (float) a.getGreen()  + " " + (float) a.getBlue());
+		return new Vector3f((float) a.getRed()/255, (float) a.getGreen()/255, (float) a.getBlue()/255);
 	}
 	
 	/**

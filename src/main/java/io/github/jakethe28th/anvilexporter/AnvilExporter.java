@@ -8,6 +8,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
+import javax.swing.JFileChooser;
+import javax.swing.UIManager;
+
 import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -20,6 +23,7 @@ import io.github.jakethe28th.engine.graphics.Renderer;
 import io.github.jakethe28th.engine.graphics.Texture;
 import io.github.jakethe28th.engine.graphics.Vertex;
 import io.github.jakethe28th.engine.graphics.Window;
+import io.github.jakethe28th.engine.graphics.gui.Element;
 import io.github.jakethe28th.engine.graphics.gui.Sprite;
 import io.github.jakethe28th.engine.math.Vector2f;
 import io.github.jakethe28th.engine.math.Vector3f;
@@ -42,7 +46,9 @@ public class AnvilExporter {
 	
 	public static Random ran = new Random();
 	
-	public static void Main() throws IOException, ParseException {
+	public String region_folder = "region_testing";
+	
+	public void Main() throws IOException, ParseException {
 		
 		 System.out.println("Free memory (bytes): " + 
 				  (Runtime.getRuntime().maxMemory() - 
@@ -100,12 +106,122 @@ public class AnvilExporter {
 		exporterObject.setRotation(45, 0, 0);
 		exporterMesh.setTexture(new Texture("export.png"));
 		
+		Element panel_top_left = new Element();
+			panel_top_left.set("inline", new Element());
+			panel_top_left.set("inline.file", new Element());
+			panel_top_left.set("inline.view", new Element());
+			panel_top_left.set("inline.options", new Element());
+			panel_top_left.set("inline.help", new Element());
+			
+			panel_top_left.set("inline.file.open_world", new Element());
+			
+			panel_top_left.get("inline").setProperty("type", Element.ELEMENT_TYPE_INLINE);
+
+			panel_top_left.get("inline.file").setProperty("type", "dropdown");
+			panel_top_left.get("inline.file").setProperty("string", "File");
+			setTheme(panel_top_left, "inline.file");
+				
+				panel_top_left.get("inline.file.open_world").setProperty("type", "button");
+				panel_top_left.get("inline.file.open_world").setProperty("string", "Open world");
+				setTheme(panel_top_left, "inline.file.open_world");
+				
+			
+			
+			panel_top_left.get("inline.view").setProperty("type", "dropdown");
+			panel_top_left.get("inline.view").setProperty("string", "View");
+			setTheme(panel_top_left, "inline.view");
+			
+			
+			panel_top_left.get("inline.options").setProperty("type", "dropdown");
+			panel_top_left.get("inline.options").setProperty("string", "Options");
+			setTheme(panel_top_left, "inline.options");
+			
+			panel_top_left.get("inline.help").setProperty("type", "dropdown");
+			panel_top_left.get("inline.help").setProperty("string", "Help");
+			setTheme(panel_top_left, "inline.help");
+			
+			
+		Element panel_top_right = new Element();
+		panel_top_right.set("inline", new Element());
+		panel_top_right.get("inline").setProperty("type", Element.ELEMENT_TYPE_INLINE);
+
+		panel_top_right.set("inline.preview_options", new Element());
+		panel_top_right.get("inline.preview_options").setProperty("type", "dropdown");
+		panel_top_right.get("inline.preview_options").setProperty("string", "Preview options");
+		setTheme(panel_top_right, "inline.preview_options");
+		
+		
+		Element panel_right = new Element();	
+		
+		panel_top_left.setProperty("type", Element.ELEMENT_TYPE_COLLECTION);
+		panel_top_left.col_base = Utility.hexToRGB("#303030"); 
+		panel_top_left.col_outline = Utility.hexToRGB("#171717"); 
+		
+		panel_top_right.setProperty("type", Element.ELEMENT_TYPE_COLLECTION);
+		panel_top_right.col_base = Utility.hexToRGB("#303030"); 
+		panel_top_right.col_outline = Utility.hexToRGB("#171717"); 
+		
+		panel_right.setProperty("type", Element.ELEMENT_TYPE_COLLECTION);
+		panel_right.col_base = Utility.hexToRGB("#2F2F2F"); 
+		panel_right.col_outline = Utility.hexToRGB("#171717"); 
+		
+		
 		Boolean queue = true;
 		int offx = 0, offz = 0;
 			while (!endProgram) {
 				int ww = window.getWidth();
 				int wh = window.getHeight();
 				
+				render.clear();
+
+				
+				panel_top_left.setProperty("x1", "0");
+				panel_top_left.setProperty("y1", "0");
+				panel_top_left.setProperty("x2", (ww-(ww/3)) + "");
+				panel_top_left.setProperty("y2", "30");
+				
+				panel_top_left.draw(render, window, null, 0, 0, 10);
+				
+				
+				panel_top_right.setProperty("x1", (ww-(ww/3)) + "");
+				panel_top_right.setProperty("y1", "0");
+				panel_top_right.setProperty("x2", ww + "");
+				panel_top_right.setProperty("y2", "30");
+				
+				panel_top_right.draw(render, window, null, 0, 0, 5);
+				
+				
+				panel_right.setProperty("x1", (ww-(ww/3)) + "");
+				panel_right.setProperty("y1", "30");
+				panel_right.setProperty("x2", ww + "");
+				panel_right.setProperty("y2", wh + "");
+				
+				panel_right.draw(render, window, null, 0, 0, 0);
+				
+				if (panel_top_left.get("inline.file.open_world").getProperty("selected") != null)
+				if (panel_top_left.get("inline.file.open_world").getProperty("selected").equals("true")) {
+					panel_top_left.get("inline.file.open_world").setProperty("selected", "false");
+					chunkMap.clear();
+					//chunkMap = new HashMap<String, ChunkMap>();
+					
+					 
+		            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		                
+		            File selectedFile = null;
+		            
+					JFileChooser chooser = new JFileChooser();
+					chooser.setCurrentDirectory(new File(System.getenv("APPDATA") + "/.minecraft/saves"));
+                    if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                    	selectedFile = chooser.getSelectedFile();
+            			System.out.println(selectedFile.getAbsolutePath());
+                    }
+                    
+					if (selectedFile != null) region_folder = selectedFile.getParent() + "\\region";
+					System.out.println(region_folder);
+					//open_world();
+					}
+				
+				/*
 				//Exporter stepping logic
 				if (exporter.chunks.size() > 0 ) { 
 					exporterMesh.flip();
@@ -138,74 +254,18 @@ public class AnvilExporter {
 						
 						
 						}
+						*/
 				
 				//Center the export on the right of the window
 				float ratio = (window.getWidth()/4) / ((exporterMesh.max_xyz.x-exporterMesh.min_xyz.x));
 				exporterObject.setPosition((window.getWidth()/2)+(window.getWidth()/3), exporterObject.getPosition().y, 0);
 				exporterObject.setScale(ratio, ratio, ratio); 
+			
 				
-
-				render.clear();
-				render2dPreview(window, chunkMap, render, offx, offz, 7);
-				
-				
-				//GUI
-				
-				EngineObject panel_right =  new EngineObject(new Mesh(new Vertex[] {
-						new Vertex(new Vector3f(ww-(ww/3), 	0,  (FAR_PLANE+1)), 	new Vector3f(.95f, .95f, .95f), 		new Vector2f(0, 0)),
-						new Vertex(new Vector3f(ww-(ww/3), 	wh, (FAR_PLANE+1)), 	new Vector3f(.95f, .95f, .95f),   	new Vector2f(0, 0)),
-						new Vertex(new Vector3f(ww		 ,	wh, (FAR_PLANE+1)), 	new Vector3f(.95f, .95f, .95f), 		new Vector2f(0, 0)),
-						new Vertex(new Vector3f(ww		 ,  0,  (FAR_PLANE+1)), 	new Vector3f(.95f, .95f, .95f), 		new Vector2f(0, 0)) }, new int[] {
-								 // Front face
-							    0, 1, 2, 2, 3, 0
-							}, null));
-				
-				EngineObject panel_right_button =  new EngineObject(new Mesh(new Vertex[] {
-						new Vertex(new Vector3f(ww-(ww/3)+5	, 	wh-(wh/4)+5,  	(FAR_PLANE+4)), 	new Vector3f(.75f, .75f, .75f), 		new Vector2f(0, 0)),
-						new Vertex(new Vector3f(ww-(ww/3)+5	, 	wh-5, 			(FAR_PLANE+4)), 	new Vector3f(.75f, .75f, .75f),   		new Vector2f(0, 0)),
-						new Vertex(new Vector3f(ww-5	 	,	wh-5, 			(FAR_PLANE+4)), 	new Vector3f(.75f, .75f, .75f), 		new Vector2f(0, 0)),
-						new Vertex(new Vector3f(ww-5		,  	wh-(wh/4)+5,   	(FAR_PLANE+4)), 		new Vector3f(.75f, .75f, .75f), 		new Vector2f(0, 0)),
-						
-						new Vertex(new Vector3f(ww-(ww/3)+6	, 	wh-(wh/4)+6,  	(FAR_PLANE+5)), 	new Vector3f(1, 1, 1), 		new Vector2f(0, 0)),
-						new Vertex(new Vector3f(ww-(ww/3)+6	, 	wh-10, 			(FAR_PLANE+5)), 	new Vector3f(1, 1, 1),   	new Vector2f(0, 0)),
-						new Vertex(new Vector3f(ww-6	 	,	wh-10, 			(FAR_PLANE+5)), 	new Vector3f(1, 1, 1), 		new Vector2f(0, 0)),
-						new Vertex(new Vector3f(ww-6		,  	wh-(wh/4)+6,   (FAR_PLANE+5)), 		new Vector3f(1, 1, 1), 		new Vector2f(0, 0)) 
-						
-				
-				}, 	new int[] { 0, 1, 2, 2, 3, 0, 
-						4, 5, 6, 6, 7, 4 }, null));
+				render2dPreview(window, chunkMap, render, offx, offz, 2);
 				
 				
-				EngineObject bar_top =  new EngineObject(new Mesh(new Vertex[] {
-						//Bar
-						new Vertex(new Vector3f(0, 	0,  (FAR_PLANE+2)), 	new Vector3f(1, 1, 1), 		new Vector2f(0, 0)),
-						new Vertex(new Vector3f(0, 	20, (FAR_PLANE+2)), 	new Vector3f(1, 1, 1),   	new Vector2f(0, 0)),
-						new Vertex(new Vector3f(ww,	20, (FAR_PLANE+2)), 	new Vector3f(1, 1, 1), 		new Vector2f(0, 0)),
-						new Vertex(new Vector3f(ww, 0,  (FAR_PLANE+2)), 	new Vector3f(1, 1, 1), 		new Vector2f(0, 0)), 
-						
-						//bottom line
-						new Vertex(new Vector3f(0, 	20,  (FAR_PLANE+2)), 	new Vector3f(.75f, .75f, .75f), 		new Vector2f(0, 0)),
-						new Vertex(new Vector3f(0, 	21, (FAR_PLANE+2)), 	new Vector3f(.75f, .75f, .75f),   		new Vector2f(0, 0)),
-						new Vertex(new Vector3f(ww,	21, (FAR_PLANE+2)), 	new Vector3f(.75f, .75f, .75f), 		new Vector2f(0, 0)),
-						new Vertex(new Vector3f(ww, 20,  (FAR_PLANE+2)), 	new Vector3f(.75f, .75f, .75f), 		new Vector2f(0, 0))
 				
-					}, 	new int[] { 0, 1, 2, 2, 3, 0, 
-									4, 5, 6, 6, 7, 4 }, null));
-				
-				panel_right.getMesh().buildMesh();
-				bar_top.getMesh().buildMesh();
-				panel_right_button.getMesh().buildMesh();
-				
-				render.renderGui(window, panel_right);
-				render.renderGui(window, bar_top);
-				render.renderGui(window, panel_right_button);
-				
-				panel_right.getMesh().cleanUp();
-				bar_top.getMesh().cleanUp();
-				panel_right_button.getMesh().cleanUp();
-									
-										
-				//
 				
 				//render.render(window, camera, new EngineObject[] { myObject, });
 				render.renderGui(window, new EngineObject[] { exporterObject, });
@@ -220,16 +280,6 @@ public class AnvilExporter {
 				window.loop();
 
 				boolean flipping = false;
-				if (window.mouseButton(Window.MB_LEFT)) {
-					window.mouseInput();
-					float moveX = (window.getMouseDisplacement().x/5);
-					float moveY = (window.getMouseDisplacement().y/5);
-					
-					camera.setRotation((camera.getRotation().x) + moveX, (camera.getRotation().y) + moveY, 0);
-
-					window.setMousePos(window.getWidth()/2,window.getHeight()/2);
-					window.mouseInput();
-					}
 				
 				if (window.isKeyPressed(GLFW.GLFW_KEY_E)) {
 					exporterObject.setPosition(exporterObject.getPosition().x, (float) (exporterObject.getPosition().y+5), exporterObject.getPosition().z);
@@ -307,7 +357,7 @@ public class AnvilExporter {
 		}
 	  }
 	
-	public static void render2dPreview(Window window, Map<String, ChunkMap> chunkMap, Renderer render, int offset_x, int offset_y, float scale) throws IOException { 
+	public void render2dPreview(Window window, Map<String, ChunkMap> chunkMap, Renderer render, int offset_x, int offset_y, float scale) throws IOException { 
 		//render in bounds
 		//translate (camera)
 		//etc
@@ -347,7 +397,7 @@ public class AnvilExporter {
 					
 					if (chunkMap.get(mcaName) == null) {
 						System.out.println("MCA " + mcaName + " is NULL");
-						chunkMap.put(mcaName, new ChunkMap((int) Math.floor(((float) ix)/32), (int) Math.floor(((float) iy)/32)));
+						chunkMap.put(mcaName, new ChunkMap((int) Math.floor(((float) ix)/32), (int) Math.floor(((float) iy)/32), region_folder));
 						}
 					
 					//System.out.println("CHUNK " + ix + " " + iy + " is " + mcaName);
@@ -380,6 +430,16 @@ public class AnvilExporter {
 		
 	}
 
+	private static void setTheme(Element element, String str) {
+		element.get(str).col_base = Utility.hexToRGB("#303030"); 
+		element.get(str).col_outline = Utility.hexToRGB("#171717"); 
+		element.get(str).col_hover = Utility.hexToRGB("#42525E"); 
+		element.get(str).col_outline_hover = Utility.hexToRGB("#416179"); 
+		element.get(str).col_select = Utility.hexToRGB("#416179"); 
+		element.get(str).col_outline_select = Utility.hexToRGB("#316C9B");
+		element.get(str).col_text = Utility.hexToRGB("#D0D0D0");
+		}
+	
 	public static void program(Mesh exporterMesh) throws Exception {
 		
 			

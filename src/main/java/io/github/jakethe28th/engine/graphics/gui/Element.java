@@ -31,6 +31,15 @@ public class Element {
 	public static final String ELEMENT_TYPE_SEP			= "seperator";
 		//Types
 	
+	public Vector3f col_outline_select = new Vector3f(0.38431372549f, 0.63529411764f, 0.89411764705f);
+	public Vector3f col_select = new Vector3f(0.78823529411f, 0.87843137254f, 0.96862745098f);
+	public Vector3f col_hover = new Vector3f(0.93725490196f, 0.96470588235f, 0.99607843137f);
+	public Vector3f col_outline_hover = new Vector3f(0.66666666666f, 0.82745098039f, 0.99607843137f);
+	public Vector3f col_base = new Vector3f(1, 1, 1);
+	public Vector3f col_outline = new Vector3f(.75f, .75f, .75f);
+	
+	public Vector3f col_text = new Vector3f(0, 0, 0);
+	
 	public int type; //Set this to a type from above
 	
 	
@@ -163,6 +172,7 @@ public class Element {
 			
 			int[] dp = drawDropdown(render, window, parent, y, x, FAR_PLANE);
 			y_size+= dp[0];
+			x_size+= dp[1];
 			
 			if (properties.get("clicked_inside").equals("true")) inside = true;
 			
@@ -201,7 +211,7 @@ public class Element {
 			this.setProperty("x2", (xx+width) + "");
 			this.setProperty("y2", (yy+height) + "");
 			
-			EngineObject panel = genPanel(xx, yy, xx+width, yy+height, FAR_PLANE, new Vector3f(.75f, .75f, .75f), new Vector3f(1, 1, 1));
+			EngineObject panel = genPanel(xx, yy, xx+width, yy+height, FAR_PLANE, this.col_outline, col_base);
 			
 			render.renderGui(window, panel);
 			
@@ -298,7 +308,7 @@ public class Element {
 		int top_y = 	Integer.valueOf(properties.get("y1"));
 		int bottom_y = 	Integer.valueOf(properties.get("y2"));
 		
-		EngineObject panel = genPanel(left_x, top_y, right_x, bottom_y, FAR_PLANE, new Vector3f(.75f, .75f, .75f), new Vector3f(1, 1, 1));
+		EngineObject panel = genPanel(left_x, top_y, right_x, bottom_y, FAR_PLANE, this.col_outline, col_base);
 		
 		render.renderGui(window, panel);
 	}
@@ -314,11 +324,11 @@ public class Element {
 		int x_size = 0;
 		String drawString = properties.get("string");
 		
-		int[] dim = TextRenderer.global().getStringDimensions(drawString,  0.2f, string_size, new Vector3f(1, 1, 1));
+		int[] dim = TextRenderer.global().getStringDimensions(drawString,  0.2f, string_size, new Vector3f(1,1,1));
 		
 		int[] dim2 = {0, 0};
 		if (properties.get("keybind") != null) {
-			dim2 = TextRenderer.global().getStringDimensions(properties.get("keybind"),  0.2f, string_size, new Vector3f(1, 1, 1));
+			dim2 = TextRenderer.global().getStringDimensions(properties.get("keybind"),  0.2f, string_size, new Vector3f(1,1,1));
 			}
 		
 		//add a width
@@ -347,14 +357,14 @@ public class Element {
 		int bottom_y = 	top_y+dim[1];
 		
 		//Default color
-		Vector3f outline_color = new Vector3f(.75f, .75f, .75f);
-		Vector3f color = new Vector3f(1, 1, 1);
+		Vector3f outline_color = this.col_outline;
+		Vector3f color = col_base;
 
 		//If hovering over button:
 		if (Utility.pointInRect(left_x, top_y, right_x, bottom_y, (int) window.getMousePos().x, (int) window.getMousePos().y)) {
 			//windows/highlighted
-			outline_color = new Vector3f(0.66666666666f, 0.82745098039f, 0.99607843137f);
-			color = new Vector3f(0.93725490196f, 0.96470588235f, 0.99607843137f);
+			outline_color = this.col_outline_hover;
+			color = this.col_hover;
 			
 			//If the left mouse button has been up and is now down:
 			if (window.mouseButton(Window.MB_LEFT)) {
@@ -374,8 +384,8 @@ public class Element {
 		//Override the color if selected.
 		if (properties.get("selected") != null) if (properties.get("selected").equals("true")) {
 			//windows/selected
-			outline_color = new Vector3f(0.38431372549f, 0.63529411764f, 0.89411764705f);
-			color = new Vector3f(0.78823529411f, 0.87843137254f, 0.96862745098f);
+			outline_color = this.col_outline_select;
+			color = this.col_select;
 		}
 		
 		EngineObject panel = genPanel(left_x, top_y, right_x, bottom_y, FAR_PLANE, outline_color, color);
@@ -390,7 +400,7 @@ public class Element {
 			if (properties.get("align").equals("center") | properties.get("align").equals("centre")) text_x = ((left_x + right_x)/2) - (dim[0]/2);	
 			}
 		
-		TextRenderer.global().drawString(drawString, render, window, 0.2f, string_size, new Vector3f(text_x, top_y, FAR_PLANE + 6), new Vector3f(1, 1, 1), new Vector3f(0, 0, 0), 1);
+		TextRenderer.global().drawString(drawString, render, window, 0.2f, string_size, new Vector3f(text_x, top_y, FAR_PLANE + 6), new Vector3f(1, 1, 1), col_text, 1);
 		
 		y_size = bottom_y - y;
 		x_size = right_x - x;
@@ -413,18 +423,19 @@ public class Element {
 		int x_size = 0;
 		String drawString = properties.get("string");
 		
-		int[] dim = TextRenderer.global().getStringDimensions(drawString,  0.2f, string_size, new Vector3f(1, 1, 1));
+		int[] dim = TextRenderer.global().getStringDimensions(drawString,  0.2f, string_size, new Vector3f(1, 1 ,1));
 
 		//add a width
 		//if size is less than width conform to x1 and x2
 		//else conform to x + width
 		
 		int padding = 6;
+		int icon_width = 15;
 		if (parent.getProperty("type").equals(ELEMENT_TYPE_DROPDOWN)) padding = 0;
 		
 		
 		int left_x = 	x+padding;
-		int right_x =	(x+(dim[0]*2))-padding;
+		int right_x =	((x+(dim[0]*2))-padding)+icon_width+10;
 		
 		if (parent.getProperty("x1") != null & parent.getProperty("x2") != null) {
 			left_x = 	Integer.valueOf(parent.getProperty("x1"))+padding;
@@ -440,14 +451,14 @@ public class Element {
 		int bottom_y = 	top_y+dim[1];
 		
 		//Default color
-		Vector3f outline_color = new Vector3f(.75f, .75f, .75f);
-		Vector3f color = new Vector3f(1, 1, 1);
+		Vector3f outline_color = this.col_outline;
+		Vector3f color = col_base;
 
 		//If hovering over button:
 		if (Utility.pointInRect(left_x, top_y, right_x, bottom_y, (int) window.getMousePos().x, (int) window.getMousePos().y)) {
 			//windows/highlighted
-			outline_color = new Vector3f(0.66666666666f, 0.82745098039f, 0.99607843137f);
-			color = new Vector3f(0.93725490196f, 0.96470588235f, 0.99607843137f);
+			outline_color = this.col_outline_hover;
+			color = this.col_hover;
 			
 			//If the left mouse button has been up and is now down:
 			if (window.mouseButton(Window.MB_LEFT)) {
@@ -469,11 +480,10 @@ public class Element {
 		//Override the color if selected.
 		if (properties.get("selected") != null) if (properties.get("selected").equals("true")) {
 			//windows/selected
-			outline_color = new Vector3f(0.38431372549f, 0.63529411764f, 0.89411764705f);
-			color = new Vector3f(0.78823529411f, 0.87843137254f, 0.96862745098f);
+			outline_color = this.col_outline_select;
+			color = this.col_select;
 		}
 		
-		int icon_width = 15;
 		EngineObject panel = genPanel(left_x, top_y, right_x, bottom_y, FAR_PLANE, outline_color, color);
 		
 		render.renderGui(window, panel);
@@ -486,7 +496,7 @@ public class Element {
 			if (properties.get("align").equals("center") | properties.get("align").equals("centre")) text_x = ((left_x + right_x)/2) - (dim[0]/2);	
 			}
 		
-		TextRenderer.global().drawString(drawString, render, window, 0.2f, string_size, new Vector3f(text_x, top_y, FAR_PLANE + 6), new Vector3f(1, 1, 1), new Vector3f(0, 0, 0), 1);
+		TextRenderer.global().drawString(drawString, render, window, 0.2f, string_size, new Vector3f(text_x, top_y, FAR_PLANE + 6), new Vector3f(1,1,1), col_text, 1);
 		
 		y_size = bottom_y - y;
 		x_size = right_x - x;
@@ -539,7 +549,7 @@ public class Element {
 		int x_size = 0;
 		String drawString = properties.get("string");
 		
-		int[] dim = TextRenderer.global().getStringDimensions(drawString,  0.2f, string_size, new Vector3f(1, 1, 1));
+		int[] dim = TextRenderer.global().getStringDimensions(drawString,  0.2f, string_size, new Vector3f(1,1,1));
 		
 		int left_x, right_x;
 		if (!parent.getProperty("type").equals(ELEMENT_TYPE_COLLECTION)
@@ -548,7 +558,7 @@ public class Element {
 			right_x =	Integer.valueOf(parent.getProperty("x2"))-2;
 			}
 		left_x = 	x+5;
-		right_x =	x+TextRenderer.global().getStringDimensions(drawString, .2f, string_size, new Vector3f(1, 1, 1))[0];
+		right_x =	x+TextRenderer.global().getStringDimensions(drawString, .2f, string_size, new Vector3f(1,1,1))[0];
 		int top_y = 	y+2;
 		int bottom_y = 	y+dim[1];
 		
@@ -563,7 +573,7 @@ public class Element {
 			if (properties.get("align").equals("center") | properties.get("align").equals("centre")) text_x = ((left_x + right_x)/2) - (dim[0]/2);	
 			}
 		
-		TextRenderer.global().drawString(drawString, render, window, 0.2f, string_size, new Vector3f(text_x, top_y, FAR_PLANE + 6), new Vector3f(1, 1, 1), new Vector3f(0, 0, 0), 1);
+		TextRenderer.global().drawString(drawString, render, window, 0.2f, string_size, new Vector3f(text_x, top_y, FAR_PLANE + 6), new Vector3f(1,1,1), col_text, 1);
 		
 		y_size = bottom_y - y;
 		x_size = right_x - x;
@@ -608,11 +618,11 @@ public class Element {
 		int string_size = 18, y_size = 0, x_size = 0;
 		String drawString = properties.get("string");
 		
-		int[] dim = TextRenderer.global().getStringDimensions(drawString,  0.2f, string_size, new Vector3f(1, 1, 1));
+		int[] dim = TextRenderer.global().getStringDimensions(drawString,  0.2f, string_size, new Vector3f(1,1,1));
 		
 		int[] dim2 = {0, 0};
 		if (properties.get("keybind") != null) {
-			dim2 = TextRenderer.global().getStringDimensions(properties.get("keybind"),  0.2f, string_size, new Vector3f(1, 1, 1));
+			dim2 = TextRenderer.global().getStringDimensions(properties.get("keybind"),  0.2f, string_size, new Vector3f(1,1,1));
 			}
 
 		int padding = 6;
@@ -648,7 +658,7 @@ public class Element {
 		int string_size = 18, y_size = 0, x_size = 0;
 		String drawString = properties.get("string");
 		
-		int[] dim = TextRenderer.global().getStringDimensions(drawString,  0.2f, string_size, new Vector3f(1, 1, 1));
+		int[] dim = TextRenderer.global().getStringDimensions(drawString,  0.2f, string_size, new Vector3f(1,1,1));
 		
 		int right_x;
 		if (!parent.getProperty("type").equals(ELEMENT_TYPE_COLLECTION)
@@ -656,7 +666,7 @@ public class Element {
 			right_x =	Integer.valueOf(parent.getProperty("x2"))-2;
 			}
 
-		right_x =	x+TextRenderer.global().getStringDimensions(drawString, .2f, string_size, new Vector3f(1, 1, 1))[0];
+		right_x =	x+TextRenderer.global().getStringDimensions(drawString, .2f, string_size, new Vector3f(1,1,1))[0];
 		int bottom_y = 	y+dim[1];
 		
 		y_size = bottom_y - y;
