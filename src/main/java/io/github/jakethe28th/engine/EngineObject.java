@@ -56,5 +56,11 @@ public class EngineObject {
     
     public void setScaleMode(int scale_mode) { this.scale_mode = scale_mode; }
 
+	public void setMesh(Mesh newMesh) {
+		this.mesh.cleanUp();
+		this.mesh = newMesh;
+		
+	}
+
     
 }

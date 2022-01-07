@@ -1,6 +1,5 @@
 package io.github.jakethe28th.anvilexporter;
 
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;

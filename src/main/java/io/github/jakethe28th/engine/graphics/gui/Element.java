@@ -42,7 +42,10 @@ public class Element {
 	
 	public int type; //Set this to a type from above
 	
+	public boolean hovered = false;
+	private Window window;
 	
+	public long lastDraw;
 	
 	public Element() {
 		elements = new LinkedHashMap<String, Element>(); 
@@ -147,6 +150,16 @@ public class Element {
 		int y_size = 0;
 		int x_size = 0;
 		
+		hovered = false;
+		lastDraw = System.currentTimeMillis();
+		
+		for (String key : elements.keySet()) {
+			elements.get(key).hovered = false;
+		}
+		
+		
+		this.window = window;
+		
 		float FAR_PLANE = depth*10;
 		
 		if (properties.get("type").equals(ELEMENT_TYPE_COLLECTION)) { 
@@ -233,14 +246,13 @@ public class Element {
 						if (properties.get("select_function").equals("close")) properties.put("selected", "false");
 						} 
 					}
+				
 				if (elements.get(key).getProperty("type").equals(ELEMENT_TYPE_DROPDOWN)) {
 					int[] i = elements.get(key).draw(render, window, this, yy, xx, depth+1);
 					yy+= i[0];
 					if (elements.get(key).getProperty("clicked_inside").equals("true")) inside = true;
 					}
 				}	
-			
-			
 			
 			if (window.mouseButton(Window.MB_LEFT)) {
 			//If hovering over button:
@@ -258,8 +270,6 @@ public class Element {
 									} } else properties.put("last_state_change", "false");
 								
 			if (inside) properties.put("clicked_inside", "true");
-			
-			
 				}
 			}
 		
@@ -290,6 +300,9 @@ public class Element {
 			x_size += i[1];
 		}
 		
+		for (String key : elements.keySet()) {
+			if (elements.get(key).hovered) hovered = true;
+		}
 		
 		int[] ret = {y_size, x_size};
 		return ret;
@@ -700,6 +713,10 @@ public class Element {
 		
 		}, 	new int[] { 0, 1, 2, 2, 3, 0, 
 				4, 5, 6, 6, 7, 4 }, null));
+		
+		if (Utility.pointInRect(left_x, top_y, right_x, bottom_y, (int) window.getMousePos().x, (int) window.getMousePos().y)) {
+			hovered = true;
+			}
 		
 		return panel;
 	}

@@ -24,6 +24,7 @@ public class Exporter {
 
 	JSONParser jsonParser = new JSONParser();
 	WriteBlock BlockWriter;
+	String filename;
 	
 	public HashMap<Integer,ChunkExporter> chunks = new HashMap<Integer,ChunkExporter>();
 	public Mesh myMesh;
@@ -31,6 +32,8 @@ public class Exporter {
 	public Exporter(String region_folder_path, String filename_) { 	
 		BlockWriter = new WriteBlock(filename_, new Sprite(256, 256));
 		this.myMesh = BlockWriter.myMesh;
+		
+		this.filename = filename_;
 	}
 	
 	public static Boolean isTransparent(Section section, int x, int y, int z) throws IOException {
@@ -96,6 +99,13 @@ public class Exporter {
 		chunks.put(chunks.size(), new ChunkExporter(chunk, cullmode, chunk_x, chunk_z, BlockWriter));
 		return false; 
 		}
+	
+	public void reset() {
+		BlockWriter.end();
+		this.myMesh = BlockWriter.myMesh;
+		
+		BlockWriter = new WriteBlock(filename, new Sprite(256, 256));
+	}
 	
 	public void end() {
 		BlockWriter.end();

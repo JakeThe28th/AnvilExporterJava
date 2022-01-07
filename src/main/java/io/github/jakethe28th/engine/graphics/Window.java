@@ -68,7 +68,7 @@ public class Window {
 		    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 			
 			// Create the window
-			window = glfwCreateWindow(w, h, title, NULL, NULL);
+			window = glfwCreateWindow(w-1, h, title, NULL, NULL);
 			if ( window == NULL )
 				throw new RuntimeException("Failed to create the GLFW window");
 
@@ -123,6 +123,10 @@ public class Window {
 			
 			//no blurry
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			
+			//Create window with different size, resize it to correct size.
+			//This is a workaround for an error with the window not drawing until resized.
+			glfwSetWindowSize(window, w, h);
 		}
 
 		public void loop() {
