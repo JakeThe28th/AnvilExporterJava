@@ -198,12 +198,14 @@ class ChunkExporter {
 					culling.put("down", Exporter.isTransparent(section, 	y, z-1, x));
 									if (!Exporter.isTransparent(section, 	y, z-1, x)) sides-=1;
 					
+									/*
 									culling.put("north", true);
 									culling.put("east", true);
 									culling.put("south", true);
 									culling.put("west", true);
 									culling.put("up", true);
 									culling.put("down", true);
+									*/
 									
 					//if (section.getBlockLight() != null) {
 					//System.out.println("l");
