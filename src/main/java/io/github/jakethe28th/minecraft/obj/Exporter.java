@@ -101,9 +101,6 @@ public class Exporter {
 		}
 	
 	public void reset() {
-		BlockWriter.end();
-		
-		
 		BlockWriter = new WriteBlock(filename, new Sprite(256, 256));
 		this.myMesh = BlockWriter.myMesh;
 	}

@@ -142,7 +142,7 @@ public class AnvilExporter {
 					} else if (queue == true) {
 						exporterMesh = exporter.myMesh;
 						exporterObject.setMesh(exporterMesh);
-						exporter.reset();
+						exporter.end();
 
 						exporterObject.setScaleMode(EngineObject.SCALE_MODE_SKEW);
 						//exporterObject.setPosition(window.getWidth()/2, window.getHeight()/2, 0);
@@ -467,6 +467,8 @@ public class AnvilExporter {
 				int iy = startY;
 				
 				int ri = 0;
+				
+				exporter.reset();
 				
 				//if (lx > 0 && ly > 0) {
 				while (ix <= lx) {

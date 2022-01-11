@@ -40,7 +40,7 @@ public class WriteBlock {
 	
 	public ArrayList<String> mtl_done = new ArrayList<String>();
 	
-	public int v_count = 4;
+	public int v_count = 0;
 	public int vt_count = 4;
 	
 	public String namespace = "minecraft";
@@ -49,6 +49,7 @@ public class WriteBlock {
 	
 	public Mesh myMesh;
 	public void end() {
+		System.out.println("Ended WriteBlock " + filename + " at " + System.currentTimeMillis());
 		try {
 		objWriter.close();
 		mtlWriter.close();
@@ -74,8 +75,11 @@ public class WriteBlock {
 	public HashMap<String, Integer> texture_index;
 	
 	public HashMap<String, String[]> cache;
+
+	private String cachepath;
 	
 	public WriteBlock(String filename_, Sprite texture_sheet) {
+		System.out.println("Created WriteBlock " + filename_ + " at " + System.currentTimeMillis());
 		filename = filename_;
 		
 		this.texture_sheet = texture_sheet;
@@ -165,7 +169,45 @@ public class WriteBlock {
 		return path;
 		}
 
-	public int addModel() {
+	public int addModel(String path, int x, int y, int z, Double rot_x, Double rot_y, Double rot_z, HashMap<String, Boolean> Culling, Boolean uvlock) throws IOException {
+		this.cachepath = path + Culling.get("north") + 
+				 Culling.get("east") + 
+				 Culling.get("south") + 
+				 Culling.get("west") + 
+				 Culling.get("up") + 
+				 Culling.get("down");
+		
+		if (cache.get(cachepath) == null) {
+			WriteModel(path, 0, 0, 0, rot_x, rot_y, rot_z, Culling, uvlock);
+			}
+		
+		String[] cachedmodel = cache.get(cachepath);
+		if (cachedmodel == null) System.out.println("Cached model for " + path + " was null.");
+		if (cachedmodel != null) {
+		int i = 0;
+		while (i < cachedmodel.length) {
+			String[] t = cachedmodel[i].split(" ");
+			String write = " ";
+			if (t[0].equals("v")) {
+				write = t[0] + " " + (Double.parseDouble(t[1])+x)
+							 + " " + (Double.parseDouble(t[2])+y)
+							 + " " + (Double.parseDouble(t[3])+z)
+							 + "\n";
+				this.v_count  += 1;
+				}
+			
+			if (t[0].equals("f")) {
+				write = "f " 
+	    		 		+ (v_count-3) + "/" + t[1].split("/")[1] + " " 
+	    		 		+ (v_count-2) + "/" + t[2].split("/")[1] + " " 
+	    		 		+ (v_count-1) + "/" + t[3].split("/")[1] + " " 
+	    		 		+ v_count + "/" + t[4].split("/")[1] + " \n";
+				}
+			objWriter.write(write);
+			//System.out.println(write);
+			i++;
+		}
+		}
 		
 		
 		return 0;
@@ -173,7 +215,8 @@ public class WriteBlock {
 	
 	
 	public int WriteModel(String path, int x, int y, int z, Double rot_x, Double rot_y, Double rot_z, HashMap<String, Boolean> Culling, Boolean uvlock) {
-
+		ArrayList<String> array_cached = new ArrayList<String>();
+		
 	path = FileHierarchy(path);
 	if (path == null) System.out.println("Model file does not exist."); 
 	
@@ -316,12 +359,15 @@ public class WriteBlock {
         	coords.rotate(8, 8, 8, rot_x, rot_z, rot_y-90);
         	coords.scale(1, 1, -1);
         	
-        	objWriter.write("v "+((coords.x1/16)+x) +" "+((coords.y1/16)+y)+" "+((coords.z1/16)+z)+ "\n");
-        	objWriter.write("v "+((coords.x2/16)+x) +" "+((coords.y2/16)+y)+" "+((coords.z2/16)+z)+ "\n");
-        	objWriter.write("v "+((coords.x3/16)+x) +" "+((coords.y3/16)+y)+" "+((coords.z3/16)+z)+ "\n");
-        	objWriter.write("v "+((coords.x4/16)+x) +" "+((coords.y4/16)+y)+" "+((coords.z4/16)+z)+ "\n");
-  	     
-    	     
+        	//objWriter.write("v "+((coords.x1/16)+x) +" "+((coords.y1/16)+y)+" "+((coords.z1/16)+z)+ "\n");
+        	//objWriter.write("v "+((coords.x2/16)+x) +" "+((coords.y2/16)+y)+" "+((coords.z2/16)+z)+ "\n");
+        	//objWriter.write("v "+((coords.x3/16)+x) +" "+((coords.y3/16)+y)+" "+((coords.z3/16)+z)+ "\n");
+        	//objWriter.write("v "+((coords.x4/16)+x) +" "+((coords.y4/16)+y)+" "+((coords.z4/16)+z)+ "\n");
+        	array_cached.add("v "+((coords.x1/16)+x) +" "+((coords.y1/16)+y)+" "+((coords.z1/16)+z)+ "\n");
+        	array_cached.add("v "+((coords.x2/16)+x) +" "+((coords.y2/16)+y)+" "+((coords.z2/16)+z)+ "\n");
+        	array_cached.add("v "+((coords.x3/16)+x) +" "+((coords.y3/16)+y)+" "+((coords.z3/16)+z)+ "\n");
+        	array_cached.add("v "+((coords.x4/16)+x) +" "+((coords.y4/16)+y)+" "+((coords.z4/16)+z)+ "\n");
+        	
     	    JSONArray uv = (JSONArray) face.get("uv");
     	    
     	     
@@ -426,6 +472,7 @@ public class WriteBlock {
     	     */
     	     //x1-y2;x2-y2;x2-y1;x1-y1;
     	    
+    	     //Don't need to cache UV coordinates because you only write them once
     	     if (!uvlock ) {
     	    	 /*
     	     	switch (face_name) {
@@ -540,13 +587,20 @@ public class WriteBlock {
     	        			objWriter.write("vt "+lock_u4+" "+lock_v4+" "+ "\n");
     	     	}
     	     
-    	     objWriter.write("f " 
+    	     /*objWriter.write("f " 
     	    		 		+ (v_count-3) + "/" + (v_count-3) + " " 
     	    		 		+ (v_count-2) + "/" + (v_count-2) + " " 
     	    		 		+ (v_count-1) + "/" + (v_count-1) + " " 
     	    		 		+ v_count + "/" + v_count + " \n"); 
+    	    */
+    	     array_cached.add("f " 
+    	    		 		+ (v_count-3) + "/" + (vt_count-3) + " " 
+    	    		 		+ (v_count-2) + "/" + (vt_count-2) + " " 
+    	    		 		+ (v_count-1) + "/" + (vt_count-1) + " " 
+    	    		 		+ v_count + "/" + vt_count + " \n");
             
-    	     v_count +=4;
+    	     //v_count +=4;
+    	     vt_count+=4;
     	     
         	}
     	     
@@ -565,6 +619,17 @@ public class WriteBlock {
      } catch (ParseException e) {
          e.printStackTrace();
      }
+	
+	String[] arr = new String[array_cached.size()];
+    Object[] array = array_cached.toArray();
+    
+    int iarr = 0;
+    while(iarr < array.length) {
+    	arr[iarr] = (String) array[iarr];
+        iarr++;
+        //System.out.println(iarr);
+    }
+	cache.put(cachepath, arr);
 	  
 	 return 1;
 	}
@@ -648,7 +713,7 @@ public class WriteBlock {
 		//System.out.println(state);
 		String tempspace = namespace;
 		if (model_name.indexOf(":") != -1) model_name.substring(0, model_name.indexOf(":"));
-		WriteModel("assets\\" + tempspace + "\\models\\" + model_name.substring(model_name.indexOf(":")+1).replace('/', '\\') + ".json", x,y,z, xr, yr, zr, Culling, uvlock); 
+		addModel("assets\\" + tempspace + "\\models\\" + model_name.substring(model_name.indexOf(":")+1).replace('/', '\\') + ".json", x,y,z, xr, yr, zr, Culling, uvlock); 
 		} else System.out.println("Model had no Variants: " + path);
 		}
 		
