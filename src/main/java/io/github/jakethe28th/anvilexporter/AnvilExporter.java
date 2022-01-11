@@ -72,9 +72,8 @@ public class AnvilExporter {
 	
 	//AE stuff
 	Map<String, ChunkMap> chunkMap = new HashMap<String, ChunkMap>();
-	
+
 	public void Main() throws IOException, ParseException {
-		
 		 System.out.println("Free memory (bytes): " + 
 				  (Runtime.getRuntime().maxMemory() - 
 		 				((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory()))));
@@ -469,7 +468,7 @@ public class AnvilExporter {
 				
 				int ri = 0;
 				
-				if (lx > 0 && ly > 0) {
+				//if (lx > 0 && ly > 0) {
 				while (ix <= lx) {
 					while (iy <= ly) {
 						try {
@@ -494,7 +493,7 @@ public class AnvilExporter {
 					iy = startY;
 					ix+=1;
 				}
-				}
+				//}
 				
 				System.out.println("\n Exporter queued " + ri);
 				}

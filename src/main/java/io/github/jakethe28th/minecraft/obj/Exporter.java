@@ -102,9 +102,10 @@ public class Exporter {
 	
 	public void reset() {
 		BlockWriter.end();
-		this.myMesh = BlockWriter.myMesh;
+		
 		
 		BlockWriter = new WriteBlock(filename, new Sprite(256, 256));
+		this.myMesh = BlockWriter.myMesh;
 	}
 	
 	public void end() {
@@ -135,7 +136,7 @@ class ChunkExporter {
 	int step() throws IOException, ParseException {
 		
 		Section section = chunk.getSection(i_sec);	
-		exportSection(section);
+		exportSection(section, 2);
 				
 		i_sec += 1;
 		//System.out.println(i_sec);
@@ -145,12 +146,12 @@ class ChunkExporter {
 	}
 	
 	
-	int exportSection(Section section) throws IOException, ParseException {
+	int exportSection(Section section, int cullmode) throws IOException, ParseException {
+			//Cullmode 0 = no culling; 1 = full blocks; 2 = face
 			int x = 0; int y = 0; int z = 0; int i = 0;
 			//Set base values to 0
 				
 				if (section == null || section.getBlockStates() == null)  return -1; //done
-				
 				//Reset values
 				x = 0; y = 0; z = 0; i = 0;
 				
@@ -176,7 +177,7 @@ class ChunkExporter {
 
 					
 					if (!BlockID_.equals("air")) { //Need to add a list of empty blocks later.
-					
+						
 					HashMap<String,Boolean> culling = new HashMap<String,Boolean>();
 					String BiD_temp;
 					
@@ -184,7 +185,7 @@ class ChunkExporter {
 					//fullblock culling
 					int sides = 6;
 					
-					
+					if (cullmode > 0) {
 					culling.put("north", Exporter.isTransparent(section, 	y, z, x-1));
 									if (!Exporter.isTransparent(section, 	y, z, x-1)) sides-=1;
 					culling.put("east", Exporter.isTransparent(section, 	y+1, z, x));
@@ -197,15 +198,17 @@ class ChunkExporter {
 									if (!Exporter.isTransparent(section, 	y, z+1, x)) sides-=1;
 					culling.put("down", Exporter.isTransparent(section, 	y, z-1, x));
 									if (!Exporter.isTransparent(section, 	y, z-1, x)) sides-=1;
-					
-									/*
-									culling.put("north", true);
-									culling.put("east", true);
-									culling.put("south", true);
-									culling.put("west", true);
-									culling.put("up", true);
-									culling.put("down", true);
-									*/
+									}
+									
+					// Turns off face culling
+					if (cullmode < 2) {
+						culling.put("north", true);
+						culling.put("east", true);
+						culling.put("south", true);
+						culling.put("west", true);
+						culling.put("up", true);
+						culling.put("down", true);
+						}
 									
 					//if (section.getBlockLight() != null) {
 					//System.out.println("l");
@@ -224,7 +227,7 @@ class ChunkExporter {
 					//float lightLevelFloat = (float) lightLevel;
 					//BlockWriter.color = lightLevelFloat / 15;
 					//}
-					if (sides > 0 ) BlockWriter.WriteFromBlockstate("assets\\minecraft\\blockstates\\" + BlockID_ + ".json", states_, x+(chunk_z*16), z+(i_sec*16), y+(chunk_x*16), culling, namespace); //ADD NAMESPACE HERE, CHOPP CHOPP
+					if (sides > 0 ) BlockWriter.WriteFromBlockstate("assets\\minecraft\\blockstates\\" + BlockID_ + ".json", states_, x+(chunk_z*16), z+(i_sec*16), y+(chunk_x*16), culling);
 				
 					}
 					

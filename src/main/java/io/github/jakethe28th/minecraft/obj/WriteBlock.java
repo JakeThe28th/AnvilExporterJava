@@ -73,12 +73,14 @@ public class WriteBlock {
 	public Sprite texture_sheet;
 	public HashMap<String, Integer> texture_index;
 	
+	public HashMap<String, String[]> cache;
 	
 	public WriteBlock(String filename_, Sprite texture_sheet) {
 		filename = filename_;
 		
 		this.texture_sheet = texture_sheet;
 		this.texture_index = new HashMap<String, Integer>();
+		this.cache = new HashMap<String, String[]>();
 		
 		this.myMesh = new Mesh(new Vertex[] {}, new int[] {}, null);	
 		
@@ -163,11 +165,15 @@ public class WriteBlock {
 		return path;
 		}
 
-	
-	
-	public int WriteModel(String path, int x, int y, int z, Double rot_x, Double rot_y, Double rot_z, HashMap<String, Boolean> Culling, Boolean uvlock, String namespace) {
-	this.namespace = namespace;
+	public int addModel() {
 		
+		
+		return 0;
+	}
+	
+	
+	public int WriteModel(String path, int x, int y, int z, Double rot_x, Double rot_y, Double rot_z, HashMap<String, Boolean> Culling, Boolean uvlock) {
+
 	path = FileHierarchy(path);
 	if (path == null) System.out.println("Model file does not exist."); 
 	
@@ -185,10 +191,11 @@ public class WriteBlock {
 	String parent = (String) model.get("parent");
 	do {
 		if (parent != null) {
-		String parent_path = FileHierarchy("assets\\" + namespace + "\\models\\" + parent.substring(parent.indexOf(":")+1) + ".json");
+		//System.out.println(parent);
+		String tempspace = namespace;
+		if (parent.indexOf(":") != -1) tempspace = parent.substring(0, parent.indexOf(":"));
+		String parent_path = FileHierarchy("assets\\" + tempspace + "\\models\\" + parent.substring(parent.indexOf(":")+1) + ".json");
 		if (parent_path == null) System.out.println("Parent file does not exist."); 
-		
-		//ADD NAMESPACE HERE. currently just chops off minecraft:
 		
 		FileReader parentReader = new FileReader(parent_path); 
 		Object parent_model = jsonParser.parse(parentReader);
@@ -272,24 +279,26 @@ public class WriteBlock {
         	//Fix filename to remove namespace
         	String tex3 = tex2;
         	if (tex2.indexOf(":") != -1) tex3 = tex2.split(":")[1];
+        	String tempspace = namespace;
+    		if (tex2.indexOf(":") != -1) tempspace = tex2.substring(0, tex2.indexOf(":"));
 
         	if ( texture_sheet == null ) {	
         		if ( Utility.ArrayIndexOf(mtl_done, tex2) == -1) {
         			mtlWriter.write("newmtl " + tex2 + "\n");
-        			mtlWriter.write("map_Kd  " + FileHierarchy("assets/" + namespace + "/textures/" + tex3 + ".png") + "\n");
+        			mtlWriter.write("map_Kd  " + FileHierarchy("assets/" + tempspace + "/textures/" + tex3 + ".png") + "\n");
         	
         			mtl_done.add(tex2);
         		}
         	} else {
         		//Add texture to sheet
         		
-        		String texture_filename = FileHierarchy("assets/" + namespace + "/textures/" + tex3 + ".png");//.replace("\"", "/");
+        		String texture_filename = FileHierarchy("assets/" + tempspace + "/textures/" + tex3 + ".png");//.replace("\"", "/");
         		if (texture_filename !=null && texture_index.get(tex2) == null ) {
         			System.out.println(" Adding sprite " + texture_filename);
         			File f = new File(texture_filename + ".mcmeta");
         			if (!f.exists()) {
         				texture_index.put(tex2, texture_sheet.addSprite(texture_filename));
-        				} else { texture_index.put(tex2, texture_sheet.addSprite("data/minecraft/assets/" + namespace + "/textures/block/stone.png")); }
+        				} else { texture_index.put(tex2, texture_sheet.addSprite("data/minecraft/assets/" + tempspace + "/textures/block/stone.png")); }
         		}
         	}
 
@@ -561,8 +570,7 @@ public class WriteBlock {
 	}
 
 	
-	public int WriteFromBlockstate(String path, String states, int x, int y, int z, HashMap<String, Boolean> Culling, String namespace) throws IOException, ParseException {
-		this.namespace = namespace;
+	public int WriteFromBlockstate(String path, String states, int x, int y, int z, HashMap<String, Boolean> Culling) throws IOException, ParseException {
 		//System.out.println(" path= " + path + " state= " + states);
 		//path = "data\\resourcepack\\" + path;
 		
@@ -638,7 +646,9 @@ public class WriteBlock {
 		//System.out.println(model_name);
 		
 		//System.out.println(state);
-		WriteModel("assets\\" + namespace + "\\models\\" + model_name.substring(model_name.indexOf(":")+1).replace('/', '\\') + ".json", x,y,z, xr, yr, zr, Culling, uvlock, namespace); 
+		String tempspace = namespace;
+		if (model_name.indexOf(":") != -1) model_name.substring(0, model_name.indexOf(":"));
+		WriteModel("assets\\" + tempspace + "\\models\\" + model_name.substring(model_name.indexOf(":")+1).replace('/', '\\') + ".json", x,y,z, xr, yr, zr, Culling, uvlock); 
 		} else System.out.println("Model had no Variants: " + path);
 		}
 		
