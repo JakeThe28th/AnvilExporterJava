@@ -47,7 +47,8 @@ public class WriteBlock {
 	
 	public Random ran = new Random();
 	
-	public Mesh myMesh;
+	public boolean preview = true;
+	
 	public void end() {
 		System.out.println("Ended WriteBlock " + filename + " at " + System.currentTimeMillis());
 		try {
@@ -56,12 +57,6 @@ public class WriteBlock {
 		if (texture_sheet != null) {
 			texture_sheet.save(filename + ".png");
 			texture_sheet.cleanup();
-			try {
-				this.myMesh.setTexture(new Texture(filename + ".png"));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			}
 		System.out.println("Closed MC2OBJ inst");
 		 	} catch (IOException e) {
@@ -85,9 +80,7 @@ public class WriteBlock {
 		this.texture_sheet = texture_sheet;
 		this.texture_index = new HashMap<String, Integer>();
 		this.cache = new HashMap<String, String[]>();
-		
-		this.myMesh = new Mesh(new Vertex[] {}, new int[] {}, null);	
-		
+
 		if (this.texture_sheet != null) {
 			
 			}
@@ -182,7 +175,7 @@ public class WriteBlock {
 			}
 		
 		String[] cachedmodel = cache.get(cachepath);
-		if (cachedmodel == null) System.out.println("Cached model for " + path + " was null.");
+		//if (cachedmodel == null) System.out.println("Cached model for " + path + " was null.");
 		if (cachedmodel != null) {
 		int i = 0;
 		while (i < cachedmodel.length) {
@@ -206,8 +199,7 @@ public class WriteBlock {
 			objWriter.write(write);
 			//System.out.println(write);
 			i++;
-		}
-		}
+		} }
 		
 		
 		return 0;
@@ -422,7 +414,9 @@ public class WriteBlock {
     	     //System.out.println("uv_y1 " + uv_y1.floatValue() + "uv_y2 " + uv_y2.floatValue());
     	     //System.out.println("w " + tex_w + "h " + tex_h);
     	     
-    	     int vc = myMesh.getVertices().length;
+    	     
+    	     if (preview) {
+    	    	 
     	     float col = this.color;
     	     switch (face_name) {
      			case "north": col -= .2	; break;
@@ -435,33 +429,6 @@ public class WriteBlock {
     	     
     	 
     	     if (col < 0 ) col = 0;
-    	     
-    	     this.myMesh.addVertices(new Vertex[] {
-     	    		new Vertex(new 	Vector3f((coords.x1.floatValue()/16)+x,
-     	    								 (coords.y1.floatValue()/16)+y,
-     	    								 (coords.z1.floatValue()/16)+z), 
-     	    								 new Vector3f(col, col, col), 
-     	    								 new Vector2f(uv_x1.floatValue(), uv_y2.floatValue()*-1)),
-     	    		
-     	    		new Vertex(new 	Vector3f((coords.x2.floatValue()/16)+x,
-     	    								 (coords.y2.floatValue()/16)+y,
-     	    								 (coords.z2.floatValue()/16)+z), 
-     	    								 new Vector3f(col, col, col), 
-     	    								 new Vector2f(uv_x2.floatValue(), uv_y2.floatValue()*-1)),
-     	    		
-     	    		new Vertex(new 	Vector3f((coords.x3.floatValue()/16)+x,
-     	    								 (coords.y3.floatValue()/16)+y,
-     	    								 (coords.z3.floatValue()/16)+z), 
-     	    								 new Vector3f(col, col, col), 
-     	    								 new Vector2f(uv_x2.floatValue(), uv_y1.floatValue()*-1)),
-     	    		
-     	    		new Vertex(new 	Vector3f((coords.x4.floatValue()/16)+x,
-     	    								 (coords.y4.floatValue()/16)+y,
-     	    								 (coords.z4.floatValue()/16)+z), 
- 							 				 new Vector3f(col, col, col), 
- 							 				 new Vector2f(uv_x1.floatValue(), uv_y1.floatValue()*-1)),
-     	    			
-     	    		}, new int[] {vc+0, vc+1, vc+2, vc+0, vc+3, vc+2 });
     	     /*
     	     		System.out.println("X " + coords.x1 + " Y " + coords.y1 + " Z " + coords.z1);
     	     		System.out.println("X " + coords.x2 + " Y " + coords.y2 + " Z " + coords.z2);
@@ -471,9 +438,11 @@ public class WriteBlock {
     	     		System.out.println(vc);
     	     */
     	     //x1-y2;x2-y2;x2-y1;x1-y1;
+    	     
+    	     }
     	    
     	     //Don't need to cache UV coordinates because you only write them once
-    	     if (!uvlock ) {
+    	     if (!uvlock) {
     	    	 /*
     	     	switch (face_name) {
     	     		case "north":
@@ -521,6 +490,7 @@ public class WriteBlock {
 	     		objWriter.write("vt "+uv_x1+" "+uv_y1+" "+ "\n");
     	     	} else {
     	     		//Faces for UVlock
+    	     		//TODO: may need to rewrite this all.
     	     		
     	     				double lock_u1=0, lock_u2=0, lock_u3=0, lock_u4=0;
     	     				double lock_v1=0, lock_v2=0, lock_v3=0, lock_v4=0;
@@ -555,6 +525,36 @@ public class WriteBlock {
     	     					//System.out.println("ew");
     	     					}
     	     				
+    	     			
+    	     				if ( texture_sheet != null ) {
+    	     					int w = texture_sheet.sprites.get(texture_index.get(tex2)).get("w");
+    	     					int h = texture_sheet.sprites.get(texture_index.get(tex2)).get("h");
+    	     					lock_u1 %= w-1;
+    	     					lock_u2 %= w-1;
+    	     					lock_u3 %= w-1;
+    	     					lock_u4 %= w-1;
+    	     					
+    	     					lock_v1 %= h-1;
+    	     					lock_v2 %= h-1;
+    	     					lock_v3 %= h-1;
+    	     					lock_v4 %= h-1;
+        	     		
+    	     					
+	        				    lock_u1 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
+	        				    lock_u2 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
+	        				    lock_u3 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
+	        				    lock_u4 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
+	        				    
+	        				    lock_v1 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
+	        				    lock_v2 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
+	        				    lock_v3 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
+	        				    lock_v4 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
+								
+								//broken
+
+	        	    	    }
+	        			
+    	     				
     	     				if (lock_u1 != 0) {  lock_u1 = (lock_u1/tex_w); }
     	        			if (lock_u2 != 0) {  lock_u2 = (lock_u2/tex_w); }
     	        			if (lock_u3 != 0) {  lock_u3 = (lock_u3/tex_w); }
@@ -565,22 +565,8 @@ public class WriteBlock {
     	        			if (lock_v3 != 0) {  lock_v3 = (lock_v3/tex_h); }
     	        			if (lock_v4 != 0) {  lock_v4 = (lock_v4/tex_h); }
     	        			
-    	        			 if ( texture_sheet != null ) {
-    	        				    lock_u1 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
-    	        				    lock_u2 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
-    	        				    lock_u3 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
-    	        				    lock_u4 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
-    	        				    
-    	        				    lock_v1 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
-    	        				    lock_v2 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
-    	        				    lock_v3 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
-    	        				    lock_v4 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
-									
-									//broken
-
-    	        	    	    }
-    	        			
-    	        			
+    	        			 
+    	        			objWriter.write("# see \n");
     	        			objWriter.write("vt "+lock_u1+" "+lock_v1+" "+ "\n");
     	        			objWriter.write("vt "+lock_u2+" "+lock_v2+" "+ "\n");
     	        			objWriter.write("vt "+lock_u3+" "+lock_v3+" "+ "\n");

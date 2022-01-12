@@ -1,6 +1,7 @@
 package io.github.jakethe28th.minecraft.obj;
 
 import io.github.jakethe28th.engine.graphics.Mesh;
+import io.github.jakethe28th.engine.graphics.Vertex;
 import io.github.jakethe28th.engine.graphics.gui.Sprite;
 import io.github.jakethe28th.minecraft.obj.WriteBlock;
 
@@ -25,13 +26,14 @@ public class Exporter {
 	JSONParser jsonParser = new JSONParser();
 	WriteBlock BlockWriter;
 	String filename;
+	int res = 512;
 	
 	public HashMap<Integer,ChunkExporter> chunks = new HashMap<Integer,ChunkExporter>();
 	public Mesh myMesh;
 	
 	public Exporter(String region_folder_path, String filename_) { 	
-		BlockWriter = new WriteBlock(filename_, new Sprite(256, 256));
-		this.myMesh = BlockWriter.myMesh;
+		BlockWriter = new WriteBlock(filename_, new Sprite(res, res));
+		this.myMesh = new Mesh(new Vertex[0], new int[0], null); //BlockWriter.myMesh;
 		
 		this.filename = filename_;
 	}
@@ -78,6 +80,10 @@ public class Exporter {
 		if (block_id.contains("carpet")) return true;
 		//System.out.println(block_id + " false");
 		
+		if (block_id.contains("slab")) return true;
+		if (block_id.contains("stair")) return true;
+		if (block_id.contains("trapdoor")) return true;
+		
 		return false;
 	}
 	
@@ -101,13 +107,13 @@ public class Exporter {
 		}
 	
 	public void reset() {
-		BlockWriter = new WriteBlock(filename, new Sprite(256, 256));
-		this.myMesh = BlockWriter.myMesh;
+		BlockWriter = new WriteBlock(filename, new Sprite(res, res));
+		//this.myMesh = BlockWriter.myMesh;
 	}
 	
 	public void end() {
 		BlockWriter.end();
-		this.myMesh = BlockWriter.myMesh;
+		//this.myMesh = BlockWriter.myMesh;
 		}
 }
 
@@ -196,7 +202,7 @@ class ChunkExporter {
 					culling.put("down", Exporter.isTransparent(section, 	y, z-1, x));
 									if (!Exporter.isTransparent(section, 	y, z-1, x)) sides-=1;
 									}
-									
+							
 					// Turns off face culling
 					if (cullmode < 2) {
 						culling.put("north", true);
