@@ -168,7 +168,10 @@ public class WriteBlock {
 				 Culling.get("south") + 
 				 Culling.get("west") + 
 				 Culling.get("up") + 
-				 Culling.get("down");
+				 Culling.get("down") +
+				 rot_x + 
+				 rot_y + 
+				 rot_z;
 		
 		if (cache.get(cachepath) == null) {
 			WriteModel(path, 0, 0, 0, rot_x, rot_y, rot_z, Culling, uvlock);
@@ -525,20 +528,54 @@ public class WriteBlock {
     	     					//System.out.println("ew");
     	     					}
     	     				
-    	     			
+    	     				
     	     				if ( texture_sheet != null ) {
     	     					int w = texture_sheet.sprites.get(texture_index.get(tex2)).get("w");
     	     					int h = texture_sheet.sprites.get(texture_index.get(tex2)).get("h");
-    	     					lock_u1 %= w-1;
-    	     					lock_u2 %= w-1;
-    	     					lock_u3 %= w-1;
-    	     					lock_u4 %= w-1;
     	     					
-    	     					lock_v1 %= h-1;
-    	     					lock_v2 %= h-1;
-    	     					lock_v3 %= h-1;
-    	     					lock_v4 %= h-1;
-        	     		
+    	     					double anchor = Utility.leastOf(new double[] {lock_u1, lock_u2, lock_u3, lock_u4});
+    	    	     			
+    	     					double diff;
+    	     					diff = lock_u1 - anchor;
+    	     					lock_u1 = Math.floorMod((int) anchor, w) + diff;
+    	     					
+    	     					diff = lock_u2 - anchor;
+    	     					lock_u2 = Math.floorMod((int) anchor, w) + diff;
+    	     					
+    	     					diff = lock_u3 - anchor;
+    	     					lock_u3 = Math.floorMod((int) anchor, w) + diff;
+    	     					
+    	     					diff = lock_u4 - anchor;
+    	     					lock_u4 = Math.floorMod((int) anchor, w) + diff;
+    	     					
+    	     					anchor = Utility.leastOf(new double[] {lock_v1, lock_v2, lock_v3, lock_v4});
+    	     					
+    	     					diff = lock_v1 - anchor;
+    	     					lock_v1 = Math.floorMod((int) anchor, w) + diff;
+    	     					
+    	     					diff = lock_v2 - anchor;
+    	     					lock_v2 = Math.floorMod((int) anchor, w) + diff;
+    	     					
+    	     					diff = lock_v3 - anchor;
+    	     					lock_v3 = Math.floorMod((int) anchor, w) + diff;
+    	     					
+    	     					diff = lock_v4 - anchor;
+    	     					lock_v4 = Math.floorMod((int) anchor, w) + diff;
+    	     					
+    	     					
+    	     					
+    	     					
+    	     					//System.out.println("lock_u1: " + lock_u1 + " modulo: " + Math.floorMod((int) lock_u1, w) + " w: " + w);
+    	     					/*lock_u1 = Math.floorMod((int) lock_u1, w); //(((lock_u1 % w) + w) % w);
+    	     					lock_u2 = Math.floorMod((int) lock_u2, w); //(((lock_u2 % w) + w) % w);
+    	     					lock_u3 = Math.floorMod((int) lock_u3, w); //(((lock_u3 % w) + w) % w);
+    	     					lock_u4 = Math.floorMod((int) lock_u4, w); //(((lock_u4 % w) + w) % w);
+    	     					
+    	     					lock_v1 = Math.floorMod((int) lock_v1, w); //(((lock_v1 % w) + w) % h);
+    	     					lock_v2 = Math.floorMod((int) lock_v2, w); //(((lock_v2 % w) + w) % h);
+    	     					lock_v3 = Math.floorMod((int) lock_v3, w); //(((lock_v3 % w) + w) % h);
+    	     					lock_v4 = Math.floorMod((int) lock_v4, w); //(((lock_v4 % w) + w) % h);
+    	     					 */
     	     					
 	        				    lock_u1 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
 	        				    lock_u2 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");

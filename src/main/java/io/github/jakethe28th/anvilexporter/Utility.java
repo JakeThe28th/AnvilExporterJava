@@ -1,6 +1,7 @@
 package io.github.jakethe28th.anvilexporter;
 
 import java.awt.Color;
+import java.util.Arrays;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -113,5 +114,9 @@ public class Utility {
 		if (a != b | b != c | c != d) return false;
 		return true;
 	}
-	
+
+	public static double leastOf(double[] arr) {
+		Arrays.sort(arr);
+		return arr[0];
+	}
 }
