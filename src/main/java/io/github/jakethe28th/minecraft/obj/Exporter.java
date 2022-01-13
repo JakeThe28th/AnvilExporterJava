@@ -74,6 +74,9 @@ public class Exporter {
 		if (block_id.equals("minecraft:rose_bush")) return true;
 		if (block_id.equals("minecraft:vine")) return true;
 		if (block_id.equals("minecraft:allium")) return true;
+		if (block_id.equals("minecraft:flowering_azalea")) return true;
+		if (block_id.equals("minecraft:azalea")) return true;
+		
 		
 		if (block_id.contains("leaves")) return true;
 		if (block_id.contains("tulip")) return true;
@@ -83,6 +86,8 @@ public class Exporter {
 		if (block_id.contains("slab")) return true;
 		if (block_id.contains("stair")) return true;
 		if (block_id.contains("trapdoor")) return true;
+		if (block_id.contains("fence")) return true;
+		if (block_id.contains("wall")) return true;
 		
 		return false;
 	}

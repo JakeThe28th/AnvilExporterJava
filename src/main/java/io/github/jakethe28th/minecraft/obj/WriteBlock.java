@@ -284,11 +284,12 @@ public class WriteBlock {
         	int i_faces = 0;
         	JSONObject faces = (JSONObject) element.get("faces");
         	
+        	
         	do {
         	switch (i_faces) {
         		case 0: face_name = "north"; break;
-        		case 1: face_name = "south"; break;
-        		case 2: face_name = "east"; break;
+        		case 1: face_name = "east"; break;
+        		case 2: face_name = "south"; break;
         		case 3: face_name = "west"; break;
         		case 4: face_name = "up"; break;
         		case 5: face_name = "down"; break;
@@ -297,7 +298,26 @@ public class WriteBlock {
         	JSONObject face = (JSONObject) faces.get(face_name);
         	Quad coords = null;
         	
-        	if (face != null && Culling.get(face_name)) {
+        	String face_cull_s = face_name;
+        	if (i_faces < 4) {
+        	//Fix face culling for rotation
+        	int face_cull = i_faces;
+        	face_cull += Math.floor(rot_y/90);
+        	face_cull %= 4;
+        	
+        	switch (face_cull) {
+    			case 0: face_cull_s = "north"; break;
+    			case 1: face_cull_s = "east"; break;
+    			case 2: face_cull_s = "south"; break;
+    			case 3: face_cull_s = "west"; break;
+    			}
+        	}
+        	
+        	if (i_faces == 4) { if (rot_z >=180) face_cull_s = "down"; }
+        	if (i_faces == 5) { if (rot_z >=180) face_cull_s = "up"; }
+            
+        	
+        	if (face != null && Culling.get(face_cull_s)) {
         		
         	//Get texture ID In model
         	String tex = ((String) face.get("texture")).substring(1);
@@ -740,7 +760,70 @@ public class WriteBlock {
 		} else System.out.println("Model had no Variants: " + path);
 		}
 		
-		if (model.get("multipart") != null) { }
+		if (model.get("multipart") != null) { 
+			JSONArray parts = (JSONArray) model.get("multipart");
+			
+			//Iter parts
+			for (int i = 0; i < parts.size(); i++) {
+				JSONObject current = (JSONObject) parts.get(i);
+				boolean true_ = false;
+				
+				//If there is no when condition, override.
+				if (current.get("when") == null) true_ = true;
+				if (current.get("when") != null) {
+					//Check if when condition matches blockstate
+					JSONObject when = (JSONObject) current.get("when");
+					for (Object keyO : when.keySet()) {
+				    	String key = (String)keyO;
+			            
+			            if (!key.isEmpty()) {
+			            JSONObject states_this = Utility.StatesToObject(key + "=" + when.get(key)); 
+			            
+			            JSONObject statestoobj = Utility.StatesToObject((String) states);
+			            if (Utility.JSObjectMatches(statestoobj,states_this)) { 
+			            	true_ = true;
+			            	} else true_ = false;
+			            states_this.clear(); //Reset states jobject, to loop again.
+						}
+					}	
+				}
+				
+				//If true, write that model.
+				if (true_) {
+					JSONObject state = (JSONObject) current.get("apply");
+					
+					if (state != null) {
+						String model_name = "";
+						model_name = (String) state.get("model");
+						Object xr_ = state.get("x");
+						Object yr_ = state.get("y");
+						Object zr_ = state.get("z");
+						
+						if (xr_ == null) { xr_ = 0; }
+						if (yr_ == null) { yr_ = 0; }
+						if (zr_ == null) { zr_ = 0; }
+						Double xr = (Double) Double.parseDouble(xr_.toString());
+						Double yr = (Double) Double.parseDouble(yr_.toString());
+						Double zr = (Double) Double.parseDouble(zr_.toString());
+						
+						Object uvlock_ = state.get("uvlock");
+						if (uvlock_ == null) uvlock_ = false;
+						Boolean uvlock = (Boolean) uvlock_;
+						
+						//System.out.println(states);
+						//System.out.println(model_name);
+						
+						//System.out.println(state);
+						String tempspace = namespace;
+						if (model_name.indexOf(":") != -1) model_name.substring(0, model_name.indexOf(":"));
+						addModel("assets\\" + tempspace + "\\models\\" + model_name.substring(model_name.indexOf(":")+1).replace('/', '\\') + ".json", x,y,z, xr, yr, zr, Culling, uvlock); 
+						} else System.out.println("Multipart failed to load: " + path);
+				}
+				
+				}
+	            
+			
+		}
 		
 		
 	return 1;
