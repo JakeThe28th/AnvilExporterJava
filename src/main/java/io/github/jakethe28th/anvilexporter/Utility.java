@@ -49,6 +49,8 @@ public class Utility {
         for (int i = 0; i < split.length; ++i) {
         	String[] statesplit = split[i].split("=");
         	
+        	if (statesplit.length == 1) return states_this;
+        	
         	states_this.put((String) statesplit[0].replace("\"", ""), (String) statesplit[1].replace("\"", ""));
         	}
 		

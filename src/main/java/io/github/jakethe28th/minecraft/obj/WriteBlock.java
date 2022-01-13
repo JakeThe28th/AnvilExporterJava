@@ -233,7 +233,14 @@ public class WriteBlock {
 		String tempspace = namespace;
 		if (parent.indexOf(":") != -1) tempspace = parent.substring(0, parent.indexOf(":"));
 		String parent_path = FileHierarchy("assets\\" + tempspace + "\\models\\" + parent.substring(parent.indexOf(":")+1) + ".json");
-		if (parent_path == null) System.out.println("Parent file does not exist."); 
+		if (parent_path == null) System.out.println("Parent file does not exist.");
+		
+		if (parent.contains("generated")) {
+			System.out.println("Parent for " + path + " uses builtin/generated, and can't be loaded.");
+			cache.put(cachepath, new String[] {});
+			return -1;
+			}
+		
 		
 		FileReader parentReader = new FileReader(parent_path); 
 		Object parent_model = jsonParser.parse(parentReader);
@@ -790,7 +797,15 @@ public class WriteBlock {
 				
 				//If true, write that model.
 				if (true_) {
-					JSONObject state = (JSONObject) current.get("apply");
+					JSONObject state;
+					Object state_obj = current.get("apply");
+					
+					if (state_obj instanceof JSONArray) {
+						JSONArray state_arr = (JSONArray) state_obj;
+						int random = ran.nextInt(state_arr.size());
+
+			            state = (JSONObject) state_arr.get(random);
+					} else state = (JSONObject) state_obj;
 					
 					if (state != null) {
 						String model_name = "";
