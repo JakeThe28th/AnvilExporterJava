@@ -1,5 +1,6 @@
 package io.github.jakethe28th.engine.graphics.gui;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -261,5 +262,46 @@ public class Sprite {
 			e.printStackTrace();
 			System.out.println("Failed to save Sprite");
 		}
+	}
+	
+	public void editHSV(int id, float hue, float sat, float val) {
+		
+		int xx = sprites.get(id).get("x");
+		int yy = sprites.get(id).get("y");
+		int ww = sprites.get(id).get("w");
+		int hh = sprites.get(id).get("h");
+		
+		int x = xx;
+		int y = yy;
+		
+		while (x < xx+ww) {
+			while (y < yy+hh) {
+				
+			int argb = sheet.getRGB(x, y);
+			int b = (argb)&0xFF;
+			int g = (argb>>8)&0xFF;
+			int r = (argb>>16)&0xFF;
+			int a = (argb>>24)&0xFF;
+			
+			float[] hsb = Color.RGBtoHSB(r, g, b, null);
+			
+			if (hue > 0) hsb[0] = hue;
+			if (sat > 0) hsb[1] = sat;
+			if (val > 0) hsb[2] = val;
+			
+			//new
+			argb = Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
+			b = (argb)&0xFF;
+			g = (argb>>8)&0xFF;
+			r = (argb>>16)&0xFF;
+			
+			sheet.setRGB(x, y, new Color(r, g, b, a).getRGB());
+			
+			y++;
+			}
+		x++;
+		y = yy;
+		} 
+		
 	}
 }

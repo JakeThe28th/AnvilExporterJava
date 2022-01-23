@@ -370,8 +370,19 @@ public class WriteBlock {
         	if ( texture_sheet == null ) {
         		
         		objWriter.write("usemtl " + tex2 + "\n");
-        		
         		}
+        	
+        	if ( face.get("tintindex") != null ) {
+        		if ( (long) face.get("tintindex") == 0 ) { 
+        			HashMap<String, Integer> sprite = texture_sheet.sprites.get(texture_index.get(tex2));
+        				
+        			if ( sprite.get("AE_hue_shifted") == null) {
+        				texture_sheet.editHSV(texture_index.get(tex2), ((float) 96f/360f), .6f, -1);
+        				System.out.println("Tinting " + tex2);
+        				sprite.put("AE_hue_shifted", 1);
+        			}
+        		}
+        	}
         	
         	
         	//Write the actual face's vertices
