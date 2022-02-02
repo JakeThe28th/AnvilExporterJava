@@ -212,6 +212,8 @@ public class WriteBlock {
 	public int WriteModel(String path, int x, int y, int z, Double rot_x, Double rot_y, Double rot_z, HashMap<String, Boolean> Culling, Boolean uvlock) {
 		ArrayList<String> array_cached = new ArrayList<String>();
 		
+		System.out.println(path);
+		
 	path = FileHierarchy(path);
 	if (path == null) System.out.println("Model file does not exist."); 
 	
@@ -791,19 +793,10 @@ public class WriteBlock {
 				if (current.get("when") != null) {
 					//Check if when condition matches blockstate
 					JSONObject when = (JSONObject) current.get("when");
-					for (Object keyO : when.keySet()) {
-				    	String key = (String)keyO;
-			            
-			            if (!key.isEmpty()) {
-			            JSONObject states_this = Utility.StatesToObject(key + "=" + when.get(key)); 
-			            
-			            JSONObject statestoobj = Utility.StatesToObject((String) states);
-			            if (Utility.JSObjectMatches(statestoobj,states_this)) { 
-			            	true_ = true;
-			            	} else true_ = false;
-			            states_this.clear(); //Reset states jobject, to loop again.
-						}
-					}	
+					JSONObject statestoobj = Utility.StatesToObject((String) states);
+					if (Utility.JSObjectMatches(statestoobj,when)) { 
+			            true_ = true;
+			            } else true_ = false;
 				}
 				
 				//If true, write that model.
