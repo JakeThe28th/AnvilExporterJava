@@ -409,10 +409,15 @@ public class WriteBlock {
     	    //NOTE: add support for different model texture resolutions
     	    int tex_w = 16;
     	    int tex_h = 16;
+    	    int true_texture_width = 16; // TODO: replace with image width / height
+	    	int true_texture_height = 16;
     	    
     	    if ( texture_sheet != null ) {
     	    	tex_w = texture_sheet.width;
     	    	tex_h = texture_sheet.height;
+    	    	
+    	    	true_texture_width = texture_sheet.sprites.get(texture_index.get(tex2)).get("w");
+    	    	true_texture_height = texture_sheet.sprites.get(texture_index.get(tex2)).get("h");
     	    } 
     	     
     	    //Base UV values
@@ -432,6 +437,24 @@ public class WriteBlock {
     	       	uv_y1 = (Double) Double.parseDouble(uv_y1_.toString());
     	       	uv_x2 = (Double) Double.parseDouble(uv_x2_.toString());
     	       	uv_y2 = (Double) Double.parseDouble(uv_y2_.toString());
+    	       	
+    	       	// UV coords need to be scaled as if they are 16*16. 
+        	    //If a texture is 8*8 for example, 8 would need to become 16.
+    	       	//System.out.println(true_texture_width);
+    	       	//System.out.println(uv_x1);
+    	       	if (true_texture_width < 16) { 
+    	       		uv_x1 *=(16/true_texture_width);
+        	    	uv_y1 *=(16/true_texture_height);
+        	    	uv_x2 *=(16/true_texture_width);
+        	    	uv_y2 *=(16/true_texture_height);
+    	       		} else {
+    	       		uv_x1 *=(true_texture_width/16);
+            	   	uv_y1 *=(true_texture_height/16);
+            	   	uv_x2 *=(true_texture_width/16);
+            	   	uv_y2 *=(true_texture_height/16);
+    	       		}
+    	      
+        	    //System.out.println(uv_x1);
     	     	}
     	    if (face_name == "east" | face_name == "west" | face_name == "south" | face_name == "north") {
     	    	 uv_y2-= uv_y1;
@@ -440,13 +463,15 @@ public class WriteBlock {
     	    
     	    if ( texture_sheet != null ) {
     	    	uv_x1 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
-    	    	uv_y1 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
+    	    	uv_y1 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y");// - (tex_h);
     	    	uv_x2 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
-    	    	uv_y2 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y") - (tex_h-16);
+    	    	uv_y2 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y");// - (tex_h);
+    	    	
+    	    	uv_y1 *=-1;
+    	    	uv_y2 *=-1;
 
     	    }
-    	     
-
+    	    
     	     uv_x1 /=tex_w;
     	     uv_y1 /=tex_h;
     	     uv_x2 /=tex_w;
