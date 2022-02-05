@@ -13,9 +13,10 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import io.github.jakethe28th.engine.graphics.Renderer;
+import io.github.jakethe28th.engine.graphics.Sprite;
 import io.github.jakethe28th.engine.graphics.Window;
-import io.github.jakethe28th.engine.graphics.gui.Sprite;
 import io.github.jakethe28th.engine.math.Vector3f;
+import io.github.jakethe28th.engine.math.Vector4f;
 
 /**
  * 
@@ -138,7 +139,7 @@ public class TextRenderer {
 		}
 
 	
-	void renderChar(Character character, Renderer render, Window window, Vector3f pos, Vector3f scale, Vector3f rot, Vector3f color, float alpha) throws FontFormatException, IOException {
+	void renderChar(Character character, Renderer render, Window window, Vector3f pos, Vector3f scale, Vector3f rot, Vector4f color, float alpha) throws FontFormatException, IOException {
 		charExists(character); //Make sure there is a render of this character, in this font, and size.
 		
 		//Get values once we know they exist.
@@ -193,7 +194,7 @@ public class TextRenderer {
 		return new int[] {xx, yy};
 	}
 	
-	public void drawString(String string,  Renderer render, Window window, float spacing, int fontSize, Vector3f pos, Vector3f scale, Vector3f color, float alpha) throws FontFormatException, IOException {
+	public void drawString(String string,  Renderer render, Window window, float spacing, int fontSize, Vector3f pos, Vector3f scale, Vector4f color, float alpha) throws FontFormatException, IOException {
 		if (fontSize == 0) return;
 		
 		setFontSize(fontSize);

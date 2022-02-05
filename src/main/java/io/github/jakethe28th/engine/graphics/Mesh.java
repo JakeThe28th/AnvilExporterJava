@@ -4,6 +4,7 @@ import org.lwjgl.system.MemoryUtil;
 
 import io.github.jakethe28th.engine.math.Vector2f;
 import io.github.jakethe28th.engine.math.Vector3f;
+import io.github.jakethe28th.engine.math.Vector4f;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -21,6 +22,7 @@ public class Mesh {
     private int 		cbo; //color
     private int 		tbo; //texture
     private int 		ibo; //index
+    private int			bbo; //brightness
     private int 		vertexCount;
     private Vertex[] 	vertices = new Vertex[] {};
     private int[] 		indices = new int[] {};
@@ -84,10 +86,10 @@ public class Mesh {
     		
     		Vector3f coords = vertices[i].getPosition();
     		Vector2f texcoords = vertices[i].getTextureCoord();
-    		Vector3f colors = vertices[i].getColor();
+    		Vector4f colors = vertices[i].getColor();
     		
     		newVertices[i] = new Vertex(new Vector3f(coords.x, -coords.y, coords.z),
-    									new Vector3f(colors.x, colors.y, colors.z), 
+    									new Vector4f(colors.x, colors.y, colors.z, colors.a), 
     									new Vector2f(texcoords.x, texcoords.y));
     		i+=1;
     		}
@@ -109,7 +111,7 @@ public class Mesh {
     		Vector2f texcoords = vertices[i].getTextureCoord();
     		
     		newVertices[i] = new Vertex(new Vector3f(coords.x+x, coords.y+y, coords.z+z),
-    									new Vector3f(1, 1, 1), 
+    									new Vector4f(1, 1, 1, 1.0f), 
     									new Vector2f(texcoords.x, texcoords.y));
     		i+=1;
     		}
@@ -131,6 +133,7 @@ public class Mesh {
     	FloatBuffer posBuffer = null;
     	FloatBuffer colBuffer = null;
     	FloatBuffer texBuffer = null;
+    	FloatBuffer briBuffer = null;
     	IntBuffer   indBuffer = null;
     	
     	//System.out.println("Berty");
@@ -148,10 +151,13 @@ public class Mesh {
             posBuffer = MemoryUtil.memAllocFloat((vertices.length)*3);
             
             cbo = glGenBuffers();
-            colBuffer = MemoryUtil.memAllocFloat((vertices.length)*3);
+            colBuffer = MemoryUtil.memAllocFloat((vertices.length)*4);
             
             tbo = glGenBuffers();
             texBuffer = MemoryUtil.memAllocFloat((vertices.length)*3);
+            
+            bbo = glGenBuffers();
+            briBuffer = MemoryUtil.memAllocFloat((vertices.length)*1);
             
             //Set each value in buffer
             for (int i = 0; i < vertices.length; i++) {
@@ -162,6 +168,9 @@ public class Mesh {
             	colBuffer.put(vertices[i].getColor().x);
             	colBuffer.put(vertices[i].getColor().y);
             	colBuffer.put(vertices[i].getColor().z);
+            	colBuffer.put(vertices[i].getColor().a);
+            	
+            	briBuffer.put(vertices[i].getBrightness());
             	
             	texBuffer.put(vertices[i].getTextureCoord().x);
             	texBuffer.put(vertices[i].getTextureCoord().y);
@@ -170,7 +179,8 @@ public class Mesh {
           	posBuffer.flip(); //End writing to posBuffer
           	colBuffer.flip(); //End writing to colBuffer
           	texBuffer.flip(); //End writing to colBuffer
-            
+        	briBuffer.flip(); //End writing to colBuffer
+          	
           	//do stuff with pos buffer IDK
           	glBindBuffer(GL_ARRAY_BUFFER, pbo);
             glBufferData(GL_ARRAY_BUFFER, posBuffer, GL_STATIC_DRAW);
@@ -181,13 +191,19 @@ public class Mesh {
             glBindBuffer(GL_ARRAY_BUFFER, cbo);
             glBufferData(GL_ARRAY_BUFFER, colBuffer, GL_STATIC_DRAW);
             glEnableVertexAttribArray(1);
-            glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0);
+            glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, 0);
             
             //do stuff with texture buffer IDK
             glBindBuffer(GL_ARRAY_BUFFER, tbo);
             glBufferData(GL_ARRAY_BUFFER, texBuffer, GL_STATIC_DRAW);
             glEnableVertexAttribArray(2);
             glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, 0);
+            
+            //Bind the brightness to the mesh buffer.
+            glBindBuffer(GL_ARRAY_BUFFER, bbo);
+            glBufferData(GL_ARRAY_BUFFER, briBuffer, GL_STATIC_DRAW);
+            glEnableVertexAttribArray(3);
+            glVertexAttribPointer(3, 1, GL_FLOAT, false, 0, 0);
             
             // Index VBO
             ibo = glGenBuffers();
@@ -275,7 +291,7 @@ public class Mesh {
     }
 
 
-	public void setColor(Vector3f col) {
+	public void setColor(Vector4f col) {
 		if (vertices.length == 0) return;
     	if (vertices != null) {
     	Vertex[] newVertices = new Vertex[this.vertices.length];
@@ -285,7 +301,7 @@ public class Mesh {
     		
     		Vector3f coords = vertices[i].getPosition();
     		Vector2f texcoords = vertices[i].getTextureCoord();
-    		Vector3f colors = vertices[i].getColor();
+    		Vector4f colors = vertices[i].getColor();
     		
     		newVertices[i] = new Vertex(new Vector3f(coords.x, coords.y, coords.z),
     									col, 

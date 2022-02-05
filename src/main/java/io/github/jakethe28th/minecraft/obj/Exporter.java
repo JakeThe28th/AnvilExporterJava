@@ -1,8 +1,8 @@
 package io.github.jakethe28th.minecraft.obj;
 
 import io.github.jakethe28th.engine.graphics.Mesh;
+import io.github.jakethe28th.engine.graphics.Sprite;
 import io.github.jakethe28th.engine.graphics.Vertex;
-import io.github.jakethe28th.engine.graphics.gui.Sprite;
 import io.github.jakethe28th.minecraft.obj.WriteBlock;
 
 import net.querz.nbt.tag.*;

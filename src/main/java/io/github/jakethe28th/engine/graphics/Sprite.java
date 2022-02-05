@@ -1,4 +1,4 @@
-package io.github.jakethe28th.engine.graphics.gui;
+package io.github.jakethe28th.engine.graphics;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -10,11 +10,9 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
-import io.github.jakethe28th.engine.graphics.Mesh;
-import io.github.jakethe28th.engine.graphics.Texture;
-import io.github.jakethe28th.engine.graphics.Vertex;
 import io.github.jakethe28th.engine.math.Vector2f;
 import io.github.jakethe28th.engine.math.Vector3f;
+import io.github.jakethe28th.engine.math.Vector4f;
 
 public class Sprite {
 
@@ -118,10 +116,10 @@ public class Sprite {
 			
 			int meshID = id;
 			meshes.put(id, new Mesh(new Vertex[] {
-					new Vertex(new Vector3f(0, 0,  0.0f), new Vector3f(1, 1, 1), 	new Vector2f(u1, v1)),
-					new Vertex(new Vector3f(0, h,  0.0f), new Vector3f(1, 1, 1),    new Vector2f(u1, v2)),
-					new Vertex(new Vector3f(w, h,  0.0f), new Vector3f(1, 1, 1), 	new Vector2f(u2, v2)),
-					new Vertex(new Vector3f(w, 0,  0.0f), new Vector3f(1, 1, 1), 	new Vector2f(u2, v1))
+					new Vertex(new Vector3f(0, 0,  0.0f), new Vector4f(1, 1, 1, 0), 	new Vector2f(u1, v1)),
+					new Vertex(new Vector3f(0, h,  0.0f), new Vector4f(1, 1, 1, 0),    new Vector2f(u1, v2)),
+					new Vertex(new Vector3f(w, h,  0.0f), new Vector4f(1, 1, 1, 0), 	new Vector2f(u2, v2)),
+					new Vertex(new Vector3f(w, 0,  0.0f), new Vector4f(1, 1, 1, 0), 	new Vector2f(u2, v1))
 								}, new int[] {
 										 // Front face
 									    0, 1, 2, 2, 3, 0
@@ -206,10 +204,10 @@ public class Sprite {
 			
 			int meshID = id;
 			meshes.put(id, new Mesh(new Vertex[] {
-					new Vertex(new Vector3f(0, 0,  0.0f), new Vector3f(1, 1, 1), 	new Vector2f(u1, v1)),
-					new Vertex(new Vector3f(0, h,  0.0f), new Vector3f(1, 1, 1),    new Vector2f(u1, v2)),
-					new Vertex(new Vector3f(w, h,  0.0f), new Vector3f(1, 1, 1), 	new Vector2f(u2, v2)),
-					new Vertex(new Vector3f(w, 0,  0.0f), new Vector3f(1, 1, 1), 	new Vector2f(u2, v1))
+					new Vertex(new Vector3f(0, 0,  0.0f), new Vector4f(1, 1, 1, 0), 	new Vector2f(u1, v1)),
+					new Vertex(new Vector3f(0, h,  0.0f), new Vector4f(1, 1, 1, 0),    new Vector2f(u1, v2)),
+					new Vertex(new Vector3f(w, h,  0.0f), new Vector4f(1, 1, 1, 0), 	new Vector2f(u2, v2)),
+					new Vertex(new Vector3f(w, 0,  0.0f), new Vector4f(1, 1, 1, 0), 	new Vector2f(u2, v1))
 								}, new int[] {
 										 // Front face
 									    0, 1, 2, 2, 3, 0

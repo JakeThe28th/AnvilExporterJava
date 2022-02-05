@@ -13,6 +13,7 @@ public class Shader {
 	
     private int vertexShaderId, fragmentShaderId, programId;
     private final Map<String, Integer> uniforms;
+    public String type;
 
     public Shader() throws Exception {
         programId = glCreateProgram();

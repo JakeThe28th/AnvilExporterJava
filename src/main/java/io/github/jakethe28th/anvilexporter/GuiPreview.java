@@ -3,7 +3,7 @@ package io.github.jakethe28th.anvilexporter;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 
-import io.github.jakethe28th.engine.graphics.gui.Sprite;
+import io.github.jakethe28th.engine.graphics.Sprite;
 import net.querz.nbt.*;
 import net.querz.nbt.tag.ListTag;
 import net.querz.nbt.tag.LongArrayTag;

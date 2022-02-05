@@ -14,6 +14,7 @@ import io.github.jakethe28th.engine.graphics.Vertex;
 import io.github.jakethe28th.engine.graphics.Window;
 import io.github.jakethe28th.engine.math.Vector2f;
 import io.github.jakethe28th.engine.math.Vector3f;
+import io.github.jakethe28th.engine.math.Vector4f;
 
 public class Element {
 	LinkedHashMap<String, Element> elements; 
@@ -31,14 +32,14 @@ public class Element {
 	public static final String ELEMENT_TYPE_SEP			= "seperator";
 		//Types
 	
-	public Vector3f col_outline_select = new Vector3f(0.38431372549f, 0.63529411764f, 0.89411764705f);
-	public Vector3f col_select = new Vector3f(0.78823529411f, 0.87843137254f, 0.96862745098f);
-	public Vector3f col_hover = new Vector3f(0.93725490196f, 0.96470588235f, 0.99607843137f);
-	public Vector3f col_outline_hover = new Vector3f(0.66666666666f, 0.82745098039f, 0.99607843137f);
-	public Vector3f col_base = new Vector3f(1, 1, 1);
-	public Vector3f col_outline = new Vector3f(.75f, .75f, .75f);
+	public Vector4f col_outline_select = new Vector4f(0.38431372549f, 0.63529411764f, 0.89411764705f, 1);
+	public Vector4f col_select = new Vector4f(0.78823529411f, 0.87843137254f, 0.96862745098f, 1);
+	public Vector4f col_hover = new Vector4f(0.93725490196f, 0.96470588235f, 0.99607843137f, 1);
+	public Vector4f col_outline_hover = new Vector4f(0.66666666666f, 0.82745098039f, 0.99607843137f, 1);
+	public Vector4f col_base = new Vector4f(1, 1, 1, 1);
+	public Vector4f col_outline = new Vector4f(.75f, .75f, .75f, 1);
 	
-	public Vector3f col_text = new Vector3f(0, 0, 0);
+	public Vector4f col_text = new Vector4f(0, 0, 0, 1);
 	
 	public int type; //Set this to a type from above
 	
@@ -370,8 +371,8 @@ public class Element {
 		int bottom_y = 	top_y+dim[1];
 		
 		//Default color
-		Vector3f outline_color = this.col_outline;
-		Vector3f color = col_base;
+		Vector4f outline_color = this.col_outline;
+		Vector4f color = col_base;
 
 		//If hovering over button:
 		if (Utility.pointInRect(left_x, top_y, right_x, bottom_y, (int) window.getMousePos().x, (int) window.getMousePos().y)) {
@@ -464,8 +465,8 @@ public class Element {
 		int bottom_y = 	top_y+dim[1];
 		
 		//Default color
-		Vector3f outline_color = this.col_outline;
-		Vector3f color = col_base;
+		Vector4f outline_color = this.col_outline;
+		Vector4f color = col_base;
 
 		//If hovering over button:
 		if (Utility.pointInRect(left_x, top_y, right_x, bottom_y, (int) window.getMousePos().x, (int) window.getMousePos().y)) {
@@ -524,24 +525,24 @@ public class Element {
 		
 		if (style.equals("down")) {
 			 arrow =  new EngineObject(new Mesh(new Vertex[] {
-				new Vertex(new Vector3f(lx-1	 ,ty-1,  (FAR_PLANE+5)), 	color, new Vector2f(0, 0)),
-				new Vertex(new Vector3f(rx+1	 ,ty-1, (FAR_PLANE+5)), 	color, new Vector2f(0, 0)),
-				new Vertex(new Vector3f((rx+lx)/2,by+1, (FAR_PLANE+5)), 	color, new Vector2f(0, 0)),
+				new Vertex(new Vector3f(lx-1	 ,ty-1,  (FAR_PLANE+5)), 	color, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f(rx+1	 ,ty-1, (FAR_PLANE+5)), 	color, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f((rx+lx)/2,by+1, (FAR_PLANE+5)), 	color, new Vector2f(0, 0), 1),
 				
-				new Vertex(new Vector3f(lx		,  ty, 	(FAR_PLANE+6)), 	outline_color, new Vector2f(0, 0)),
-				new Vertex(new Vector3f(rx		,  ty, 	(FAR_PLANE+6)), 	outline_color, new Vector2f(0, 0)),
-				new Vertex(new Vector3f((rx+lx)/2, by,	(FAR_PLANE+6)), 	outline_color, new Vector2f(0, 0))
+				new Vertex(new Vector3f(lx		,  ty, 	(FAR_PLANE+6)), 	outline_color, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f(rx		,  ty, 	(FAR_PLANE+6)), 	outline_color, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f((rx+lx)/2, by,	(FAR_PLANE+6)), 	outline_color, new Vector2f(0, 0), 1)
 			}, 	new int[] { 0, 1, 2, 3, 4, 5}, null)); }
 		
 		if (style.equals("right")) {
 			 arrow =  new EngineObject(new Mesh(new Vertex[] {
-				new Vertex(new Vector3f(lx-1	 ,ty-1,  (FAR_PLANE+5)), 	color, new Vector2f(0, 0)),
-				new Vertex(new Vector3f(lx+1	 ,by-1, (FAR_PLANE+5)), 	color, new Vector2f(0, 0)),
-				new Vertex(new Vector3f(rx-1,(by+ty)/2, (FAR_PLANE+5)), 	color, new Vector2f(0, 0)),
+				new Vertex(new Vector3f(lx-1	 ,ty-1,  (FAR_PLANE+5)), 	color, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f(lx+1	 ,by-1, (FAR_PLANE+5)), 	color, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f(rx-1,(by+ty)/2, (FAR_PLANE+5)), 	color, new Vector2f(0, 0), 1),
 				
-				new Vertex(new Vector3f(lx		,  ty, 	(FAR_PLANE+6)), 	outline_color, new Vector2f(0, 0)),
-				new Vertex(new Vector3f(lx		,  by, 	(FAR_PLANE+6)), 	outline_color, new Vector2f(0, 0)),
-				new Vertex(new Vector3f(rx, (by+ty)/2,	(FAR_PLANE+6)), 	outline_color, new Vector2f(0, 0))
+				new Vertex(new Vector3f(lx		,  ty, 	(FAR_PLANE+6)), 	outline_color, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f(lx		,  by, 	(FAR_PLANE+6)), 	outline_color, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f(rx, (by+ty)/2,	(FAR_PLANE+6)), 	outline_color, new Vector2f(0, 0), 1)
 			}, 	new int[] { 0, 1, 2, 3, 4, 5}, null)); }
 		
 		render.renderGui(window, arrow);
@@ -689,26 +690,26 @@ public class Element {
 		return ret;
 	}
 	
-	public EngineObject genPanel(int x1, int y1, int x2, int y2, float FAR_PLANE, Vector3f color_outline, Vector3f color) { 
+	public EngineObject genPanel(int x1, int y1, int x2, int y2, float FAR_PLANE, Vector4f color_outline, Vector4f color) { 
 		int left_x = x1;
 		int right_x = x2;
 		int top_y = y1;
 		int bottom_y = y2;
-		Vector3f coo = color_outline;
-		Vector3f col = color;
+		Vector4f coo = color_outline;
+		Vector4f col = color;
 		
 		//new Vector3f(col, col, col);
 		
 		EngineObject panel =  new EngineObject(new Mesh(new Vertex[] {
-				new Vertex(new Vector3f(left_x-1	, 	top_y-1,  			(FAR_PLANE+2)), 	coo, new Vector2f(0, 0)),
-				new Vertex(new Vector3f(left_x-1	, 	bottom_y+1, 		(FAR_PLANE+2)), 	coo, new Vector2f(0, 0)),
-				new Vertex(new Vector3f(right_x+1	,	bottom_y+1, 		(FAR_PLANE+2)), 	coo, new Vector2f(0, 0)),
-				new Vertex(new Vector3f(right_x+1	,	top_y-1,   			(FAR_PLANE+2)), 	coo, new Vector2f(0, 0)),
+				new Vertex(new Vector3f(left_x-1	, 	top_y-1,  			(FAR_PLANE+2)), 	coo, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f(left_x-1	, 	bottom_y+1, 		(FAR_PLANE+2)), 	coo, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f(right_x+1	,	bottom_y+1, 		(FAR_PLANE+2)), 	coo, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f(right_x+1	,	top_y-1,   			(FAR_PLANE+2)), 	coo, new Vector2f(0, 0), 1),
 			
-				new Vertex(new Vector3f(left_x	, 	top_y,  				(FAR_PLANE+4)), 	col, new Vector2f(0, 0)),
-				new Vertex(new Vector3f(left_x	, 	bottom_y, 				(FAR_PLANE+4)), 	col, new Vector2f(0, 0)),
-				new Vertex(new Vector3f(right_x	,	bottom_y, 				(FAR_PLANE+4)), 	col, new Vector2f(0, 0)),
-				new Vertex(new Vector3f(right_x	,	top_y,   				(FAR_PLANE+4)), 	col, new Vector2f(0, 0))
+				new Vertex(new Vector3f(left_x	, 	top_y,  				(FAR_PLANE+4)), 	col, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f(left_x	, 	bottom_y, 				(FAR_PLANE+4)), 	col, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f(right_x	,	bottom_y, 				(FAR_PLANE+4)), 	col, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f(right_x	,	top_y,   				(FAR_PLANE+4)), 	col, new Vector2f(0, 0), 1)
 				
 		
 		}, 	new int[] { 0, 1, 2, 2, 3, 0, 

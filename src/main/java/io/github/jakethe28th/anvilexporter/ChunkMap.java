@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.github.jakethe28th.engine.graphics.gui.Sprite;
+import io.github.jakethe28th.engine.graphics.Sprite;
 import io.github.jakethe28th.engine.math.Vector3f;
 import net.querz.mca.Chunk;
 import net.querz.mca.MCAFile;

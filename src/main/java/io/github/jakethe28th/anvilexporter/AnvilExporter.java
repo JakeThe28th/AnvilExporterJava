@@ -22,14 +22,15 @@ import io.github.jakethe28th.engine.EngineObject;
 import io.github.jakethe28th.engine.graphics.Camera;
 import io.github.jakethe28th.engine.graphics.Mesh;
 import io.github.jakethe28th.engine.graphics.Renderer;
+import io.github.jakethe28th.engine.graphics.Sprite;
 import io.github.jakethe28th.engine.graphics.Texture;
 import io.github.jakethe28th.engine.graphics.Vertex;
 import io.github.jakethe28th.engine.graphics.Window;
 import io.github.jakethe28th.engine.graphics.gui.Element;
-import io.github.jakethe28th.engine.graphics.gui.Sprite;
 import io.github.jakethe28th.engine.graphics.gui.TextRenderer;
 import io.github.jakethe28th.engine.math.Vector2f;
 import io.github.jakethe28th.engine.math.Vector3f;
+import io.github.jakethe28th.engine.math.Vector4f;
 
 import java.io.FileWriter;   // Import the FileWriter class
 
@@ -271,12 +272,12 @@ public class AnvilExporter {
 				int chunk_spr = map.getChunkSprite(ix, iy);
 				
 				if (chunk_spr >=0) {
-				render.renderSpriteGui(window, map.getSprite(), chunk_spr, new Vector3f(realpos.x, realpos.y, FAR_PLANE), new Vector3f(scale, scale, 0), new Vector3f(0,0,0), new Vector3f(1,1,1), 1);
+				render.renderSpriteGui(window, map.getSprite(), chunk_spr, new Vector3f(realpos.x, realpos.y, FAR_PLANE), new Vector3f(scale, scale, 0), new Vector3f(0,0,0), new Vector4f(1,1,1,1), 1);
 				} } }
 				
 			//Selecting chunks handling
 			if (ix >= startX & ix <= endX) if (iy >= startY & iy <= endY) {
-				EngineObject p = genPanel(0, 0, 15, 15, 0, new Vector3f(0.75f, 0.75f, 0.5f), new Vector3f(1,1,1));
+				EngineObject p = genPanel(0, 0, 15, 15, 0, new Vector4f(0.75f, 0.75f, 0.5f, .25f), new Vector4f(1,1,1, .25f));
 				p.setScale(scale, scale, 0);
 				p.setPosition(realpos.x, realpos.y, FAR_PLANE+5);
 				render.renderGui(window, p);
@@ -321,7 +322,7 @@ public class AnvilExporter {
 					startY = t;
 				} }  else selecting_chunks = false;
 			
-			EngineObject p = genPanel(0, 0, 15, 15, 0, new Vector3f(0.75f, 0.75f, 0.5f), new Vector3f(1,1,1));
+			EngineObject p = genPanel(0, 0, 15, 15, 0, new Vector4f(0.75f, 0.75f, 0.5f, .25f), new Vector4f(1,1,1, .25f));
 			p.setScale(scale, scale, 0);
 			p.setPosition(realpos.x, realpos.y, FAR_PLANE+5);
 			render.renderGui(window, p);
@@ -505,26 +506,26 @@ public class AnvilExporter {
 
 	}
 	
-	public EngineObject genPanel(int x1, int y1, int x2, int y2, float FAR_PLANE, Vector3f color_outline, Vector3f color) { 
+	public EngineObject genPanel(int x1, int y1, int x2, int y2, float FAR_PLANE, Vector4f color_outline, Vector4f color) { 
 		int left_x = x1;
 		int right_x = x2;
 		int top_y = y1;
 		int bottom_y = y2;
-		Vector3f coo = color_outline;
-		Vector3f col = color;
+		Vector4f coo = color_outline;
+		Vector4f col = color;
 		
 		//new Vector3f(col, col, col);
 		
 		EngineObject panel =  new EngineObject(new Mesh(new Vertex[] {
-				new Vertex(new Vector3f(left_x-1	, 	top_y-1,  			(FAR_PLANE+2)), 	coo, new Vector2f(0, 0)),
-				new Vertex(new Vector3f(left_x-1	, 	bottom_y+1, 		(FAR_PLANE+2)), 	coo, new Vector2f(0, 0)),
-				new Vertex(new Vector3f(right_x+1	,	bottom_y+1, 		(FAR_PLANE+2)), 	coo, new Vector2f(0, 0)),
-				new Vertex(new Vector3f(right_x+1	,	top_y-1,   			(FAR_PLANE+2)), 	coo, new Vector2f(0, 0)),
+				new Vertex(new Vector3f(left_x-1	, 	top_y-1,  			(FAR_PLANE+2)), 	coo, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f(left_x-1	, 	bottom_y+1, 		(FAR_PLANE+2)), 	coo, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f(right_x+1	,	bottom_y+1, 		(FAR_PLANE+2)), 	coo, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f(right_x+1	,	top_y-1,   			(FAR_PLANE+2)), 	coo, new Vector2f(0, 0), 1),
 			
-				new Vertex(new Vector3f(left_x	, 	top_y,  				(FAR_PLANE+4)), 	col, new Vector2f(0, 0)),
-				new Vertex(new Vector3f(left_x	, 	bottom_y, 				(FAR_PLANE+4)), 	col, new Vector2f(0, 0)),
-				new Vertex(new Vector3f(right_x	,	bottom_y, 				(FAR_PLANE+4)), 	col, new Vector2f(0, 0)),
-				new Vertex(new Vector3f(right_x	,	top_y,   				(FAR_PLANE+4)), 	col, new Vector2f(0, 0))
+				new Vertex(new Vector3f(left_x	, 	top_y,  				(FAR_PLANE+4)), 	col, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f(left_x	, 	bottom_y, 				(FAR_PLANE+4)), 	col, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f(right_x	,	bottom_y, 				(FAR_PLANE+4)), 	col, new Vector2f(0, 0), 1),
+				new Vertex(new Vector3f(right_x	,	top_y,   				(FAR_PLANE+4)), 	col, new Vector2f(0, 0), 1)
 		
 		}, 	new int[] { 0, 1, 2, 2, 3, 0, 
 				4, 5, 6, 6, 7, 4 }, null));

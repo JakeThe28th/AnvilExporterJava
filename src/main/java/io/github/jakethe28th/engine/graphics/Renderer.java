@@ -14,15 +14,15 @@ import org.joml.Matrix4f;
 
 import io.github.jakethe28th.engine.EngineObject;
 import io.github.jakethe28th.engine.Utility;
-import io.github.jakethe28th.engine.graphics.gui.Sprite;
 import io.github.jakethe28th.engine.math.Transformation;
 import io.github.jakethe28th.engine.math.Vector3f;
+import io.github.jakethe28th.engine.math.Vector4f;
 
 public class Renderer {
 
     private Shader shader;
-    private Shader shaderGui;
-    private Shader shaderGuiFlat;
+    private Shader shader_ortho;
+    private Shader shader_ortho_flat;
     private Transformation transformation;
     
     //projection
@@ -38,40 +38,37 @@ public class Renderer {
     	//add a shader file handler and use shaders via filenames aka flat textured shaded
     }
 
+    private static Shader setUpShader(String path) throws Exception {
+    	String type = Utility.loadFromGLSL(Utility.loadAsString(path), "type");
+    	Shader shadert = new Shader();
+			shadert.createVertexShader(Utility.loadFromGLSL(Utility.loadAsString(path), "vertex"));
+			shadert.createFragmentShader(Utility.loadFromGLSL(Utility.loadAsString(path), "fragment"));
+			shadert.link();
+		
+			System.out.println(type);
+			if (type.contains("orthographic")) {
+				// Create uniforms for Ortographic-model projection matrix and base colour
+		    	shadert.createUniform("projModelMatrix");
+		    	//shader_ortho.createUniform("color");
+		    	shadert.createUniform("texture_sampler");
+				} else {
+				// Create uniforms for modelView and projection matrices and texture
+				shadert.createUniform("projectionMatrix");
+				shadert.createUniform("modelViewMatrix");
+				shadert.createUniform("texture_sampler");
+				}
+			
+			shadert.type = type;
+    	
+			return shadert;
+    }
+
     public void init() throws Exception {
-    		shader = new Shader();
-    		shader.createVertexShader(Utility.loadAsString("assets/engine/shaders/vertex.vs"));
-    		shader.createFragmentShader(Utility.loadAsString("assets/engine/shaders/fragment.fs"));
-    		shader.link();
-    		
-    		// Create uniforms for modelView and projection matrices and texture
-            shader.createUniform("projectionMatrix");
-            shader.createUniform("modelViewMatrix");
-            shader.createUniform("texture_sampler");
+    		shader = setUpShader("assets/engine/shaders/shader.glsl");
             
             //GUI shaders
-            shaderGui = new Shader();
-            //shaderGui.createVertexShader(Utility.loadAsString("assets/engine/shaders/gui.vs"));
-            //shaderGui.createFragmentShader(Utility.loadAsString("assets/engine/shaders/gui.fs"));
-            shaderGui.createVertexShader(Utility.loadFromGLSL(Utility.loadAsString("assets/engine/shaders/ortho.glsl"), "vertex"));
-            shaderGui.createFragmentShader(Utility.loadFromGLSL(Utility.loadAsString("assets/engine/shaders/ortho.glsl"), "fragment"));
-            shaderGui.link();
-            
-            // Create uniforms for Ortographic-model projection matrix and base colour
-            shaderGui.createUniform("projModelMatrix");
-            //shaderGui.createUniform("color");
-            shaderGui.createUniform("texture_sampler");
-            
-            //GUI shaders (flat)
-            shaderGuiFlat = new Shader();
-            shaderGuiFlat.createVertexShader(Utility.loadFromGLSL(Utility.loadAsString("assets/engine/shaders/gui.glsl"), "vertex"));
-            shaderGuiFlat.createFragmentShader(Utility.loadFromGLSL(Utility.loadAsString("assets/engine/shaders/gui.glsl"), "fragment"));
-            shaderGuiFlat.link();
-
-            // Create uniforms for Ortographic-model projection matrix and base colour
-            shaderGuiFlat.createUniform("projModelMatrix");
-            //shaderGui.createUniform("color");
-            shaderGuiFlat.createUniform("texture_sampler");
+            shader_ortho = setUpShader("assets/engine/shaders/ortho.glsl");
+            shader_ortho_flat = setUpShader("assets/engine/shaders/ortho.glsl");
     }
 
     public void clear() {
@@ -116,7 +113,7 @@ public class Renderer {
               window.setResized(false);
           }
           
-          shaderGui.bind();
+          shader_ortho.bind();
           
           shader.setUniform("texture_sampler", 0);
 
@@ -125,14 +122,14 @@ public class Renderer {
               Mesh mesh = gameItem.getMesh();
               // Set orthographic and model matrix for this HUD item
               Matrix4f projModelMatrix = transformation.getOrthoProjModelMatrix(gameItem, ortho);
-              shaderGui.setUniform("projModelMatrix", projModelMatrix);
-             // shaderGui.setUniform("color", gameItem.getMesh().getMaterial().getAmbientColour());
+              shader_ortho.setUniform("projModelMatrix", projModelMatrix);
+             // shader_ortho.setUniform("color", gameItem.getMesh().getMaterial().getAmbientColour());
 
               // Render the mesh for this HUD item
               mesh.render();
           }
 
-          shaderGui.unbind();
+          shader_ortho.unbind();
           
     }
     
@@ -144,24 +141,24 @@ public class Renderer {
               window.setResized(false);
           }
           
-          shaderGuiFlat.bind();
+          shader_ortho_flat.bind();
           
-          shaderGuiFlat.setUniform("texture_sampler", 0);
+          shader_ortho_flat.setUniform("texture_sampler", 0);
 
           Matrix4f ortho = transformation.getOrthoProjectionMatrix(0, window.getWidth(), window.getHeight(), 0);
           Mesh mesh = EngineObject.getMesh();
           // Set orthographic and model matrix for this HUD item
           Matrix4f projModelMatrix = transformation.getOrthoProjModelMatrix(EngineObject, ortho);
-          shaderGuiFlat.setUniform("projModelMatrix", projModelMatrix);
-         // shaderGui.setUniform("color", gameItem.getMesh().getMaterial().getAmbientColour());
+          shader_ortho_flat.setUniform("projModelMatrix", projModelMatrix);
+         // shader_ortho.setUniform("color", gameItem.getMesh().getMaterial().getAmbientColour());
 
           // Render the mesh for this HUD item
           mesh.render();
-          shaderGuiFlat.unbind();
+          shader_ortho_flat.unbind();
           
     }
     
-    public void renderSpriteGui(Window window, Sprite sheet, int id, Vector3f pos, Vector3f scale, Vector3f rot, Vector3f col, float alpha)
+    public void renderSpriteGui(Window window, Sprite sheet, int id, Vector3f pos, Vector3f scale, Vector3f rot, Vector4f col, float alpha)
     {
     	if (window.isResized()) {
             glViewport(0, 0, window.getWidth(), window.getHeight());
@@ -170,7 +167,7 @@ public class Renderer {
     	
     	if (!sheet.isNull(id)) {
         
-        shaderGui.bind();
+        shader_ortho.bind();
         
         shader.setUniform("texture_sampler", 0);
 
@@ -182,13 +179,13 @@ public class Renderer {
             
             // Set orthographic and model matrix for this HUD item
             Matrix4f projModelMatrix = transformation.getOrthoProjModelMatrix(EngineObject.SCALE_MODE_SKEW, new org.joml.Vector3f(pos.x, pos.y, pos.z), new org.joml.Vector3f(scale.x, scale.y, scale.z), new org.joml.Vector3f(rot.x, rot.y, rot.z), ortho);
-            shaderGui.setUniform("projModelMatrix", projModelMatrix);
-            // shaderGui.setUniform("color", gameItem.getMesh().getMaterial().getAmbientColour());
+            shader_ortho.setUniform("projModelMatrix", projModelMatrix);
+            // shader_ortho.setUniform("color", gameItem.getMesh().getMaterial().getAmbientColour());
 
             // Render the mesh for this HUD item
             sheet.draw(id);
 
-        shaderGui.unbind();
+        shader_ortho.unbind();
         
     	}
     	

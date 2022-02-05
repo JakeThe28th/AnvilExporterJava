@@ -21,9 +21,9 @@ import java.math.*;
 
 import io.github.jakethe28th.anvilexporter.Utility;
 import io.github.jakethe28th.engine.graphics.Mesh;
+import io.github.jakethe28th.engine.graphics.Sprite;
 import io.github.jakethe28th.engine.graphics.Texture;
 import io.github.jakethe28th.engine.graphics.Vertex;
-import io.github.jakethe28th.engine.graphics.gui.Sprite;
 import io.github.jakethe28th.engine.math.Vector2f;
 import io.github.jakethe28th.engine.math.Vector3f;
 
@@ -212,7 +212,7 @@ public class WriteBlock {
 	public int WriteModel(String path, int x, int y, int z, Double rot_x, Double rot_y, Double rot_z, HashMap<String, Boolean> Culling, Boolean uvlock) {
 		ArrayList<String> array_cached = new ArrayList<String>();
 		
-		System.out.println(path);
+		//System.out.println(path);
 		
 	path = FileHierarchy(path);
 	if (path == null) System.out.println("Model file does not exist."); 
@@ -467,8 +467,8 @@ public class WriteBlock {
     	    	uv_x2 += texture_sheet.sprites.get(texture_index.get(tex2)).get("x");
     	    	uv_y2 -= texture_sheet.sprites.get(texture_index.get(tex2)).get("y");// - (tex_h);
     	    	
-    	    	uv_y1 *=-1;
-    	    	uv_y2 *=-1;
+    	    	//uv_y1 *=-1;
+    	    	//uv_y2 *=-1;
 
     	    }
     	    
