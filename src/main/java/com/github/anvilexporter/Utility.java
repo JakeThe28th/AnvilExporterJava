@@ -1,4 +1,4 @@
-package io.github.jakethe28th.anvilexporter;
+package com.github.anvilexporter;
 
 import java.awt.Color;
 import java.util.Arrays;
