@@ -33,7 +33,7 @@ public class Exporter {
 	
 	public Exporter(String region_folder_path, String filename_) { 	
 		BlockWriter = new WriteBlock(filename_, new Sprite(res, res));
-		this.myMesh = new Mesh(new Vertex[0], new int[0], null); //BlockWriter.myMesh;
+		this.myMesh = BlockWriter.myMesh; //new Mesh(new Vertex[0], new int[0], null); //BlockWriter.myMesh;
 		
 		this.filename = filename_;
 	}
@@ -113,12 +113,12 @@ public class Exporter {
 	
 	public void reset() {
 		BlockWriter = new WriteBlock(filename, new Sprite(res, res));
-		//this.myMesh = BlockWriter.myMesh;
+		this.myMesh = BlockWriter.myMesh;
 	}
 	
 	public void end() {
 		BlockWriter.end();
-		//this.myMesh = BlockWriter.myMesh;
+		this.myMesh = BlockWriter.myMesh;
 		}
 }
 

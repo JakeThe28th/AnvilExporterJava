@@ -20,12 +20,14 @@ import java.util.List;
 import java.math.*;
 
 import io.github.jakethe28th.anvilexporter.Utility;
+import io.github.jakethe28th.engine.EngineObject;
 import io.github.jakethe28th.engine.graphics.Mesh;
 import io.github.jakethe28th.engine.graphics.Sprite;
 import io.github.jakethe28th.engine.graphics.Texture;
 import io.github.jakethe28th.engine.graphics.Vertex;
 import io.github.jakethe28th.engine.math.Vector2f;
 import io.github.jakethe28th.engine.math.Vector3f;
+import io.github.jakethe28th.engine.math.Vector4f;
 
 //delete quad somehow?
 
@@ -64,6 +66,12 @@ public class WriteBlock {
 		      e.printStackTrace();
 		    }
 		    
+		try {
+			myMesh.setTexture(new Texture(filename + ".png"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public Sprite texture_sheet;
@@ -72,6 +80,10 @@ public class WriteBlock {
 	public HashMap<String, String[]> cache;
 
 	private String cachepath;
+
+	public Mesh myMesh;
+	public ArrayList<Vector3f> vertscache;
+	public ArrayList<Vector2f> vertstexscache;
 	
 	public WriteBlock(String filename_, Sprite texture_sheet) {
 		System.out.println("Created WriteBlock " + filename_ + " at " + System.currentTimeMillis());
@@ -80,6 +92,11 @@ public class WriteBlock {
 		this.texture_sheet = texture_sheet;
 		this.texture_index = new HashMap<String, Integer>();
 		this.cache = new HashMap<String, String[]>();
+		
+		this.myMesh = new Mesh(new Vertex[0], new int[0], null);
+		
+		vertscache = new ArrayList<Vector3f>();
+		vertstexscache = new ArrayList<Vector2f>();
 
 		if (this.texture_sheet != null) {
 			
@@ -190,6 +207,7 @@ public class WriteBlock {
 							 + " " + (Double.parseDouble(t[3])+z)
 							 + "\n";
 				this.v_count  += 1;
+				vertscache.add(new Vector3f(Float.parseFloat(t[1])+x, Float.parseFloat(t[2])+y, Float.parseFloat(t[3])+z));
 				}
 			
 			if (t[0].equals("f")) {
@@ -198,6 +216,22 @@ public class WriteBlock {
 	    		 		+ (v_count-2) + "/" + t[2].split("/")[1] + " " 
 	    		 		+ (v_count-1) + "/" + t[3].split("/")[1] + " " 
 	    		 		+ v_count + "/" + t[4].split("/")[1] + " \n";
+				
+				Vector4f coo = new Vector4f(1,1,1,1);
+				try {
+				myMesh.addVertices(new Vertex[] {
+						new Vertex(vertscache.get(0), coo, vertstexscache.get(Integer.parseInt(t[1].split("/")[1])-1), 0),
+						new Vertex(vertscache.get(1), coo, vertstexscache.get(Integer.parseInt(t[2].split("/")[1])-1), 0),
+						new Vertex(vertscache.get(2), coo, vertstexscache.get(Integer.parseInt(t[3].split("/")[1])-1), 0),
+						new Vertex(vertscache.get(3), coo, vertstexscache.get(Integer.parseInt(t[4].split("/")[1])-1), 0),
+				}, 	new int[] { 0, 1, 2, 2, 3, 0,});
+				} catch (java.lang.IndexOutOfBoundsException e) { 
+					
+					System.out.println("Index out of bounds: " + (t[1].split("/")[1]) + " In " + path);
+				}
+				
+				vertscache.clear();
+				//vertstexscache.clear();
 				}
 			objWriter.write(write);
 			//System.out.println(write);
@@ -556,6 +590,11 @@ public class WriteBlock {
 	     		objWriter.write("vt "+uv_x2+" "+uv_y2+" "+ "\n");
 	     		objWriter.write("vt "+uv_x2+" "+uv_y1+" "+ "\n");
 	     		objWriter.write("vt "+uv_x1+" "+uv_y1+" "+ "\n");
+	     		
+    	     	vertstexscache.add(new Vector2f(uv_x1.floatValue(), uv_y2.floatValue()));
+	     		vertstexscache.add(new Vector2f(uv_x2.floatValue(), uv_y2.floatValue()));
+	     		vertstexscache.add(new Vector2f(uv_x2.floatValue(), uv_y1.floatValue()));
+	     		vertstexscache.add(new Vector2f(uv_x1.floatValue(), uv_y1.floatValue()));
     	     	} else {
     	     		//Faces for UVlock
     	     		//TODO: may need to rewrite this all.
@@ -673,6 +712,12 @@ public class WriteBlock {
     	        			objWriter.write("vt "+lock_u2+" "+lock_v2+" "+ "\n");
     	        			objWriter.write("vt "+lock_u3+" "+lock_v3+" "+ "\n");
     	        			objWriter.write("vt "+lock_u4+" "+lock_v4+" "+ "\n");
+    	        			
+    	        			vertstexscache.add(new Vector2f(Float.parseFloat(lock_u1+""), Float.parseFloat(lock_v2+"")));
+    	    	     		vertstexscache.add(new Vector2f(Float.parseFloat(lock_u2+""), Float.parseFloat(lock_v2+"")));
+    	    	     		vertstexscache.add(new Vector2f(Float.parseFloat(lock_u2+""), Float.parseFloat(lock_v1+"")));
+    	    	     		vertstexscache.add(new Vector2f(Float.parseFloat(lock_u1+""), Float.parseFloat(lock_v1+"")));
+    	        	  
     	     	}
     	     
     	     /*objWriter.write("f " 
